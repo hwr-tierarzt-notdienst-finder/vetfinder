@@ -2,7 +2,7 @@
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 
-source "$SCRIPT_DIR/../../shared-bash.sh"
+. "$SCRIPT_DIR/../../shared-bash.sh"
 
 requirements_abs_path=$(realpath "$SCRIPT_DIR/../requirements-dev.txt")
 echo_information "Compiling development python requirements into '$requirements_abs_path'"
