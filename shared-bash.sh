@@ -77,7 +77,7 @@ function echo_colored() {
 }
 
 function echo_processing() {
-    echo_colored "processing" "$(echo_token "icon:processing") $1..."
+    echo_colored "processing" "$(echo_token "icon:processing") $1"
 }
 
 function echo_success() {

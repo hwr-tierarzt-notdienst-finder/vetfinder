@@ -11,10 +11,22 @@ function python_executable() {
     fi
 }
 
+function venv_python_executable() {
+    echo "$(realpath "$SCRIPT_DIR/..")/.venv/bin/python"
+}
+
 function echo_and_run_python() {
     echo_and_run "$(python_executable) $*"
 }
 
 function run_python() {
     eval "$(python_executable) $*"
+}
+
+function echo_and_run_venv_python() {
+    echo_and_run "$(venv_python_executable) $*"
+}
+
+function run_venv_python() {
+    eval "$(venv_python_executable) $*"
 }
