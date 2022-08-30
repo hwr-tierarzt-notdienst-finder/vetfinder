@@ -4,3 +4,9 @@
 #
 #    pip-compile --output-file=/home/oscar/Projects/vetfinder/backend/bin/../requirements.txt /home/oscar/Projects/vetfinder/backend/bin/../requirements.in
 #
+mongoengine==0.24.2
+    # via -r /home/oscar/Projects/vetfinder/backend/bin/../requirements.in
+pymongo==4.2.0
+    # via mongoengine
+python-dotenv==0.20.0
+    # via -r /home/oscar/Projects/vetfinder/backend/bin/../requirements.in

@@ -3,7 +3,8 @@
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 VENV_PATH="$SCRIPT_DIR/../.venv"
 
-source "$SCRIPT_DIR/../../shared-bash.sh"
+. "$SCRIPT_DIR/../../shared-bash.sh"
+. "$SCRIPT_DIR/_python.sh"
 
 function setup() {
     check_running_correct_python_version
@@ -41,7 +42,7 @@ function create_venv() {
     abs_venv_path=$(realpath "$VENV_PATH")
 
     echo_information "Creating python virtual environment at '$abs_venv_path'"
-    echo_and_run "python -m venv $VENV_PATH"
+    echo_and_run_python "-m venv $VENV_PATH"
     if [ -d "$VENV_PATH" ]; then
         echo_success "Created python virtual environment at '$abs_venv_path'"
     else
@@ -59,7 +60,7 @@ function activate_venv() {
 
 function install_package_management_tools() {
     echo_information "Installing pip-tools for python package management https://pypi.org/project/pip-tools/"
-    echo_and_run 'pip install pip-tools'
+    echo_and_run_python '-m pip install pip-tools'
     echo_success "Installed pip-tools"
 }
 
