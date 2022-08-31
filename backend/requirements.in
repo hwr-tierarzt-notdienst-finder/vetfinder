@@ -1,2 +1,2 @@
-python-dotenv>0.20<0.30
-mongoengine>0.24<0.30
+python-dotenv>=0.20<0.30
+pymongo>=4.2.0<5

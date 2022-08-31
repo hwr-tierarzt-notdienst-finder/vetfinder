@@ -155,3 +155,20 @@ function remove_mongo_container() {
     echo_information "Removing container with id=$container_id"
     echo_and_run "docker container rm $container_id"
 }
+
+function has_mongo_db_container() {
+    local env_context
+    env_context="$1"
+
+    local container_name
+    container_name="$(get_mongo_container_name "$env_context")"
+
+    local container_id
+    container_id=$(docker ps -aqf "name=^$container_name")
+
+    if [ "$container_id" = '' ]; then
+        echo 'false'
+    else
+        echo 'true'
+    fi
+}

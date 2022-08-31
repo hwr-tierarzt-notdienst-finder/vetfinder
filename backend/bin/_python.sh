@@ -4,7 +4,7 @@ if [ -f "$SCRIPT_DIR/../.env.local" ]; then
 fi
 
 function python_executable() {
-    if [ -z "$PYTHON_EXECUTABLE" ]; then
+    if [ -z "${PYTHON_EXECUTABLE:-}" ]; then
         echo "python"
     else
         echo "$PYTHON_EXECUTABLE"

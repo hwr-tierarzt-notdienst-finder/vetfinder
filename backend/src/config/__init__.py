@@ -1,62 +1,76 @@
 from dotenv import dotenv_values
 
-from ..types import EnvContext
+from .. import env
 from ._schema import *
 
 
-_config: Config | None = None
-def get_config() -> Config:
-    global _config
-
-    if _config is None:
-        _config = _extract_config()
-
-    return _config
+_cached_config: Config | None = None
+_cached_dotenv_vars: dict | None = None
 
 
-def _extract_config() -> Config:
-    return Config(
-        dbs=DbConfigs(
-            dev=DbConfig(
-                port=_extract_mongo_dotenv_var_value(
-                    "HOST_PORT",
-                    context="dev"
-                ),
-                container_name=_extract_mongo_dotenv_var_value(
-                    "CONTAINER_BASE_NAME",
-                ) + "_dev",
-                root_user_name=_extract_mongo_dotenv_var_value(
-                    "INITDB_ROOT_USERNAME",
-                    context="dev",
-                ),
-                root_password=_extract_mongo_dotenv_var_value(
-                    "INITDB_ROOT_PASSWORD",
-                    context="dev",
-                )
-            )
+def get() -> Config:
+    global _cached_config
+
+    env_context = env.get_context()
+
+    if _cached_config is None:
+        _cached_config = Config(
+            db=_get_db_config(env_context)
         )
+
+    return _cached_config
+
+
+def reset_cache() -> None:
+    global _cached_config
+    global _cached_dotenv_vars
+
+    _cached_config = None
+    _cached_dotenv_vars = None
+
+
+def _get_db_config(env_context: env.Context) -> DbConfig:
+    return DbConfig(
+        port=int(_get_mongo_dotenv_var_value(
+            "HOST_PORT",
+            context=env_context
+        )),
+        container_name=_get_mongo_dotenv_var_value(
+            "CONTAINER_BASE_NAME",
+        ) + f"_{env_context}",
+        root_username=_get_mongo_dotenv_var_value(
+            "INITDB_ROOT_USERNAME",
+            context=env_context,
+        ),
+        root_password=_get_mongo_dotenv_var_value(
+            "INITDB_ROOT_PASSWORD",
+            context=env_context,
+        ),
+        connection_ping_timeout=float(_get_mongo_dotenv_var_value(
+            "CONNECTION_PING_TIMEOUT",
+            context=env_context,
+        )),
     )
 
 
-def _extract_mongo_dotenv_var_value(
+def _get_mongo_dotenv_var_value(
         name: str,
-        context: EnvContext | None = None,
+        context: env.Context | None = None,
 ) -> str:
-    return _extract_dotenv_var_value(
+    return _get_dotenv_var_value(
         name,
         category="MONGO",
         context=context
     )
 
 
-_dotenv_vars: dict | None = None
-def _extract_dotenv_var_value(
+def _get_dotenv_var_value(
         name: str,
         *,
         category: str | None = None,
-        context: EnvContext | None = None,
+        context: env.Context | None = None,
 ) -> str:
-    global _dotenv_vars
+    global _cached_dotenv_vars
 
     if category is None:
         env_var_name_start = ""
@@ -70,10 +84,10 @@ def _extract_dotenv_var_value(
 
     env_var_name = f"{env_var_name_start}{env_var_name_middle}{name}"
 
-    if _dotenv_vars is None:
-        _dotenv_vars = {
+    if _cached_dotenv_vars is None:
+        _cached_dotenv_vars = {
             **dotenv_values(".env"),
             **dotenv_values(".env.local")
         }
 
-    return _dotenv_vars[env_var_name]
+    return _cached_dotenv_vars[env_var_name]
