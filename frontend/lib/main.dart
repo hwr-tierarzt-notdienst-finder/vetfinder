@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/home.dart';
 import 'package:frontend/vet_information.dart';
-import 'package:frontend/search_page.dart';
+import 'package:frontend/filter_page.dart';
 
 //
 // leicht abgerundete Ecken
@@ -27,6 +27,9 @@ void main() {
   runApp(MaterialApp(
     title: 'Flutter Demo',
     theme: ThemeData(
+      buttonTheme: const ButtonThemeData(
+        buttonColor: Colors.red
+      ),
       primarySwatch: Colors.red,
     ),
     initialRoute: '/home',
@@ -35,7 +38,7 @@ void main() {
             title: 'VetFinder',
           ),
       '/vet_information': (context) => const VetInformation(),
-      '/search_page': (context) => const SearchPage(),
+      '/filter_page': (context) => const FilterPage(),
     },
   ));
 }

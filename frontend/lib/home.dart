@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/components/veterinarian.dart';
+import 'package:frontend/components/search_widget.dart';
 import 'package:frontend/api.dart';
 
 class Home extends StatefulWidget {
@@ -21,6 +22,7 @@ class _HomeState extends State<Home> {
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
 
+    String query = '';
     List<Veterinarian> vets = getVeterinarians();
 
     return Scaffold(
@@ -28,8 +30,8 @@ class _HomeState extends State<Home> {
         title: Text(widget.title),
         actions: [
           IconButton(
-              onPressed: () => Navigator.pushNamed(context, '/search_page'),
-              icon: const Icon(Icons.search)),
+              onPressed: () => Navigator.pushNamed(context, '/filter_page'),
+              icon: const Icon(Icons.filter_list_rounded)),
         ],
       ),
       body: Container(
@@ -41,6 +43,10 @@ class _HomeState extends State<Home> {
                 'Tierärzte in deiner Nähe',
                 style: Theme.of(context).textTheme.headline4,
               ),
+              SearchWidget(
+                text: query,
+                onChanged: (abc) {},
+                hintText: 'Suchen...'),
               Container(
                 width: MediaQuery.of(context).size.width * 0.9,
                 height: MediaQuery.of(context).size.height * 0.3,
