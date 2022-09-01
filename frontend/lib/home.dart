@@ -49,13 +49,28 @@ class _HomeState extends State<Home> {
                 'Tierärzte in deiner Nähe',
                 style: Theme.of(context).textTheme.headline4,
               ),
-              const TextField(
-                  decoration: InputDecoration(
-                      hintText: 'Suchen...', suffixIcon: Icon(Icons.search))),
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+                child: TextFormField(
+                  style: const TextStyle(fontSize: 20),
+                  decoration: const InputDecoration(
+                    border: UnderlineInputBorder(),
+                    labelText: 'Suchen...',
+                    suffixIcon: Icon(Icons.search),
+                    helperText: 'Hier können Sie nach Tierärzten suchen',
+                    helperStyle: TextStyle(color: Colors.grey),
+                  ),
+                ),
+              ),
               Container(
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.black),
+                  borderRadius: BorderRadius.circular(10),
+                ),
                 width: MediaQuery.of(context).size.width * 0.9,
-                height: MediaQuery.of(context).size.height * 0.5,
-                color: Colors.black,
+                height: MediaQuery.of(context).size.height * 0.4,
+                margin: const EdgeInsets.only(bottom: 20.0),
               ),
               Expanded(
                 child: ListView.builder(

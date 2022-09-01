@@ -23,8 +23,10 @@ class VetCard extends Card {
       child: Column(
         children: [
           Text(name, style: const TextStyle(fontWeight: FontWeight.bold)),
+          const SizedBox(height: 5),
           Text(address),
           Text(telephoneNumber),
+          const SizedBox(height: 5),
           Text(websiteUrl),
           TextButton.icon(
               onPressed: () {
