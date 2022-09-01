@@ -13,18 +13,11 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  List<Veterinarian> vets = getVeterinarians();
+  String query = '';
+
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
-
-    String query = '';
-    List<Veterinarian> vets = getVeterinarians();
-
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
@@ -45,8 +38,8 @@ class _HomeState extends State<Home> {
               ),
               SearchWidget(
                 text: query,
-                onChanged: (abc) {},
-                hintText: 'Suchen...'),
+                onSubmitted: searchVet,
+                hintText: 'Name, Adresse, Posleitzahl'),
               Container(
                 width: MediaQuery.of(context).size.width * 0.9,
                 height: MediaQuery.of(context).size.height * 0.3,
@@ -68,11 +61,23 @@ class _HomeState extends State<Home> {
           ),
         ),
       ),
-      /*floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ),*/ // This trailing comma makes auto-formatting nicer for build methods.
     );
+  }
+
+  void searchVet(String query) {
+    setState(() {
+      this.query = query.toLowerCase();
+
+      // Create a list of veterinarians based on query
+      vets = getVeterinarians();
+      List<Veterinarian> new_vets_list = [...vets];
+      for (var vet in vets) {
+        if (!(vet.name.toLowerCase().contains(this.query) ||
+            vet.address.toLowerCase().contains(this.query))) {
+          new_vets_list.remove(vet);
+        }
+      }
+      vets = new_vets_list;
+    });
   }
 }

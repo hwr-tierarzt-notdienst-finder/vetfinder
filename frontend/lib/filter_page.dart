@@ -1,7 +1,19 @@
 import 'package:flutter/material.dart';
 
-class FilterPage extends StatelessWidget {
+class FilterPage extends StatefulWidget {
   const FilterPage({Key? key}) : super(key: key);
+
+  @override
+  State<FilterPage> createState() => _FilterPageState();
+}
+
+class _FilterPageState extends State<FilterPage> {
+    // Initial Selected Location
+    String currentLocation = 'Berlin';
+    // List of location
+    var locations = [
+      'Berlin', 'München', 'Frankfurt', 'Düsseldorf'
+    ];
 
   @override
   Widget build(BuildContext context) {
@@ -22,8 +34,18 @@ class FilterPage extends StatelessWidget {
             ),
             DropdownButton<String>(
                 isExpanded: true,
-                items: [],
-                onChanged: (value) {}
+                value: currentLocation,
+                items: locations.map((String locations) {
+                  return DropdownMenuItem(
+                    value: locations,
+                    child: Text(locations),
+                  );
+                }).toList(),
+                onChanged: (String? newLocation) {
+                  setState(() {
+                    currentLocation = newLocation!;
+                  });
+                },
             ),
             const SizedBox(height: 30),
             const Text(
@@ -38,7 +60,16 @@ class FilterPage extends StatelessWidget {
             ),
             const SizedBox(height: 30),
             ElevatedButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.pushNamedAndRemoveUntil(
+                  context,
+                  '/home',
+                  (Route<dynamic> route) => false,
+                  arguments: {
+                    'location': currentLocation
+                  },
+                );
+              },
               child: const Text(
                 'Filter anwenden',
                 style: TextStyle(
