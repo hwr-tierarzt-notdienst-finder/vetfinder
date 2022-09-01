@@ -70,7 +70,14 @@ class _HomeState extends State<Home> {
                 ),
                 width: MediaQuery.of(context).size.width * 0.9,
                 height: MediaQuery.of(context).size.height * 0.4,
-                margin: const EdgeInsets.only(bottom: 20.0),
+                margin: const EdgeInsets.only(bottom: 20.0, top: 30.0),
+                child: const Center(
+                  child: Text(
+                    'Hier alle Standorte anzeigen',
+                    style: TextStyle(fontSize: 20),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
               ),
               Expanded(
                 child: ListView.builder(
