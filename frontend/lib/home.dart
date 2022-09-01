@@ -67,14 +67,19 @@ class _HomeState extends State<Home> {
   void searchVet(String query) {
     setState(() {
       this.query = query.toLowerCase();
+      List<String> keywords = this.query.split(' ');
 
       // Create a list of veterinarians based on query
       vets = getVeterinarians();
       List<Veterinarian> new_vets_list = [...vets];
       for (var vet in vets) {
-        if (!(vet.name.toLowerCase().contains(this.query) ||
-            vet.address.toLowerCase().contains(this.query))) {
-          new_vets_list.remove(vet);
+        for (var keyword in keywords) {
+          if (vet.name.toLowerCase().contains(keyword) ||
+              vet.address.toLowerCase().contains(keyword)) {
+            continue;
+          } else {
+            new_vets_list.remove(vet);
+          }
         }
       }
       vets = new_vets_list;
