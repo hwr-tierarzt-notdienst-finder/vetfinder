@@ -28,7 +28,7 @@ class VetCard extends Card {
           Text(websiteUrl),
           TextButton.icon(
               onPressed: () {
-                Navigator.pushNamed(context, 'vet_information',
+                Navigator.pushNamed(context, '/vet_information',
                     arguments: VetInformationScreenArguments(id));
               },
               icon: const Icon(Icons.arrow_forward_ios_rounded),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/home.dart';
 import 'package:frontend/vet_information.dart';
+import 'package:frontend/search_page.dart';
 
 //
 // leicht abgerundete Ecken
@@ -33,7 +34,8 @@ void main() {
       '/home': (context) => const Home(
             title: 'VetFinder',
           ),
-      'vet_information': (context) => const VetInformation()
+      '/vet_information': (context) => const VetInformation(),
+      '/search_page': (context) => const SearchPage(),
     },
   ));
 }
