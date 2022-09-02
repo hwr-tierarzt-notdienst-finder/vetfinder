@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:string_similarity/string_similarity.dart';
 import 'package:frontend/components/veterinarian.dart';
 import 'package:frontend/components/search_widget.dart';
 import 'package:frontend/api.dart';
+
+import 'dart:collection';
 
 class Home extends StatefulWidget {
   const Home({Key? key, required this.title}) : super(key: key);
@@ -71,18 +74,20 @@ class _HomeState extends State<Home> {
 
       // Create a list of veterinarians based on query
       vets = getVeterinarians();
-      List<Veterinarian> new_vets_list = [...vets];
+      Map similarityMap = {};
+  
       for (var vet in vets) {
-        for (var keyword in keywords) {
-          if (vet.name.toLowerCase().contains(keyword) ||
-              vet.address.toLowerCase().contains(keyword)) {
-            continue;
-          } else {
-            new_vets_list.remove(vet);
-          }
-        }
+        String vetInfo = '${vet.name} ${vet.address}';
+        final comparison = this.query.similarityTo(vetInfo);
+        similarityMap[vet.id] = comparison;
       }
-      vets = new_vets_list;
+
+      var sortedMap = new SplayTreeMap<String, double>.from(
+        similarityMap, (key1, key2) => (similarityMap[key1] > similarityMap[key2])? -1 : 1);
+      vets = sortedMap.keys.map((id) => getVeterinarianById(id)).toList();
+      for(var vet in vets) {
+        print(vet.name);
+      }
     });
   }
 }

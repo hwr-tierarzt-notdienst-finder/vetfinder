@@ -19,25 +19,31 @@ List<Veterinarian> getVeterinarians() {
   vets.add(const Veterinarian(
       id: '0',
       name: 'Mr. Happy',
-      address: 'Glücklich Straße 6',
+      address: 'Berliner Straße 8',
       telephoneNumber: '+49 123 456 789',
       websiteUrl: 'https://www.google.com'));
   vets.add(const Veterinarian(
       id: '1',
-      name: 'Mr. Unappy',
-      address: 'Unglücklich Straße 6',
+      name: 'Mr. Sad',
+      address: 'Hamburger Straße 2',
       telephoneNumber: '+49 123 456 789',
       websiteUrl: 'https://www.google.com'));
   vets.add(const Veterinarian(
       id: '2',
-      name: 'Mr. Happy1',
-      address: 'Glücklich Straße 6',
+      name: 'Mr. Angry',
+      address: 'Hotdog Straße 3',
       telephoneNumber: '+49 123 456 789',
       websiteUrl: 'https://www.google.com'));
   vets.add(const Veterinarian(
       id: '3',
-      name: 'Mr. Unappy2',
-      address: 'Unglück2lich Straße 6',
+      name: 'Mr. Angy',
+      address: 'Pommes Straße 1',
+      telephoneNumber: '+49 123 456 789',
+      websiteUrl: 'https://www.google.com'));
+  vets.add(const Veterinarian(
+      id: '4',
+      name: 'Mr. Rainbow',
+      address: 'Pommes Straße 3',
       telephoneNumber: '+49 123 456 789',
       websiteUrl: 'https://www.google.com'));
 
