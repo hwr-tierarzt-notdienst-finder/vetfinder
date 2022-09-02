@@ -1,2 +1,4 @@
 python-dotenv>=0.20<0.30
 pymongo>=4.2.0<5
+fastapi>=0.81.0<0.90
+uvicorn>=0.18.3<0.2
