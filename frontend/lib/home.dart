@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/components/veterinarian.dart';
 import 'package:frontend/api.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:flutter_map/plugin_api.dart';
+import 'package:latlong2/latlong.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key, required this.title}) : super(key: key);
@@ -40,39 +43,58 @@ class _HomeState extends State<Home> {
       appBar: AppBar(
         title: Text(widget.title),
       ),
-      body: Container(
-        margin: const EdgeInsets.all(10),
-        child: Center(
-          child: Column(
-            children: <Widget>[
-              Text(
-                'Tierärzte in deiner Nähe',
-                style: Theme.of(context).textTheme.headline4,
-              ),
-              const TextField(
-                  decoration: InputDecoration(
-                      hintText: 'Suchen...', suffixIcon: Icon(Icons.search))),
-              Container(
-                width: MediaQuery.of(context).size.width * 0.9,
-                height: MediaQuery.of(context).size.height * 0.5,
-                color: Colors.black,
-              ),
-              Expanded(
-                child: ListView.builder(
-                    itemCount: vets.length,
-                    itemBuilder: (context, index) {
-                      return VetCard(
-                          id: vets[index].id,
-                          name: vets[index].name,
-                          telephoneNumber: vets[index].telephoneNumber,
-                          address: vets[index].address,
-                          websiteUrl: vets[index].websiteUrl);
-                    }),
-              )
-            ],
+      body: Column(
+        children: [
+          Text(
+            'Tierärzte in deiner Nähe',
+            style: Theme.of(context).textTheme.headline4,
           ),
-        ),
+          const TextField(
+              decoration: InputDecoration(
+                  hintText: 'Suchen...', suffixIcon: Icon(Icons.search))),
+          Container(
+            width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.height * 0.5,
+            child: Stack(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8),
+                  child: FlutterMap(
+                    options: MapOptions(
+                      center: LatLng(51.5, -0.09),
+                      zoom: 11,
+                      rotation: 0,
+                    ),
+                    layers: [
+                      TileLayerOptions(
+                        minZoom: 1,
+                        maxZoom: 18,
+                        backgroundColor: Colors.black,
+                        urlTemplate:
+                            'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+                        subdomains: ['a', 'b', 'c'],
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Expanded(
+            child: ListView.builder(
+                itemCount: vets.length,
+                itemBuilder: (context, index) {
+                  return VetCard(
+                      id: vets[index].id,
+                      name: vets[index].name,
+                      telephoneNumber: vets[index].telephoneNumber,
+                      address: vets[index].address,
+                      websiteUrl: vets[index].websiteUrl);
+                }),
+          )
+        ],
       ),
+
       /*floatingActionButton: FloatingActionButton(
         onPressed: _incrementCounter,
         tooltip: 'Increment',
