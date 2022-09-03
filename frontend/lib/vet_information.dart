@@ -40,6 +40,7 @@ class VetInformation extends StatelessWidget {
                 fontSize: 30,
               ),
             ),
+            const SizedBox(height: 10),
             const Text(
               'vet.praxisName',
               style: TextStyle(
@@ -47,7 +48,7 @@ class VetInformation extends StatelessWidget {
                 fontSize: 20,
               ),
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 20),
             Row(
               children: [
                 const Icon(Icons.location_on),
