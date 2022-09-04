@@ -85,9 +85,6 @@ class _HomeState extends State<Home> {
       var sortedMap = new SplayTreeMap<String, double>.from(
         similarityMap, (key1, key2) => (similarityMap[key1] > similarityMap[key2])? -1 : 1);
       vets = sortedMap.keys.map((id) => getVeterinarianById(id)).toList();
-      for(var vet in vets) {
-        print(vet.name);
-      }
     });
   }
 }
