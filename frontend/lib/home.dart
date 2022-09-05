@@ -38,6 +38,63 @@ class _HomeState extends State<Home> {
     // than having to individually change instances of widgets.
 
     List<Veterinarian> vets = getVeterinarians();
+    List<Marker> markers = [];
+
+    TextButton createMarkerWidget(Veterinarian vet) {
+      return TextButton.icon(
+        onPressed: () {
+          showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: Text(vet.name),
+                  content: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      Text("Adresse: ${vet.getAddress()}"),
+                      const SizedBox(height: 10),
+                      Text("Telefonnummer: ${vet.telephoneNumber}"),
+                      const SizedBox(height: 10),
+                      Text("Webseite: ${vet.websiteUrl}"),
+                    ],
+                  ),
+                  actions: <Widget>[
+                    TextButton(
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: const <Widget>[
+                          Text("Okay"),
+                          SizedBox(width: 5),
+                          Icon(Icons.arrow_forward)
+                        ],
+                      ),
+                      onPressed: () {
+                        // Close the dialog
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  ],
+                );
+              });
+        },
+        icon: const Icon(Icons.location_on, color: Colors.red, size: 35.0),
+        label: Text(
+          vet.name,
+          overflow: TextOverflow.ellipsis,
+          softWrap: false,
+          maxLines: 2,
+        ),
+      );
+    }
+
+    for (Veterinarian vet in vets) {
+      markers.add(Marker(
+          width: 100,
+          height: 50,
+          point: vet.getPosition(),
+          builder: (context) => createMarkerWidget(vet)));
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -61,7 +118,8 @@ class _HomeState extends State<Home> {
                   padding: const EdgeInsets.all(8),
                   child: FlutterMap(
                     options: MapOptions(
-                      center: LatLng(51.5, -0.09),
+                      center: LatLng(vets[0].location.latitude,
+                          vets[0].location.longitude),
                       zoom: 11,
                       rotation: 0,
                     ),
@@ -74,6 +132,7 @@ class _HomeState extends State<Home> {
                             'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
                         subdomains: ['a', 'b', 'c'],
                       ),
+                      MarkerLayerOptions(markers: markers)
                     ],
                   ),
                 ),
@@ -88,7 +147,7 @@ class _HomeState extends State<Home> {
                       id: vets[index].id,
                       name: vets[index].name,
                       telephoneNumber: vets[index].telephoneNumber,
-                      address: vets[index].address,
+                      address: vets[index].getAddress(),
                       websiteUrl: vets[index].websiteUrl);
                 }),
           )

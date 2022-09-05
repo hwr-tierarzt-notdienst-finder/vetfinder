@@ -26,7 +26,7 @@ class VetInformation extends StatelessWidget {
             Text(id),
             Text(vet.name),
             Text(vet.telephoneNumber),
-            Text(vet.address),
+            Text(vet.getAddress()),
             Text(vet.websiteUrl),
           ]),
         ));
