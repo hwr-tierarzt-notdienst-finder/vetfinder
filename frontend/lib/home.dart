@@ -39,6 +39,22 @@ class _HomeState extends State<Home> {
                 'Tierärzte in deiner Nähe',
                 style: Theme.of(context).textTheme.headline4,
               ),
+              TextButton(
+                onPressed: () {
+                  editAddressModalBottomSheet(context);
+                },
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      'Current Address'
+                    ),
+                    Icon(
+                      Icons.arrow_drop_down_rounded
+                    ),
+                  ],
+                ),
+              ),
               SearchWidget(
                 text: query,
                 onSubmitted: searchVet,
@@ -86,5 +102,67 @@ class _HomeState extends State<Home> {
         similarityMap, (key1, key2) => (similarityMap[key1] > similarityMap[key2])? -1 : 1);
       vets = sortedMap.keys.map((id) => getVeterinarianById(id)).toList();
     });
+  }
+
+  void editAddressModalBottomSheet(context) {
+    showModalBottomSheet(
+      context: context,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
+      ),
+      builder: (BuildContext context) {
+        return Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20)
+          ),
+          height: MediaQuery.of(context).size.height * 0.4,
+          child: Padding(
+            padding: const EdgeInsets.all(5),
+            child: Column(
+              children: [
+                const SizedBox(height: 10),
+                const Text(
+                  'Standort',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 20),
+                TextButton(
+                  onPressed: () {},
+                  child: Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.my_location_rounded
+                        ),
+                        const SizedBox(width: 10),
+                        Text(
+                          'Aktuellen Standort verwenden',
+                          style: TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                const Divider(
+                  height: 10,
+                  thickness: 1,
+                  color: Colors.grey,
+                  indent: 20,
+                  endIndent: 20,
+                ),
+              ],
+            ),
+          )
+        );
+      }
+    );
   }
 }

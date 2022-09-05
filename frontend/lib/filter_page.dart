@@ -53,7 +53,7 @@ class _FilterPageState extends State<FilterPage> {
             const Text(
               'Standort',
               style: TextStyle(
-                fontSize: 20,
+                fontSize: 15,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -78,7 +78,7 @@ class _FilterPageState extends State<FilterPage> {
                 const Text(
                   'Suchradius:',
                   style: TextStyle(
-                    fontSize: 20,
+                    fontSize: 15,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -118,7 +118,7 @@ class _FilterPageState extends State<FilterPage> {
                 const Text(
                   'km',
                   style: TextStyle(
-                    fontSize: 20,
+                    fontSize: 15,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -139,7 +139,7 @@ class _FilterPageState extends State<FilterPage> {
             const Text(
               'Tierart',
               style: TextStyle(
-                fontSize: 20,
+                fontSize: 15,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -157,6 +157,7 @@ class _FilterPageState extends State<FilterPage> {
                     color: isSelected
                         ? Colors.white
                         : Colors.grey,
+                    fontSize: 15,
                     fontWeight: FontWeight.bold,
                   ),
                   selected: isSelected,
@@ -174,7 +175,7 @@ class _FilterPageState extends State<FilterPage> {
                 );
               }),
             ),
-            const SizedBox(height: 30),
+            const SizedBox(height: 60),
             ElevatedButton(
               onPressed: () {
                 Navigator.pushNamedAndRemoveUntil(
@@ -186,7 +187,7 @@ class _FilterPageState extends State<FilterPage> {
               child: const Text(
                 'Anwenden',
                 style: TextStyle(
-                  fontSize: 20,
+                  fontSize: 15,
                   fontWeight: FontWeight.bold,
                 ),
               ),
