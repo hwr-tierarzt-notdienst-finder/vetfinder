@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'dart:convert';
 
 const int MAX_RADIUS = 50;
 const int MIN_RADIUS = 5;
@@ -18,24 +19,39 @@ class _FilterPageState extends State<FilterPage> {
     // Filter options
     String currentLocation = 'Berlin'; // Current Selected Location
     int currentRadius = MIN_RADIUS; // Current Radius (km)
+    List<String> currentCategories = [];
 
     // List of locations
     var locations = [
       'Berlin', 'München', 'Frankfurt', 'Düsseldorf'
     ];
 
+    // List of animal types
+    var categories = [
+      'Hunde', 'Katzen'
+    ];
+
+  String getSettingInJson() {
+    Map currentSetting = {
+      'location' : currentLocation,
+      'search_radius' : currentRadius,
+      'categories' : currentCategories
+    };
+    return json.encode(currentSetting);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          title: const Text('Suchfilter')
+          title: const Text('Sucheinstellungen')
       ),
       body: Container(
         margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
         child: ListView(
           children: [
             const Text(
-              'Standort:',
+              'Standort',
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
@@ -60,7 +76,7 @@ class _FilterPageState extends State<FilterPage> {
             Row(
               children: [
                 const Text(
-                  'Radius:',
+                  'Suchradius:',
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -121,14 +137,42 @@ class _FilterPageState extends State<FilterPage> {
             ),
             const SizedBox(height: 30),
             const Text(
-              'Tierart:',
+              'Tierart',
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
               ),
             ),
-            const TextField(
+            const SizedBox(height: 10),
+            Wrap(
+              spacing: 10,
+              children:
+                List<Widget>.generate(categories.length, (index) {
+                final category = categories[index];
+                final isSelected = currentCategories.contains(category);
 
+                return FilterChip(
+                  label: Text(category),
+                  labelStyle: TextStyle(
+                    color: isSelected
+                        ? Colors.white
+                        : Colors.grey,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  selected: isSelected,
+                  selectedColor: Colors.redAccent,
+                  checkmarkColor: Colors.white,
+                  onSelected: (bool selected) {
+                    setState(() {
+                      if (selected) {
+                        currentCategories.add(category);
+                      } else {
+                        currentCategories.remove(category);
+                      }
+                    });
+                  },
+                );
+              }),
             ),
             const SizedBox(height: 30),
             ElevatedButton(
@@ -137,14 +181,10 @@ class _FilterPageState extends State<FilterPage> {
                   context,
                   '/home',
                   (Route<dynamic> route) => false,
-                  arguments: {
-                    'location': currentLocation,
-                    'radius': currentRadius,
-                  },
                 );
               },
               child: const Text(
-                'Filter anwenden',
+                'Anwenden',
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
