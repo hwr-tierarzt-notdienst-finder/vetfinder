@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/components/veterinarian.dart';
-import 'package:frontend/api.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map/plugin_api.dart';
+import 'package:string_similarity/string_similarity.dart';
 import 'package:latlong2/latlong.dart';
+
+import 'package:frontend/components/veterinarian.dart';
+import 'package:frontend/components/search_widget.dart';
+import 'package:frontend/components/edit_address_modal.dart';
+import 'package:frontend/api.dart';
+
+import 'dart:collection';
 
 class Home extends StatefulWidget {
   const Home({Key? key, required this.title}) : super(key: key);
@@ -15,18 +21,103 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  int _counter = 0;
+  List<Marker> markers = [];
+  List<Veterinarian> vets = getVeterinarians();
+  String query = '';
 
-  void _incrementCounter() {
+  TextButton createMarkerWidget(Veterinarian vet) {
+    return TextButton.icon(
+      onPressed: () {
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: Text(vet.name),
+                content: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    Text("Adresse: ${vet.getAddress()}"),
+                    const SizedBox(height: 10),
+                    Text("Telefonnummer: ${vet.telephoneNumber}"),
+                    const SizedBox(height: 10),
+                    Text("Webseite: ${vet.websiteUrl}"),
+                  ],
+                ),
+                actions: <Widget>[
+                  TextButton(
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: const <Widget>[
+                        Text("Okay"),
+                        SizedBox(width: 5),
+                        Icon(Icons.arrow_forward)
+                      ],
+                    ),
+                    onPressed: () {
+                      // Close the dialog
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              );
+            });
+      },
+      icon: const Icon(Icons.location_on, color: Colors.red, size: 35.0),
+      label: Text(
+        vet.name,
+        overflow: TextOverflow.ellipsis,
+        softWrap: false,
+        maxLines: 2,
+      ),
+    );
+  }
+
+  void createMarkers() {
+    markers.clear();
+    for (Veterinarian vet in vets) {
+      markers.add(Marker(
+          width: 100,
+          height: 50,
+          point: vet.getPosition(),
+          builder: (context) => createMarkerWidget(vet)));
+    }
+  } 
+
+  void searchVet(String query) {
     setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
+      this.query = query.toLowerCase();
+      List<String> keywords = this.query.split(' ');
+
+      // Create a list of veterinarians based on query
+      vets = getVeterinarians();
+      Map similarityMap = {};
+  
+      for (var vet in vets) {
+        String vetInfo = '${vet.name} ${vet.getAddress()}';
+        final comparison = this.query.similarityTo(vetInfo);
+        similarityMap[vet.id] = comparison;
+      }
+
+      var sortedMap = new SplayTreeMap<String, double>.from(
+        similarityMap, (key1, key2) => (similarityMap[key1] > similarityMap[key2])? -1 : 1);
+      vets = sortedMap.keys.map((id) => getVeterinarianById(id)).toList();
     });
   }
+
+  void editAddressModalBottomSheet(context) {
+    showModalBottomSheet(
+      context: context,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
+      ),
+      builder: (BuildContext context) {
+        return EditAddressModal(
+          currentAddress: 'Platzhalter Straße 123',
+        );
+      }
+    );
+  } 
 
   @override
   Widget build(BuildContext context) {
@@ -37,68 +128,14 @@ class _HomeState extends State<Home> {
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
 
-    List<Veterinarian> vets = getVeterinarians();
-    List<Marker> markers = [];
-
-    TextButton createMarkerWidget(Veterinarian vet) {
-      return TextButton.icon(
-        onPressed: () {
-          showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return AlertDialog(
-                  title: Text(vet.name),
-                  content: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      Text("Adresse: ${vet.getAddress()}"),
-                      const SizedBox(height: 10),
-                      Text("Telefonnummer: ${vet.telephoneNumber}"),
-                      const SizedBox(height: 10),
-                      Text("Webseite: ${vet.websiteUrl}"),
-                    ],
-                  ),
-                  actions: <Widget>[
-                    TextButton(
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: const <Widget>[
-                          Text("Okay"),
-                          SizedBox(width: 5),
-                          Icon(Icons.arrow_forward)
-                        ],
-                      ),
-                      onPressed: () {
-                        // Close the dialog
-                        Navigator.of(context).pop();
-                      },
-                    ),
-                  ],
-                );
-              });
-        },
-        icon: const Icon(Icons.location_on, color: Colors.red, size: 35.0),
-        label: Text(
-          vet.name,
-          overflow: TextOverflow.ellipsis,
-          softWrap: false,
-          maxLines: 2,
-        ),
-      );
-    }
-
-    for (Veterinarian vet in vets) {
-      markers.add(Marker(
-          width: 100,
-          height: 50,
-          point: vet.getPosition(),
-          builder: (context) => createMarkerWidget(vet)));
-    }
-
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
+        actions: [
+          IconButton(
+              onPressed: () => Navigator.pushNamed(context, '/filter_page'),
+              icon: const Icon(Icons.filter_list_rounded)),
+        ],
       ),
       body: Column(
         children: [
@@ -106,9 +143,26 @@ class _HomeState extends State<Home> {
             'Tierärzte in deiner Nähe',
             style: Theme.of(context).textTheme.headline4,
           ),
-          const TextField(
-              decoration: InputDecoration(
-                  hintText: 'Suchen...', suffixIcon: Icon(Icons.search))),
+          TextButton(
+            onPressed: () {
+              editAddressModalBottomSheet(context);
+            },
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  'Current Address'
+                ),
+                Icon(
+                  Icons.arrow_drop_down_rounded
+                ),
+              ],
+            ),
+          ),
+          SearchWidget(
+            text: query,
+            onSubmitted: searchVet,
+            hintText: 'Name, Adresse, Posleitzahl'),
           Container(
             width: MediaQuery.of(context).size.width,
             height: MediaQuery.of(context).size.height * 0.5,
@@ -153,12 +207,6 @@ class _HomeState extends State<Home> {
           )
         ],
       ),
-
-      /*floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ),*/ // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }
