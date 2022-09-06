@@ -5,30 +5,16 @@ from pymongo import MongoClient
 from pymongo.database import Database, Mapping, Collection
 from pymongo.results import InsertOneResult
 
-from .models import VetCreate, VetContact, VetLocation, VetGet
+from models import Vet, Location, VetGet
 from .normalization import normalize_vet
 from . import config
 
 
-def create_vet(vet: VetCreate) -> InsertOneResult:
+def create_vet(vet: Vet) -> InsertOneResult:
     vet = normalize_vet(vet)
 
-    vet_json = {
-        "name": vet.name,
-        "location": {
-            "address": vet.location.address,
-            "lat": vet.location.lat,
-            "lon": vet.location.lon,
-        },
-        "contact": {
-            "tel": vet.contact.tel,
-            "email": vet.contact.email,
-            "url": vet.contact.url,
-        }
-    }
-
     vets = get_vets_collection()
-    result = vets.insert_one(vet_json)
+    result = vets.insert_one(vet.dict())
 
     return result
 
@@ -39,17 +25,7 @@ def get_vets() -> list[VetGet]:
     return [
         VetGet(
             id=str(vet_db_obj["_id"]),
-            name=vet_db_obj["name"],
-            location=VetLocation(
-                address=vet_db_obj["location"]["address"],
-                lat=vet_db_obj["location"]["lat"],
-                lon=vet_db_obj["location"]["lon"],
-            ),
-            contact=VetContact(
-                tel=vet_db_obj["contact"]["tel"],
-                email=vet_db_obj["contact"]["email"],
-                url=vet_db_obj["contact"]["url"],
-            )
+            **vet_db_obj
         )
         for vet_db_obj in vets.find({})
     ]
