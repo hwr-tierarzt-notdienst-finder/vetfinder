@@ -53,7 +53,7 @@ class VetInformation extends StatelessWidget {
               children: [
                 const Icon(Icons.location_on),
                 Text(
-                  vet.address,
+                  vet.getAddress(),
                   style: const TextStyle(
                     fontSize: 15,
                   ),
@@ -101,9 +101,9 @@ class VetInformation extends StatelessWidget {
             ),
             const SizedBox(height: 10),
             Row(
-              children: const [
+              children: [
                 Text(
-                  'vet.website',
+                  vet.websiteUrl,
                   style: descTextStyle,
                 ),
               ],
