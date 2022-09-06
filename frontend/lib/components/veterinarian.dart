@@ -22,9 +22,12 @@ class VetCard extends Card {
     return Card(
       child: Column(
         children: [
+          const SizedBox(height: 10),
           Text(name, style: const TextStyle(fontWeight: FontWeight.bold)),
+          const SizedBox(height: 5),
           Text(address),
           Text(telephoneNumber),
+          const SizedBox(height: 5),
           Text(websiteUrl),
           TextButton.icon(
               onPressed: () {
