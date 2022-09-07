@@ -26,6 +26,10 @@ flit==3.7.1
     # via -r requirements.in
 flit-core==3.7.1
     # via flit
+geographiclib==1.52
+    # via geopy
+geopy==2.2.0
+    # via -r requirements.in
 h11==0.13.0
     # via uvicorn
 html5lib==1.1

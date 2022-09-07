@@ -9,7 +9,9 @@
     #   -c requirements.txt
     #   -r requirements-dev.in
 -e file:///home/oscar/Projects/vetfinder/backend/shared
-    # via -r requirements-dev.in
+    # via
+    #   -c requirements.txt
+    #   -r requirements-dev.in
 attrs==22.1.0
     # via pytest
 dnspython==2.2.1
@@ -26,6 +28,8 @@ idna==3.3
     #   email-validator
 iniconfig==1.1.1
     # via pytest
+lark==1.1.2
+    # via -r requirements-dev.in
 packaging==21.3
     # via pytest
 pluggy==1.0.0
@@ -41,7 +45,11 @@ pyparsing==3.0.9
 pytest==7.1.2
     # via -r requirements-dev.in
 python-dateutil==2.8.2
-    # via shared
+    # via
+    #   -c requirements.txt
+    #   shared
+pyyaml==6.0
+    # via -r requirements-dev.in
 six==1.16.0
     # via
     #   -c requirements.txt

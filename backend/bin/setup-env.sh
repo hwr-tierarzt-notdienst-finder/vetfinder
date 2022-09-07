@@ -52,7 +52,7 @@ function create_venv() {
 
 function activate_venv() {
     echo_information "Activating python from virtual env"
-    echo_and_run ". .venv/bin/activate"
+    echo_and_run ". $SCRIPT_DIR/../.venv/bin/activate"
     unset PS1
     echo_success "Activated python virtualenv"
     echo_information "Now using python version $(python --version) at $(which python)"
