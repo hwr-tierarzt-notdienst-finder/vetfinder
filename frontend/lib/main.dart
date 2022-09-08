@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/home.dart';
+import 'package:frontend/setting.dart';
 import 'package:frontend/vet_information.dart';
-import 'package:frontend/filter_page.dart';
 
 //
 // leicht abgerundete Ecken
@@ -10,18 +10,6 @@ import 'package:frontend/filter_page.dart';
 // - primary: #b71c1c
 // - secondary: #fdfdfd
 //
-
-/*
-
-  Aufgaben:
-    - Home Screen (+ Card), VetInformation Screen --> Orhun
-    - Filterfunktion + Suche --> Nico
-    - Karte implementieren (https://navoki.com/open-street-map-using-flutter/) --> Denis
-
-    - nebenbei:
-      - Typ Vetenarian erweitern (GPS Daten (lat, lon), Tiere (die behandelt werden), ...)
-
-*/
 
 void main() {
   runApp(MaterialApp(
@@ -38,7 +26,7 @@ void main() {
             title: 'VetFinder',
           ),
       '/vet_information': (context) => const VetInformation(),
-      '/filter_page': (context) => const FilterPage(),
+      '/setting': (context) => const Setting(),
     },
   ));
 }

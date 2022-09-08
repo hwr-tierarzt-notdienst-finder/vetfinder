@@ -40,11 +40,11 @@ class _EditAddressModalState extends State<EditAddressModal> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(
+                    const Icon(
                       Icons.my_location_rounded
                     ),
                     const SizedBox(width: 10),
-                    Text(
+                    const Text(
                       'Aktuellen Standort verwenden',
                       style: TextStyle(
                         fontSize: 15,

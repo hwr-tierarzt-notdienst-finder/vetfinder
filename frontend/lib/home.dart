@@ -6,6 +6,7 @@ import 'package:latlong2/latlong.dart';
 
 import 'package:frontend/components/veterinarian.dart';
 import 'package:frontend/components/search_widget.dart';
+import 'package:frontend/components/search_filter_dialog.dart';
 import 'package:frontend/components/edit_address_modal.dart';
 import 'package:frontend/api.dart';
 
@@ -105,7 +106,44 @@ class _HomeState extends State<Home> {
     });
   }
 
-  void editAddressModalBottomSheet(context) {
+  Future<void>  showFilterDialog(BuildContext context) {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Suchfilter'),
+          content: SearchFilterDialog(),
+          contentPadding: EdgeInsets.zero,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          actions: <Widget>[
+            TextButton(
+              style: TextButton.styleFrom(
+                textStyle: Theme.of(context).textTheme.labelLarge,
+              ),
+              child: const Text('Abbrechen'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              style: TextButton.styleFrom(
+                textStyle: Theme.of(context).textTheme.labelLarge,
+              ),
+              child: const Text('Anwenden'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void showEditAddressModalBottomSheet(BuildContext context) {
     showModalBottomSheet(
       context: context,
       shape: RoundedRectangleBorder(
@@ -117,7 +155,7 @@ class _HomeState extends State<Home> {
         );
       }
     );
-  } 
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -133,36 +171,48 @@ class _HomeState extends State<Home> {
         title: Text(widget.title),
         actions: [
           IconButton(
-              onPressed: () => Navigator.pushNamed(context, '/filter_page'),
-              icon: const Icon(Icons.filter_list_rounded)),
+              onPressed: () => Navigator.pushNamed(context, '/setting'),
+              icon: const Icon(Icons.settings)),
         ],
       ),
       body: Column(
         children: [
-          Text(
-            'Tierärzte in deiner Nähe',
-            style: Theme.of(context).textTheme.headline4,
-          ),
           TextButton(
             onPressed: () {
-              editAddressModalBottomSheet(context);
+              showEditAddressModalBottomSheet(context);
             },
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  'Current Address'
-                ),
-                Icon(
-                  Icons.arrow_drop_down_rounded
-                ),
-              ],
+            child: Padding(
+              padding: const EdgeInsets.all(10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'Current Address'
+                  ),
+                  Icon(
+                    Icons.arrow_drop_down_rounded
+                  ),
+                ],
+              ),
             ),
           ),
-          SearchWidget(
-            text: query,
-            onSubmitted: searchVet,
-            hintText: 'Name, Adresse, Posleitzahl'),
+          Row(
+            children: [
+              Flexible(
+                child: SearchWidget(
+                  text: query,
+                  onSubmitted: searchVet,
+                  hintText: 'Name, Adresse, Posleitzahl'),
+              ),
+              Container(
+                margin: EdgeInsets.fromLTRB(0, 0, 8, 0),
+                child: ElevatedButton(
+                  onPressed: () => showFilterDialog(context),
+                  child: Icon(Icons.filter_list_rounded,)
+                ),
+              ),
+            ],
+          ),
           Container(
             width: MediaQuery.of(context).size.width,
             height: MediaQuery.of(context).size.height * 0.5,
