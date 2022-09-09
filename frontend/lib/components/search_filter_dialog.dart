@@ -1,17 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 const int maxRadius = 50;
 const int minRadius = 5;
 
 class SearchFilterDialog extends StatefulWidget {
   final List<String> availableCategories;
-  final Map? currentFilterSetting;
 
   const SearchFilterDialog({
     Key? key,
-    required this.availableCategories,
-    required this.currentFilterSetting,
+    required this.availableCategories
   }) : super(key: key);
 
   @override
@@ -22,24 +21,31 @@ class _SearchFilterDialogState extends State<SearchFilterDialog> {
   // TextEditingController
   final radiusFieldController = TextEditingController();
   int currentRadius = minRadius; // Current Radius (km)
-  List<String> prevCategories = [];
-  List<String> currentCategories = [];
+  List<String> currentCategories = []; // Chosen animal categories
   bool filterSettingUpdated = false;
 
-  Map getNewFilterSetting() {
-    Map filterSetting = {
-      'searchRadius' : currentRadius,
-      'categories' : currentCategories
-    };
-    return filterSetting;
+  void setFilterSetting() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt('searchRadius', currentRadius);
+    await prefs.setStringList('categories', currentCategories);
+  }
+
+  void getFilterSetting() async {
+    final prefs = await SharedPreferences.getInstance();
+    final int? searchRadius = prefs.getInt('searchRadius');
+    final List<String>? categories = prefs.getStringList('categories');
+
+    setState(() {
+      currentRadius = searchRadius!;
+      currentCategories = categories!;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     // Update filter setting once on the first build
     if (!filterSettingUpdated) {
-      currentRadius = widget.currentFilterSetting?['searchRadius'];
-      currentCategories = [...widget.currentFilterSetting?['categories']];
+      getFilterSetting();
       filterSettingUpdated = true;
     }
 
@@ -56,7 +62,7 @@ class _SearchFilterDialogState extends State<SearchFilterDialog> {
           ),
           child: const Text('Abbrechen'),
           onPressed: () {
-            Navigator.pop(context, widget.currentFilterSetting);
+            Navigator.of(context).pop();
           },
         ),
         TextButton(
@@ -65,7 +71,8 @@ class _SearchFilterDialogState extends State<SearchFilterDialog> {
           ),
           child: const Text('Anwenden'),
           onPressed: () {
-            Navigator.pop(context, getNewFilterSetting());
+            setFilterSetting();
+            Navigator.of(context).pop();
           },
         ),
       ],

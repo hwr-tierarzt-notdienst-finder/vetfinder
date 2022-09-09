@@ -25,10 +25,6 @@ class _HomeState extends State<Home> {
   List<Marker> markers = [];
   List<Veterinarian> vets = getVeterinarians();
   String query = '';
-  Map? filterSetting = {
-    'searchRadius' : minRadius,
-    'categories' : <String>[],
-  };
 
   TextButton createMarkerWidget(Veterinarian vet) {
     return TextButton.icon(
@@ -122,21 +118,16 @@ class _HomeState extends State<Home> {
     return availableCategories;
   }
 
-  void showFilterDialog(BuildContext context) async {
-    Map? newFilterSetting = await showDialog<Map>(
+  Future<void> showFilterDialog(BuildContext context) {
+    return showDialog<void>(
       context: context,
       barrierDismissible: false,
       builder: (BuildContext context) {
         return SearchFilterDialog(
           availableCategories: fetchAvailableCategories(),
-          currentFilterSetting: filterSetting,
         );
       },
     );
-
-    setState(() {
-      filterSetting = newFilterSetting;
-    });
   }
 
   void showEditAddressModalBottomSheet(BuildContext context) {
@@ -202,9 +193,7 @@ class _HomeState extends State<Home> {
               Container(
                 margin: EdgeInsets.fromLTRB(0, 0, 8, 0),
                 child: ElevatedButton(
-                  onPressed: () {
-                    showFilterDialog(context);
-                  },
+                  onPressed: () => showFilterDialog(context),
                   child: Icon(Icons.filter_list_rounded,)
                 ),
               ),
