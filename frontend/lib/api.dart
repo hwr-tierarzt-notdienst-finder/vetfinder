@@ -28,7 +28,8 @@ class Veterinarian {
       required this.name,
       required this.telephoneNumber,
       required this.websiteUrl,
-      required this.location})
+      required this.location,
+      required this.categories})
       : super();
 
   final String id;
@@ -36,6 +37,7 @@ class Veterinarian {
   final String telephoneNumber;
   final String websiteUrl;
   final Location location;
+  final List<String> categories;
 
   String getAddress() {
     return "${location.address.street} ${location.address.number}";
@@ -57,7 +59,9 @@ List<Veterinarian> getVeterinarians() {
           latitude: 52.5278578,
           longitude: 13.6243765,
           address: Address(
-              street: "Hönower Straße", number: "263", zipCode: 16000))));
+              street: "Hönower Straße", number: "263", zipCode: 16000)),
+      categories: ["Hunde"]),
+  );
   vets.add(
     const Veterinarian(
         id: '1',
@@ -68,7 +72,8 @@ List<Veterinarian> getVeterinarians() {
             latitude: 52.5373378,
             longitude: 13.2664472,
             address:
-                Address(street: "Wattstraße", number: "10", zipCode: 13629))),
+                Address(street: "Wattstraße", number: "10", zipCode: 13629)),
+        categories: ["Hunde", "Katzen"]),
   );
   vets.add(
     const Veterinarian(
@@ -80,7 +85,8 @@ List<Veterinarian> getVeterinarians() {
             latitude: 10.4,
             longitude: 20.5,
             address:
-                Address(street: "Teststraße", number: "10", zipCode: 16000))),
+                Address(street: "Teststraße", number: "10", zipCode: 16000)),
+        categories: ["Hunde", "Katzen", "Pferde"]),
   );
   vets.add(
     const Veterinarian(
@@ -92,7 +98,8 @@ List<Veterinarian> getVeterinarians() {
             latitude: 10.4,
             longitude: 20.5,
             address:
-                Address(street: "Teststraße", number: "10", zipCode: 16000))),
+                Address(street: "Teststraße", number: "10", zipCode: 16000)),
+        categories: ["Katzen", "Pferde"]),
   );
 
   return vets;

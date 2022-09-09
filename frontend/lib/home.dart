@@ -25,6 +25,10 @@ class _HomeState extends State<Home> {
   List<Marker> markers = [];
   List<Veterinarian> vets = getVeterinarians();
   String query = '';
+  Map? filterSetting = {
+    'searchRadius' : minRadius,
+    'categories' : <String>[],
+  };
 
   TextButton createMarkerWidget(Veterinarian vet) {
     return TextButton.icon(
@@ -88,13 +92,12 @@ class _HomeState extends State<Home> {
   void searchVet(String query) {
     setState(() {
       this.query = query.toLowerCase();
-      List<String> keywords = this.query.split(' ');
 
       // Create a list of veterinarians based on query
       vets = getVeterinarians();
       Map similarityMap = {};
   
-      for (var vet in vets) {
+      for (Veterinarian vet in vets) {
         String vetInfo = '${vet.name} ${vet.getAddress()}';
         final comparison = this.query.similarityTo(vetInfo);
         similarityMap[vet.id] = comparison;
@@ -106,41 +109,34 @@ class _HomeState extends State<Home> {
     });
   }
 
-  Future<void>  showFilterDialog(BuildContext context) {
-    return showDialog<void>(
+  List<String> fetchAvailableCategories() {
+    List<String> availableCategories = [];
+    for (Veterinarian vet in vets) {
+      List<String> categories = vet.categories;
+      for (String category in categories) {
+        if (!(availableCategories.contains(category))) {
+          availableCategories.add(category);
+        }
+      }
+    }
+    return availableCategories;
+  }
+
+  void showFilterDialog(BuildContext context) async {
+    Map? newFilterSetting = await showDialog<Map>(
       context: context,
       barrierDismissible: false,
       builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Suchfilter'),
-          content: SearchFilterDialog(),
-          contentPadding: EdgeInsets.zero,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-          actions: <Widget>[
-            TextButton(
-              style: TextButton.styleFrom(
-                textStyle: Theme.of(context).textTheme.labelLarge,
-              ),
-              child: const Text('Abbrechen'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            TextButton(
-              style: TextButton.styleFrom(
-                textStyle: Theme.of(context).textTheme.labelLarge,
-              ),
-              child: const Text('Anwenden'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
+        return SearchFilterDialog(
+          availableCategories: fetchAvailableCategories(),
+          currentFilterSetting: filterSetting,
         );
       },
     );
+
+    setState(() {
+      filterSetting = newFilterSetting;
+    });
   }
 
   void showEditAddressModalBottomSheet(BuildContext context) {
@@ -165,7 +161,6 @@ class _HomeState extends State<Home> {
     // The Flutter framework has been optimized to make rerunning build methods
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
-
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
@@ -207,7 +202,9 @@ class _HomeState extends State<Home> {
               Container(
                 margin: EdgeInsets.fromLTRB(0, 0, 8, 0),
                 child: ElevatedButton(
-                  onPressed: () => showFilterDialog(context),
+                  onPressed: () {
+                    showFilterDialog(context);
+                  },
                   child: Icon(Icons.filter_list_rounded,)
                 ),
               ),
@@ -248,11 +245,12 @@ class _HomeState extends State<Home> {
                 itemCount: vets.length,
                 itemBuilder: (context, index) {
                   return VetCard(
-                      id: vets[index].id,
-                      name: vets[index].name,
-                      telephoneNumber: vets[index].telephoneNumber,
-                      address: vets[index].getAddress(),
-                      websiteUrl: vets[index].websiteUrl);
+                    id: vets[index].id,
+                    name: vets[index].name,
+                    telephoneNumber: vets[index].telephoneNumber,
+                    address: vets[index].getAddress(),
+                    websiteUrl: vets[index].websiteUrl
+                  );
                 }),
           )
         ],

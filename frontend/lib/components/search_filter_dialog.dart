@@ -1,64 +1,95 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'dart:convert';
 
-const int MAX_RADIUS = 50;
-const int MIN_RADIUS = 5;
+const int maxRadius = 50;
+const int minRadius = 5;
 
 class SearchFilterDialog extends StatefulWidget {
-  const SearchFilterDialog({Key? key}) : super(key: key);
+  final List<String> availableCategories;
+  final Map? currentFilterSetting;
+
+  const SearchFilterDialog({
+    Key? key,
+    required this.availableCategories,
+    required this.currentFilterSetting,
+  }) : super(key: key);
 
   @override
   State<SearchFilterDialog> createState() => _SearchFilterDialogState();
 }
 
 class _SearchFilterDialogState extends State<SearchFilterDialog> {
-    // TextEditingController
-    final radius_field_controller = TextEditingController();
+  // TextEditingController
+  final radiusFieldController = TextEditingController();
+  int currentRadius = minRadius; // Current Radius (km)
+  List<String> prevCategories = [];
+  List<String> currentCategories = [];
+  bool filterSettingUpdated = false;
 
-    // Filter options
-    int currentRadius = MIN_RADIUS; // Current Radius (km)
-    List<String> currentCategories = [];
-
-    // List of animal types
-    var categories = [
-      'Hunde', 'Katzen'
-    ];
-
-  String getSettingInJson() {
-    Map currentSetting = {
-      'search_radius' : currentRadius,
+  Map getNewFilterSetting() {
+    Map filterSetting = {
+      'searchRadius' : currentRadius,
       'categories' : currentCategories
     };
-    return json.encode(currentSetting);
+    return filterSetting;
   }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 25),
-      width: MediaQuery.of(context).size.width * 0.75,
-      height: MediaQuery.of(context).size.height * 0.5,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const Divider(
-            thickness: 1,
-            color: Colors.grey,
+    // Update filter setting once on the first build
+    if (!filterSettingUpdated) {
+      currentRadius = widget.currentFilterSetting?['searchRadius'];
+      currentCategories = [...widget.currentFilterSetting?['categories']];
+      filterSettingUpdated = true;
+    }
+
+    return AlertDialog(
+      title: const Text('Suchfilter'),
+      contentPadding: EdgeInsets.zero,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10),
+      ),
+      actions: <Widget>[
+        TextButton(
+          style: TextButton.styleFrom(
+            textStyle: Theme.of(context).textTheme.labelLarge,
           ),
-          const SizedBox(height: 20),
-          Container(
-            child: Column(
+          child: const Text('Abbrechen'),
+          onPressed: () {
+            Navigator.pop(context, widget.currentFilterSetting);
+          },
+        ),
+        TextButton(
+          style: TextButton.styleFrom(
+            textStyle: Theme.of(context).textTheme.labelLarge,
+          ),
+          child: const Text('Anwenden'),
+          onPressed: () {
+            Navigator.pop(context, getNewFilterSetting());
+          },
+        ),
+      ],
+      content: Container(
+        padding: EdgeInsets.symmetric(horizontal: 25),
+        width: MediaQuery.of(context).size.width * 0.75,
+        height: MediaQuery.of(context).size.height * 0.5,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Divider(
+              thickness: 1,
+              color: Colors.grey,
+            ),
+            const SizedBox(height: 20),
+            Column(
               children: [
                 Row(
                   children: [
-                    Container(
-                      child: const Text(
-                        'Suchradius:',
-                        style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.bold,
-                        ),
+                    const Text(
+                      'Suchradius:',
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                     const SizedBox(width: 10),
@@ -66,7 +97,7 @@ class _SearchFilterDialogState extends State<SearchFilterDialog> {
                       width: 50,
                       height: 40,
                       child: TextField(
-                        controller: radius_field_controller
+                        controller: radiusFieldController
                                     ..text = currentRadius.toString(),
                         decoration: InputDecoration(
                           border: OutlineInputBorder(),
@@ -82,13 +113,13 @@ class _SearchFilterDialogState extends State<SearchFilterDialog> {
                             int input = int.parse(text);
 
                             // Allow input range: 5 - 50
-                            if (input > MAX_RADIUS) {
-                              input = MAX_RADIUS;
-                            } else if (input < MIN_RADIUS) {
-                              input = MIN_RADIUS;
+                            if (input > maxRadius) {
+                              input = maxRadius;
+                            } else if (input < minRadius) {
+                              input = minRadius;
                             }
                             currentRadius = input;
-                            radius_field_controller.text = currentRadius.toString();
+                            radiusFieldController.text = currentRadius.toString();
                           });
                         },
                       ),
@@ -105,29 +136,34 @@ class _SearchFilterDialogState extends State<SearchFilterDialog> {
                 ),
                 Slider(
                   value: currentRadius.toDouble(),
-                  min: MIN_RADIUS.toDouble(),
-                  max: MAX_RADIUS.toDouble(),
+                  min: minRadius.toDouble(),
+                  max: maxRadius.toDouble(),
                   onChanged: (double value) {
                     setState(() {
                       currentRadius = value.toInt();
-                      radius_field_controller.text = currentRadius.toString();
+                      radiusFieldController.text = currentRadius.toString();
                     });
                   },
                 ),
               ],
             ),
-          ),
-          const SizedBox(height: 30),
-          Container(
-            child: Column(
+            const SizedBox(height: 30),
+            Column(
               children: [
                 Row(
                   children: [
                     const Text(
-                      'Tierart',
+                      'Tierart:',
                       style: TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Text(
+                      '${currentCategories.length} von ${widget.availableCategories.length} ausgewählt',
+                      style: TextStyle(
+                        fontSize: 15,
                       ),
                     ),
                   ],
@@ -136,8 +172,8 @@ class _SearchFilterDialogState extends State<SearchFilterDialog> {
                 Wrap(
                   spacing: 10,
                   children:
-                    List<Widget>.generate(categories.length, (index) {
-                    final category = categories[index];
+                    List<Widget>.generate(widget.availableCategories.length, (index) {
+                    final category = widget.availableCategories[index];
                     final isSelected = currentCategories.contains(category);
 
                     return FilterChip(
@@ -166,8 +202,8 @@ class _SearchFilterDialogState extends State<SearchFilterDialog> {
                 ),
               ],
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
