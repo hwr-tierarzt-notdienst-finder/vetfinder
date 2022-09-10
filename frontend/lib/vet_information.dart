@@ -128,6 +128,20 @@ class VetInformation extends StatelessWidget {
                     }),
               ],
             ),
+            Row(
+              children: [
+                RaisedButton(
+                    child: const Text(
+                      'Open Map',
+                      style: TextStyle(
+                          color: Colors.white, fontWeight: FontWeight.bold),
+                    ),
+                    onPressed: () {
+                      launch(
+                          'https://www.google.com/maps/search/?api=1&query=${vet.location.latitude},${vet.location.longitude}');
+                    }),
+              ],
+            ),
             const SizedBox(height: 10),
             Container(
               decoration: BoxDecoration(
