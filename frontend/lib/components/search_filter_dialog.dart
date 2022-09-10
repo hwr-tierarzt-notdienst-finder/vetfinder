@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
-const int maxRadius = 50;
-const int minRadius = 5;
+import 'package:frontend/utils/preferences.dart';
+import 'package:frontend/utils/constants.dart';
 
 class SearchFilterDialog extends StatefulWidget {
   final List<String> availableCategories;
@@ -20,33 +19,29 @@ class SearchFilterDialog extends StatefulWidget {
 class _SearchFilterDialogState extends State<SearchFilterDialog> {
   // TextEditingController
   final radiusFieldController = TextEditingController();
+
   int currentRadius = minRadius; // Current Radius (km)
   List<String> currentCategories = []; // Chosen animal categories
-  bool filterSettingUpdated = false;
+  bool isUpdated = false;
 
-  void setFilterSetting() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setInt('searchRadius', currentRadius);
-    await prefs.setStringList('categories', currentCategories);
+  void setFilterSetting() {
+    SharedPrefs().searchRadius = currentRadius;
+    SharedPrefs().categories = currentCategories;
   }
 
-  void getFilterSetting() async {
-    final prefs = await SharedPreferences.getInstance();
-    final int? searchRadius = prefs.getInt('searchRadius');
-    final List<String>? categories = prefs.getStringList('categories');
-
+  void getFilterSetting() {
     setState(() {
-      currentRadius = searchRadius!;
-      currentCategories = categories!;
+      currentRadius = SharedPrefs().searchRadius;
+      currentCategories = SharedPrefs().categories;
     });
   }
 
   @override
   Widget build(BuildContext context) {
     // Update filter setting once on the first build
-    if (!filterSettingUpdated) {
+    if (!isUpdated) {
       getFilterSetting();
-      filterSettingUpdated = true;
+      isUpdated = true;
     }
 
     return AlertDialog(
@@ -56,6 +51,19 @@ class _SearchFilterDialogState extends State<SearchFilterDialog> {
         borderRadius: BorderRadius.circular(10),
       ),
       actions: <Widget>[
+        TextButton(
+          style: TextButton.styleFrom(
+            textStyle: Theme.of(context).textTheme.labelLarge,
+          ),
+          child: const Text('Zurücksetzen'),
+          onPressed: () {
+            setState(() {
+              currentRadius = minRadius;
+              currentCategories = [];
+            });
+            setFilterSetting();
+          },
+        ),
         TextButton(
           style: TextButton.styleFrom(
             textStyle: Theme.of(context).textTheme.labelLarge,
@@ -160,17 +168,10 @@ class _SearchFilterDialogState extends State<SearchFilterDialog> {
                 Row(
                   children: [
                     const Text(
-                      'Tierart:',
+                      'Tierart',
                       style: TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    Text(
-                      '${currentCategories.length} von ${widget.availableCategories.length} ausgewählt',
-                      style: TextStyle(
-                        fontSize: 15,
                       ),
                     ),
                   ],

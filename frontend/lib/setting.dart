@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'package:frontend/utils/preferences.dart';
+
 class Setting extends StatefulWidget {
   const Setting({Key? key}) : super(key: key);
 
@@ -9,9 +11,16 @@ class Setting extends StatefulWidget {
 
 class _SettingState extends State<Setting> {
   bool darkmodeOn = false;
+  bool isUpdated = false;
 
   @override
   Widget build(BuildContext context) {
+    // Update app setting once on the first build
+    if (!isUpdated) {
+      darkmodeOn = SharedPrefs().isDarkMode;
+      isUpdated = true;
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Einstellungen'),
@@ -36,6 +45,7 @@ class _SettingState extends State<Setting> {
                     onChanged: (bool value) {
                       setState(() {
                         darkmodeOn = value;
+                        SharedPrefs().isDarkMode = darkmodeOn;
                       });
                     },
                   ),
