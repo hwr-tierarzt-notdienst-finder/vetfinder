@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/api.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class VetInformationScreenArguments {
   final String id;
@@ -8,6 +9,9 @@ class VetInformationScreenArguments {
 
 class VetInformation extends StatelessWidget {
   const VetInformation({Key? key}) : super(key: key);
+  double deviceHeight(BuildContext context) =>
+      MediaQuery.of(context).size.height;
+  double deviceWidth(BuildContext context) => MediaQuery.of(context).size.width;
 
   @override
   Widget build(BuildContext context) {
@@ -24,11 +28,22 @@ class VetInformation extends StatelessWidget {
       height: 2,
     );
     return Scaffold(
+      resizeToAvoidBottomInset: false,
+
       appBar: AppBar(
         title: const Text('Vet Information'),
       ),
       // 2 rows with 8 columns
       body: SingleChildScrollView(
+        // add margin all around with 0.9 size of screen
+        // margin: const EdgeInsets.all(0.9),
+        padding: EdgeInsets.only(
+          // top: deviceHeight(context) * 0.05,
+          left: deviceWidth(context) * 0.05,
+          right: deviceWidth(context) * 0.05,
+          bottom: deviceHeight(context) * 0.05,
+        ),
+
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
@@ -99,32 +114,35 @@ class VetInformation extends StatelessWidget {
                 ),
               ],
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 30),
             Row(
               children: [
-                Text(
-                  vet.websiteUrl,
-                  style: descTextStyle,
-                ),
+                RaisedButton(
+                    child: const Text(
+                      'Open Website',
+                      style: TextStyle(
+                          color: Colors.white, fontWeight: FontWeight.bold),
+                    ),
+                    onPressed: () {
+                      launch(vet.websiteUrl);
+                    }),
+              ],
+            ),
+            Row(
+              children: [
+                RaisedButton(
+                    child: const Text(
+                      'Open Map',
+                      style: TextStyle(
+                          color: Colors.white, fontWeight: FontWeight.bold),
+                    ),
+                    onPressed: () {
+                      launch(
+                          'https://www.google.com/maps/search/?api=1&query=${vet.location.latitude},${vet.location.longitude}');
+                    }),
               ],
             ),
             const SizedBox(height: 10),
-            Container(
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.black),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              width: MediaQuery.of(context).size.width * 0.9,
-              height: MediaQuery.of(context).size.height * 0.1,
-              margin: const EdgeInsets.only(bottom: 20.0, top: 30.0),
-              child: const Center(
-                child: Text(
-                  'vet.description',
-                  style: TextStyle(fontSize: 20),
-                  textAlign: TextAlign.center,
-                ),
-              ),
-            ),
             Container(
               decoration: BoxDecoration(
                 border: Border.all(color: Colors.black),
