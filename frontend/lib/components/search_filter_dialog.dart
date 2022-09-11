@@ -20,16 +20,16 @@ class _SearchFilterDialogState extends State<SearchFilterDialog> {
   // TextEditingController
   final radiusFieldController = TextEditingController();
 
-  int currentRadius = minRadius; // Current Radius (km)
+  int currentRadius = minSearchRadius; // Current Radius (km)
   List<String> currentCategories = []; // Chosen animal categories
   bool isUpdated = false;
 
-  void setFilterSetting() {
+  void _setFilterSetting() {
     SharedPrefs().searchRadius = currentRadius;
     SharedPrefs().categories = currentCategories;
   }
 
-  void getFilterSetting() {
+  void _getFilterSetting() {
     setState(() {
       currentRadius = SharedPrefs().searchRadius;
       currentCategories = SharedPrefs().categories;
@@ -40,7 +40,7 @@ class _SearchFilterDialogState extends State<SearchFilterDialog> {
   Widget build(BuildContext context) {
     // Update filter setting once on the first build
     if (!isUpdated) {
-      getFilterSetting();
+      _getFilterSetting();
       isUpdated = true;
     }
 
@@ -58,10 +58,10 @@ class _SearchFilterDialogState extends State<SearchFilterDialog> {
           child: const Text('Zurücksetzen'),
           onPressed: () {
             setState(() {
-              currentRadius = minRadius;
+              currentRadius = minSearchRadius;
               currentCategories = [];
             });
-            setFilterSetting();
+            _setFilterSetting();
           },
         ),
         TextButton(
@@ -79,7 +79,7 @@ class _SearchFilterDialogState extends State<SearchFilterDialog> {
           ),
           child: const Text('Anwenden'),
           onPressed: () {
-            setFilterSetting();
+            _setFilterSetting();
             Navigator.of(context).pop();
           },
         ),
@@ -128,10 +128,10 @@ class _SearchFilterDialogState extends State<SearchFilterDialog> {
                             int input = int.parse(text);
 
                             // Allow input range: 5 - 50
-                            if (input > maxRadius) {
-                              input = maxRadius;
-                            } else if (input < minRadius) {
-                              input = minRadius;
+                            if (input > maxSearchRadius) {
+                              input = maxSearchRadius;
+                            } else if (input < minSearchRadius) {
+                              input = minSearchRadius;
                             }
                             currentRadius = input;
                             radiusFieldController.text = currentRadius.toString();
@@ -151,8 +151,8 @@ class _SearchFilterDialogState extends State<SearchFilterDialog> {
                 ),
                 Slider(
                   value: currentRadius.toDouble(),
-                  min: minRadius.toDouble(),
-                  max: maxRadius.toDouble(),
+                  min: minSearchRadius.toDouble(),
+                  max: maxSearchRadius.toDouble(),
                   onChanged: (double value) {
                     setState(() {
                       currentRadius = value.toInt();

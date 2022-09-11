@@ -1,6 +1,6 @@
 // Filter Settings
-const int maxRadius = 50;
-const int minRadius = 5;
+const int maxSearchRadius = 50;
+const int minSearchRadius = 5;
 
 // Shared Preferences Keys
 // App Settings

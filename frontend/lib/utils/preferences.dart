@@ -19,7 +19,7 @@ class SharedPrefs {
   }
 
   // Filter Settings
-  int get searchRadius => _sharedPrefs.getInt(keySearchRadius) ?? minRadius;
+  int get searchRadius => _sharedPrefs.getInt(keySearchRadius) ?? minSearchRadius;
   set searchRadius(int value) {
     _sharedPrefs.setInt(keySearchRadius, value);
   }

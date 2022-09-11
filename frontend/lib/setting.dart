@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
+import 'package:frontend/theme.dart';
 import 'package:frontend/utils/preferences.dart';
 
 class Setting extends StatefulWidget {
@@ -40,14 +42,13 @@ class _SettingState extends State<Setting> {
                       fontSize: 20,
                     ),
                   ),
-                  Switch(
-                    value: darkmodeOn,
-                    onChanged: (bool value) {
-                      setState(() {
-                        darkmodeOn = value;
-                        SharedPrefs().isDarkMode = darkmodeOn;
-                      });
-                    },
+                  Consumer<ThemeNotifier>(
+                    builder: (context,notifier,child) => Switch(
+                      onChanged: (bool value){
+                        notifier.toggleTheme();
+                      },
+                      value: notifier.isDarkMode,
+                    ),
                   ),
                 ],
               ),
@@ -70,7 +71,6 @@ class _SettingState extends State<Setting> {
                     'Impressum',
                     style: TextStyle(
                       fontSize: 20,
-                      color: Colors.black,
                     ),
                   ),
                 ],
