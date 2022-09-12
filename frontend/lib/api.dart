@@ -1,5 +1,7 @@
 import 'package:latlong2/latlong.dart';
 
+import 'package:frontend/utils/preferences.dart';
+
 class Address {
   const Address({
     required this.street,
@@ -103,6 +105,43 @@ List<Veterinarian> getVeterinarians() {
   );
 
   return vets;
+}
+
+List<String> getAvailableCategories() {
+  List<Veterinarian> allVets = getVeterinarians();
+  List<String> availableCategories = [];
+  for (Veterinarian vet in allVets) {
+    List<String> categories = vet.categories;
+    for (String category in categories) {
+      if (!(availableCategories.contains(category))) {
+        availableCategories.add(category);
+      }
+    }
+  }
+  return availableCategories;
+}
+
+List<Veterinarian> getFilteredVeterinarians() {
+  List<Veterinarian> vets = getVeterinarians();
+  List<Veterinarian> filteredVets = [];
+
+  // Filter animal categories
+  if (SharedPrefs().categories.length > 0) {
+    for (Veterinarian vet in vets) {
+      for (String category in SharedPrefs().categories) {
+        if (vet.categories.contains(category)) {
+          filteredVets.add(vet);
+          break;
+        }
+      }
+    }
+  }
+
+  if (filteredVets.length > 0) {
+    return filteredVets;
+  } else {
+    return vets;
+  }
 }
 
 Veterinarian getVeterinarianById(String id) {
