@@ -15,17 +15,14 @@ class Address {
 }
 
 class Location {
-  const Location(
-      {required this.latitude, required this.longitude, required this.address})
-      : super();
+  const Location({required this.position, required this.address}) : super();
 
-  final double latitude;
-  final double longitude;
+  final LatLng position;
   final Address address;
 }
 
 class Veterinarian {
-  const Veterinarian(
+  Veterinarian(
       {required this.id,
       required this.name,
       required this.telephoneNumber,
@@ -46,61 +43,58 @@ class Veterinarian {
   }
 
   LatLng getPosition() {
-    return LatLng(location.latitude, location.longitude);
+    return location.position;
   }
 }
 
 List<Veterinarian> getVeterinarians() {
   List<Veterinarian> vets = [];
-  vets.add(const Veterinarian(
-      id: '0',
-      name: 'Mr. Happy',
-      telephoneNumber: '+49 123 456 789',
-      websiteUrl: 'https://www.google.com',
-      location: Location(
-          latitude: 52.5278578,
-          longitude: 13.6243765,
-          address: Address(
-              street: "Hönower Straße", number: "263", zipCode: 16000)),
-      categories: ["Hunde"]),
+  vets.add(
+    Veterinarian(
+        id: '0',
+        name: 'Mr. Happy',
+        telephoneNumber: '+49 123 456 789',
+        websiteUrl: 'https://www.google.com',
+        location: Location(
+            position: LatLng(52.5278578, 13.6243765),
+            address: const Address(
+                street: "Hönower Straße", number: "263", zipCode: 16000)),
+        categories: ["Hunde"]),
   );
   vets.add(
-    const Veterinarian(
+    Veterinarian(
         id: '1',
         name: 'Mr. Unappy',
         telephoneNumber: '+49 123 456 789',
         websiteUrl: 'https://www.google.com',
         location: Location(
-            latitude: 52.5373378,
-            longitude: 13.2664472,
-            address:
-                Address(street: "Wattstraße", number: "10", zipCode: 13629)),
+            position: LatLng(52.5373378, 13.2664472),
+            address: const Address(
+                street: "Wattstraße", number: "10", zipCode: 13629)),
         categories: ["Hunde", "Katzen"]),
   );
   vets.add(
-    const Veterinarian(
+    Veterinarian(
         id: '2',
         name: 'Mr. Happy1',
         telephoneNumber: '+49 123 456 789',
         websiteUrl: 'https://www.google.com',
         location: Location(
-            latitude: 10.4,
-            longitude: 20.5,
-            address:
-                Address(street: "Teststraße", number: "10", zipCode: 16000)),
+            position: LatLng(10.4, 20.5),
+            address: const Address(
+                street: "Teststraße", number: "10", zipCode: 16000)),
         categories: ["Hunde", "Katzen", "Pferde"]),
   );
   vets.add(
-    const Veterinarian(
+    Veterinarian(
         id: '3',
         name: 'Mr. Unappy2',
         telephoneNumber: '+49 123 456 789',
         websiteUrl: 'https://www.google.com',
         location: Location(
-            latitude: 10.4,
-            longitude: 20.5,
-            address:
-                Address(street: "Teststraße", number: "10", zipCode: 16000)),
+            position: LatLng(10.4, 20.5),
+            address: const Address(
+                street: "Teststraße", number: "10", zipCode: 16000)),
         categories: ["Katzen", "Pferde"]),
   );
 
