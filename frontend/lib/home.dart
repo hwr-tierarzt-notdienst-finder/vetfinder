@@ -23,6 +23,10 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  String address = 'Current address';
+  LatLng currentPosition = LatLng(13.0, 13.0);
+  MapController mapController = MapController();
+
   List<Marker> markers = [];
   List<Veterinarian> vets = getVeterinarians();
   String query = '';
@@ -84,7 +88,7 @@ class _HomeState extends State<Home> {
           point: vet.getPosition(),
           builder: (context) => createMarkerWidget(vet)));
     }
-  } 
+  }
 
   void searchVet(String query) {
     setState(() {
@@ -93,15 +97,15 @@ class _HomeState extends State<Home> {
       // Create a list of veterinarians based on query
       vets = getVeterinarians();
       Map similarityMap = {};
-  
+
       for (Veterinarian vet in vets) {
         String vetInfo = '${vet.name} ${vet.getAddress()}';
         final comparison = this.query.similarityTo(vetInfo);
         similarityMap[vet.id] = comparison;
       }
 
-      var sortedMap = new SplayTreeMap<String, double>.from(
-        similarityMap, (key1, key2) => (similarityMap[key1] > similarityMap[key2])? -1 : 1);
+      var sortedMap = new SplayTreeMap<String, double>.from(similarityMap,
+          (key1, key2) => (similarityMap[key1] > similarityMap[key2]) ? -1 : 1);
       vets = sortedMap.keys.map((id) => getVeterinarianById(id)).toList();
     });
   }
@@ -133,16 +137,21 @@ class _HomeState extends State<Home> {
 
   void _showEditAddressModalBottomSheet(BuildContext context) {
     showModalBottomSheet(
-      context: context,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20),
-      ),
-      builder: (BuildContext context) {
-        return EditAddressModal(
-          currentAddress: 'Platzhalter Straße 123',
-        );
-      }
-    );
+        context: context,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
+        builder: (BuildContext context) {
+          return EditAddressModal(
+            currentAddress: 'Platzhalter Straße 123',
+            onPositionChanged: (position, address) => {
+              setState(() {
+                this.address = address;
+                mapController.move(position, 18);
+              })
+            },
+          );
+        });
   }
 
   @override
@@ -154,101 +163,95 @@ class _HomeState extends State<Home> {
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
     return Consumer<FilterNotifier>(
-      builder: (context, FilterNotifier notifier, child) {
-        return Scaffold(
-          appBar: AppBar(
-            title: Text(widget.title),
-            actions: [
-              IconButton(
-                  onPressed: () => Navigator.pushNamed(context, '/setting'),
-                  icon: const Icon(Icons.settings)),
-            ],
-          ),
-          body: Column(
-            children: [
-              TextButton(
-                onPressed: () {
-                  _showEditAddressModalBottomSheet(context);
-                },
-                child: Padding(
-                  padding: const EdgeInsets.all(10),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        'Current Address'
-                      ),
-                      Icon(
-                        Icons.arrow_drop_down_rounded
-                      ),
-                    ],
-                  ),
+        builder: (context, FilterNotifier notifier, child) {
+      return Scaffold(
+        appBar: AppBar(
+          title: Text(widget.title),
+          actions: [
+            IconButton(
+                onPressed: () => Navigator.pushNamed(context, '/setting'),
+                icon: const Icon(Icons.settings)),
+          ],
+        ),
+        body: Column(
+          children: [
+            TextButton(
+              onPressed: () {
+                _showEditAddressModalBottomSheet(context);
+              },
+              child: Padding(
+                padding: const EdgeInsets.all(10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(address),
+                    const Icon(Icons.arrow_drop_down_rounded),
+                  ],
                 ),
               ),
-              Row(
-                children: [
-                  Flexible(
-                    child: SearchWidget(
+            ),
+            Row(
+              children: [
+                Flexible(
+                  child: SearchWidget(
                       text: query,
                       onSubmitted: searchVet,
                       hintText: 'Name, Adresse, Posleitzahl'),
-                  ),
-                  Container(
-                    margin: EdgeInsets.fromLTRB(0, 0, 8, 0),
-                    child: ElevatedButton(
+                ),
+                Container(
+                  margin: EdgeInsets.fromLTRB(0, 0, 8, 0),
+                  child: ElevatedButton(
                       onPressed: () => _showFilterDialog(context),
-                      child: Icon(Icons.filter_list_rounded,)
+                      child: Icon(
+                        Icons.filter_list_rounded,
+                      )),
+                ),
+              ],
+            ),
+            Container(
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height * 0.5,
+              child: Stack(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8),
+                    child: FlutterMap(
+                      mapController: mapController,
+                      options: MapOptions(zoom: 11, rotation: 0),
+                      layers: [
+                        TileLayerOptions(
+                          minZoom: 1,
+                          maxZoom: 18,
+                          backgroundColor: Colors.black,
+                          urlTemplate:
+                              'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+                          subdomains: ['a', 'b', 'c'],
+                        ),
+                        MarkerLayerOptions(markers: markers)
+                      ],
                     ),
                   ),
                 ],
               ),
-              Container(
-                width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height * 0.5,
-                child: Stack(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(8),
-                      child: FlutterMap(
-                        options: MapOptions(
-                          center: LatLng(vets[0].location.latitude,
-                              vets[0].location.longitude),
-                          zoom: 11,
-                          rotation: 0,
-                        ),
-                        layers: [
-                          TileLayerOptions(
-                            minZoom: 1,
-                            maxZoom: 18,
-                            backgroundColor: Colors.black,
-                            urlTemplate:
-                                'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-                            subdomains: ['a', 'b', 'c'],
-                          ),
-                          MarkerLayerOptions(markers: markers)
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Expanded(
-                child: ListView.builder(
-                    itemCount: vets.length,
-                    itemBuilder: (context, index) {
-                      return VetCard(
+            ),
+            Expanded(
+              child: ListView.builder(
+                  itemCount: vets.length,
+                  itemBuilder: (context, index) {
+                    return VetCard(
                         id: vets[index].id,
                         name: vets[index].name,
                         telephoneNumber: vets[index].telephoneNumber,
-                        address: vets[index].getAddress(),
-                        websiteUrl: vets[index].websiteUrl
-                      );
-                    }),
-              )
-            ],
-          ),
-        );
-      }
-    );
+                        location: vets[index].location,
+                        onViewInMap: (position) {
+                          mapController.move(position, 16);
+                        },
+                        websiteUrl: vets[index].websiteUrl);
+                  }),
+            )
+          ],
+        ),
+      );
+    });
   }
 }

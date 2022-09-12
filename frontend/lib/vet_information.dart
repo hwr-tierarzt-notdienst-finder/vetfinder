@@ -138,7 +138,7 @@ class VetInformation extends StatelessWidget {
                     ),
                     onPressed: () {
                       launch(
-                          'https://www.google.com/maps/search/?api=1&query=${vet.location.latitude},${vet.location.longitude}');
+                          'https://www.google.com/maps/search/?api=1&query=${vet.location.position.latitude},${vet.location.position.longitude}');
                     }),
               ],
             ),

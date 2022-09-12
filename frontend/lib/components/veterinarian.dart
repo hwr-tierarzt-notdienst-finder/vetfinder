@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/api.dart';
 import 'package:frontend/vet_information.dart';
+import 'package:latlong2/latlong.dart';
 
 class VetCard extends Card {
   const VetCard(
@@ -7,15 +9,17 @@ class VetCard extends Card {
       required this.id,
       required this.name,
       required this.telephoneNumber,
-      required this.address,
-      required this.websiteUrl})
+      required this.location,
+      required this.websiteUrl,
+      required this.onViewInMap})
       : super(key: key);
 
   final String id;
   final String name;
   final String telephoneNumber;
-  final String address;
+  final Location location;
   final String websiteUrl;
+  final Function(LatLng) onViewInMap;
 
   @override
   Widget build(BuildContext context) {
@@ -25,17 +29,28 @@ class VetCard extends Card {
           const SizedBox(height: 10),
           Text(name, style: const TextStyle(fontWeight: FontWeight.bold)),
           const SizedBox(height: 5),
-          Text(address),
+          Text("${location.address.street} ${location.address.number}"),
           Text(telephoneNumber),
           const SizedBox(height: 5),
           Text(websiteUrl),
-          TextButton.icon(
-              onPressed: () {
-                Navigator.pushNamed(context, '/vet_information',
-                    arguments: VetInformationScreenArguments(id));
-              },
-              icon: const Icon(Icons.arrow_forward_ios_rounded),
-              label: const Text('Zum Tierarzt'))
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              TextButton.icon(
+                  onPressed: () {
+                    onViewInMap(location.position);
+                  },
+                  icon: const Icon(Icons.map_rounded),
+                  label: const Text('Show in map')),
+              TextButton.icon(
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/vet_information',
+                        arguments: VetInformationScreenArguments(id));
+                  },
+                  icon: const Icon(Icons.arrow_forward_ios_rounded),
+                  label: const Text('View vet')),
+            ],
+          )
         ],
       ),
     );
