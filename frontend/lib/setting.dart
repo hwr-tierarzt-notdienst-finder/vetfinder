@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'package:frontend/theme.dart';
+import 'package:frontend/utils/preferences.dart';
 
 class Setting extends StatefulWidget {
   const Setting({Key? key}) : super(key: key);
@@ -37,7 +38,7 @@ class _SettingState extends State<Setting> {
                       onChanged: (bool value){
                         notifier.toggleTheme();
                       },
-                      value: notifier.isDarkMode,
+                      value: SharedPrefs().isDarkMode,
                     ),
                   ),
                 ],

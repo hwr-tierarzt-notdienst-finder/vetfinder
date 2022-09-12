@@ -24,7 +24,7 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   List<Marker> markers = [];
-  List<Veterinarian> vets = getVeterinarians();
+  List<Veterinarian> vets = getFilteredVeterinarians();
   String query = '';
 
   TextButton createMarkerWidget(Veterinarian vet) {
@@ -91,7 +91,6 @@ class _HomeState extends State<Home> {
       this.query = query.toLowerCase();
 
       // Create a list of veterinarians based on query
-      vets = getVeterinarians();
       Map similarityMap = {};
   
       for (Veterinarian vet in vets) {
@@ -100,23 +99,10 @@ class _HomeState extends State<Home> {
         similarityMap[vet.id] = comparison;
       }
 
-      var sortedMap = new SplayTreeMap<String, double>.from(
+      var sortedMap = SplayTreeMap<String, double>.from(
         similarityMap, (key1, key2) => (similarityMap[key1] > similarityMap[key2])? -1 : 1);
       vets = sortedMap.keys.map((id) => getVeterinarianById(id)).toList();
     });
-  }
-
-  List<String> fetchAvailableCategories() {
-    List<String> availableCategories = [];
-    for (Veterinarian vet in vets) {
-      List<String> categories = vet.categories;
-      for (String category in categories) {
-        if (!(availableCategories.contains(category))) {
-          availableCategories.add(category);
-        }
-      }
-    }
-    return availableCategories;
   }
 
   Future<void> _showFilterDialog(BuildContext context) {
@@ -125,7 +111,7 @@ class _HomeState extends State<Home> {
       barrierDismissible: false,
       builder: (BuildContext context) {
         return SearchFilterDialog(
-          availableCategories: fetchAvailableCategories(),
+          availableCategories: getAvailableCategories(),
         );
       },
     );
@@ -155,6 +141,12 @@ class _HomeState extends State<Home> {
     // than having to individually change instances of widgets.
     return Consumer<FilterNotifier>(
       builder: (context, FilterNotifier notifier, child) {
+        // Update the list of vets if filter is applied
+        if (notifier.filterUpdated) {
+          vets = getFilteredVeterinarians();
+          notifier.filterUpdated = false;
+        }
+
         return Scaffold(
           appBar: AppBar(
             title: Text(widget.title),

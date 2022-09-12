@@ -8,8 +8,15 @@ import 'package:frontend/utils/constants.dart';
 class FilterNotifier extends ChangeNotifier {
   late int _searchRadius;
   late List<String> _categories;
+  late bool _filterUpdated;
+
   int get searchRadius => _searchRadius;
   List<String> get categories => _categories;
+
+  bool get filterUpdated => _filterUpdated;
+  set filterUpdated(bool value) {
+    _filterUpdated = value;
+  }
   
   FilterNotifier() {
     updateFilter();
@@ -18,6 +25,7 @@ class FilterNotifier extends ChangeNotifier {
   updateFilter() async {
     _searchRadius = SharedPrefs().searchRadius;
     _categories = SharedPrefs().categories;
+    _filterUpdated = true;
     notifyListeners();
   }
 }
