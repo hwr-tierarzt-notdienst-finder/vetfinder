@@ -3,6 +3,7 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map/plugin_api.dart';
 import 'package:string_similarity/string_similarity.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:provider/provider.dart';
 
 import 'package:frontend/components/veterinarian.dart';
 import 'package:frontend/components/search_widget.dart';
@@ -118,7 +119,7 @@ class _HomeState extends State<Home> {
     return availableCategories;
   }
 
-  Future<void> showFilterDialog(BuildContext context) {
+  Future<void> _showFilterDialog(BuildContext context) {
     return showDialog<void>(
       context: context,
       barrierDismissible: false,
@@ -130,7 +131,7 @@ class _HomeState extends State<Home> {
     );
   }
 
-  void showEditAddressModalBottomSheet(BuildContext context) {
+  void _showEditAddressModalBottomSheet(BuildContext context) {
     showModalBottomSheet(
       context: context,
       shape: RoundedRectangleBorder(
@@ -152,98 +153,102 @@ class _HomeState extends State<Home> {
     // The Flutter framework has been optimized to make rerunning build methods
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-        actions: [
-          IconButton(
-              onPressed: () => Navigator.pushNamed(context, '/setting'),
-              icon: const Icon(Icons.settings)),
-        ],
-      ),
-      body: Column(
-        children: [
-          TextButton(
-            onPressed: () {
-              showEditAddressModalBottomSheet(context);
-            },
-            child: Padding(
-              padding: const EdgeInsets.all(10),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    'Current Address'
-                  ),
-                  Icon(
-                    Icons.arrow_drop_down_rounded
-                  ),
-                ],
-              ),
-            ),
-          ),
-          Row(
-            children: [
-              Flexible(
-                child: SearchWidget(
-                  text: query,
-                  onSubmitted: searchVet,
-                  hintText: 'Name, Adresse, Posleitzahl'),
-              ),
-              Container(
-                margin: EdgeInsets.fromLTRB(0, 0, 8, 0),
-                child: ElevatedButton(
-                  onPressed: () => showFilterDialog(context),
-                  child: Icon(Icons.filter_list_rounded,)
-                ),
-              ),
+    return Consumer<FilterNotifier>(
+      builder: (context, FilterNotifier notifier, child) {
+        return Scaffold(
+          appBar: AppBar(
+            title: Text(widget.title),
+            actions: [
+              IconButton(
+                  onPressed: () => Navigator.pushNamed(context, '/setting'),
+                  icon: const Icon(Icons.settings)),
             ],
           ),
-          Container(
-            width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.height * 0.5,
-            child: Stack(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(8),
-                  child: FlutterMap(
-                    options: MapOptions(
-                      center: LatLng(vets[0].location.latitude,
-                          vets[0].location.longitude),
-                      zoom: 11,
-                      rotation: 0,
-                    ),
-                    layers: [
-                      TileLayerOptions(
-                        minZoom: 1,
-                        maxZoom: 18,
-                        backgroundColor: Colors.black,
-                        urlTemplate:
-                            'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-                        subdomains: ['a', 'b', 'c'],
+          body: Column(
+            children: [
+              TextButton(
+                onPressed: () {
+                  _showEditAddressModalBottomSheet(context);
+                },
+                child: Padding(
+                  padding: const EdgeInsets.all(10),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        'Current Address'
                       ),
-                      MarkerLayerOptions(markers: markers)
+                      Icon(
+                        Icons.arrow_drop_down_rounded
+                      ),
                     ],
                   ),
                 ),
-              ],
-            ),
+              ),
+              Row(
+                children: [
+                  Flexible(
+                    child: SearchWidget(
+                      text: query,
+                      onSubmitted: searchVet,
+                      hintText: 'Name, Adresse, Posleitzahl'),
+                  ),
+                  Container(
+                    margin: EdgeInsets.fromLTRB(0, 0, 8, 0),
+                    child: ElevatedButton(
+                      onPressed: () => _showFilterDialog(context),
+                      child: Icon(Icons.filter_list_rounded,)
+                    ),
+                  ),
+                ],
+              ),
+              Container(
+                width: MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.height * 0.5,
+                child: Stack(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(8),
+                      child: FlutterMap(
+                        options: MapOptions(
+                          center: LatLng(vets[0].location.latitude,
+                              vets[0].location.longitude),
+                          zoom: 11,
+                          rotation: 0,
+                        ),
+                        layers: [
+                          TileLayerOptions(
+                            minZoom: 1,
+                            maxZoom: 18,
+                            backgroundColor: Colors.black,
+                            urlTemplate:
+                                'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+                            subdomains: ['a', 'b', 'c'],
+                          ),
+                          MarkerLayerOptions(markers: markers)
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: ListView.builder(
+                    itemCount: vets.length,
+                    itemBuilder: (context, index) {
+                      return VetCard(
+                        id: vets[index].id,
+                        name: vets[index].name,
+                        telephoneNumber: vets[index].telephoneNumber,
+                        address: vets[index].getAddress(),
+                        websiteUrl: vets[index].websiteUrl
+                      );
+                    }),
+              )
+            ],
           ),
-          Expanded(
-            child: ListView.builder(
-                itemCount: vets.length,
-                itemBuilder: (context, index) {
-                  return VetCard(
-                    id: vets[index].id,
-                    name: vets[index].name,
-                    telephoneNumber: vets[index].telephoneNumber,
-                    address: vets[index].getAddress(),
-                    websiteUrl: vets[index].websiteUrl
-                  );
-                }),
-          )
-        ],
-      ),
+        );
+      }
     );
   }
 }

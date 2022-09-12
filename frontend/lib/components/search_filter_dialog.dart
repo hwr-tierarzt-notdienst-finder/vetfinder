@@ -1,8 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 
 import 'package:frontend/utils/preferences.dart';
 import 'package:frontend/utils/constants.dart';
+
+class FilterNotifier extends ChangeNotifier {
+  late int _searchRadius;
+  late List<String> _categories;
+  int get searchRadius => _searchRadius;
+  List<String> get categories => _categories;
+  
+  FilterNotifier() {
+    updateFilter();
+  }
+
+  updateFilter() async {
+    _searchRadius = SharedPrefs().searchRadius;
+    _categories = SharedPrefs().categories;
+    notifyListeners();
+  }
+}
 
 class SearchFilterDialog extends StatefulWidget {
   final List<String> availableCategories;
@@ -30,10 +48,8 @@ class _SearchFilterDialogState extends State<SearchFilterDialog> {
   }
 
   void _getFilterSetting() {
-    setState(() {
-      currentRadius = SharedPrefs().searchRadius;
-      currentCategories = SharedPrefs().categories;
-    });
+    currentRadius = SharedPrefs().searchRadius;
+    currentCategories = SharedPrefs().categories;
   }
 
   @override
@@ -44,173 +60,175 @@ class _SearchFilterDialogState extends State<SearchFilterDialog> {
       isUpdated = true;
     }
 
-    return AlertDialog(
-      title: const Text('Suchfilter'),
-      contentPadding: EdgeInsets.zero,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10),
-      ),
-      actions: <Widget>[
-        TextButton(
-          style: TextButton.styleFrom(
-            textStyle: Theme.of(context).textTheme.labelLarge,
-          ),
-          child: const Text('Zurücksetzen'),
-          onPressed: () {
-            setState(() {
-              currentRadius = minSearchRadius;
-              currentCategories = [];
-            });
-            _setFilterSetting();
-          },
+    return Consumer<FilterNotifier>(
+      builder: (context,notifier,child) => AlertDialog(
+        title: const Text('Suchfilter'),
+        contentPadding: EdgeInsets.zero,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
         ),
-        TextButton(
-          style: TextButton.styleFrom(
-            textStyle: Theme.of(context).textTheme.labelLarge,
-          ),
-          child: const Text('Abbrechen'),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-        ),
-        TextButton(
-          style: TextButton.styleFrom(
-            textStyle: Theme.of(context).textTheme.labelLarge,
-          ),
-          child: const Text('Anwenden'),
-          onPressed: () {
-            _setFilterSetting();
-            Navigator.of(context).pop();
-          },
-        ),
-      ],
-      content: Container(
-        padding: EdgeInsets.symmetric(horizontal: 25),
-        width: MediaQuery.of(context).size.width * 0.75,
-        height: MediaQuery.of(context).size.height * 0.5,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Divider(
-              thickness: 1,
-              color: Colors.grey,
+        actions: <Widget>[
+          TextButton(
+            style: TextButton.styleFrom(
+              textStyle: Theme.of(context).textTheme.labelLarge,
             ),
-            const SizedBox(height: 20),
-            Column(
-              children: [
-                Row(
-                  children: [
-                    const Text(
-                      'Suchradius:',
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    Container(
-                      width: 50,
-                      height: 40,
-                      child: TextField(
-                        controller: radiusFieldController
-                                    ..text = currentRadius.toString(),
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(),
+            child: const Text('Zurücksetzen'),
+            onPressed: () {
+              setState(() {
+                currentRadius = minSearchRadius;
+                currentCategories = [];
+              });
+            },
+          ),
+          TextButton(
+            style: TextButton.styleFrom(
+              textStyle: Theme.of(context).textTheme.labelLarge,
+            ),
+            child: const Text('Abbrechen'),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+          TextButton(
+            style: TextButton.styleFrom(
+              textStyle: Theme.of(context).textTheme.labelLarge,
+            ),
+            child: const Text('Anwenden'),
+            onPressed: () {
+              _setFilterSetting();
+              notifier.updateFilter();
+              Navigator.of(context).pop();
+            },
+          ),
+        ],
+        content: Container(
+          padding: EdgeInsets.symmetric(horizontal: 25),
+          width: MediaQuery.of(context).size.width * 0.75,
+          height: MediaQuery.of(context).size.height * 0.5,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Divider(
+                thickness: 1,
+                color: Colors.grey,
+              ),
+              const SizedBox(height: 20),
+              Column(
+                children: [
+                  Row(
+                    children: [
+                      const Text(
+                        'Suchradius:',
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold,
                         ),
-                        inputFormatters: <TextInputFormatter>[
-                          FilteringTextInputFormatter.digitsOnly,
-                          LengthLimitingTextInputFormatter(2),
-                        ],
-                        keyboardType: TextInputType.number,
-                        textAlign: TextAlign.center,
-                        onSubmitted: (String text) {
-                          setState(() {
-                            int input = int.parse(text);
+                      ),
+                      const SizedBox(width: 10),
+                      Container(
+                        width: 50,
+                        height: 40,
+                        child: TextField(
+                          controller: radiusFieldController
+                                      ..text = currentRadius.toString(),
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(),
+                          ),
+                          inputFormatters: <TextInputFormatter>[
+                            FilteringTextInputFormatter.digitsOnly,
+                            LengthLimitingTextInputFormatter(2),
+                          ],
+                          keyboardType: TextInputType.number,
+                          textAlign: TextAlign.center,
+                          onSubmitted: (String text) {
+                            setState(() {
+                              int input = int.parse(text);
 
-                            // Allow input range: 5 - 50
-                            if (input > maxSearchRadius) {
-                              input = maxSearchRadius;
-                            } else if (input < minSearchRadius) {
-                              input = minSearchRadius;
+                              // Allow input range: 5 - 50
+                              if (input > maxSearchRadius) {
+                                input = maxSearchRadius;
+                              } else if (input < minSearchRadius) {
+                                input = minSearchRadius;
+                              }
+                              currentRadius = input;
+                              radiusFieldController.text = currentRadius.toString();
+                            });
+                          },
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      const Text(
+                        'km',
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                  Slider(
+                    value: currentRadius.toDouble(),
+                    min: minSearchRadius.toDouble(),
+                    max: maxSearchRadius.toDouble(),
+                    onChanged: (double value) {
+                      setState(() {
+                        currentRadius = value.toInt();
+                        radiusFieldController.text = currentRadius.toString();
+                      });
+                    },
+                  ),
+                ],
+              ),
+              const SizedBox(height: 30),
+              Column(
+                children: [
+                  Row(
+                    children: [
+                      const Text(
+                        'Tierart',
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+                  Wrap(
+                    spacing: 10,
+                    children:
+                      List<Widget>.generate(widget.availableCategories.length, (index) {
+                      final category = widget.availableCategories[index];
+                      final isSelected = currentCategories.contains(category);
+
+                      return FilterChip(
+                        label: Text(category),
+                        labelStyle: TextStyle(
+                          color: isSelected
+                              ? Colors.white
+                              : Colors.grey,
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        selected: isSelected,
+                        selectedColor: Colors.redAccent,
+                        checkmarkColor: Colors.white,
+                        onSelected: (bool selected) {
+                          setState(() {
+                            if (selected) {
+                              currentCategories.add(category);
+                            } else {
+                              currentCategories.remove(category);
                             }
-                            currentRadius = input;
-                            radiusFieldController.text = currentRadius.toString();
                           });
                         },
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    const Text(
-                      'km',
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
-                Slider(
-                  value: currentRadius.toDouble(),
-                  min: minSearchRadius.toDouble(),
-                  max: maxSearchRadius.toDouble(),
-                  onChanged: (double value) {
-                    setState(() {
-                      currentRadius = value.toInt();
-                      radiusFieldController.text = currentRadius.toString();
-                    });
-                  },
-                ),
-              ],
-            ),
-            const SizedBox(height: 30),
-            Column(
-              children: [
-                Row(
-                  children: [
-                    const Text(
-                      'Tierart',
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 10),
-                Wrap(
-                  spacing: 10,
-                  children:
-                    List<Widget>.generate(widget.availableCategories.length, (index) {
-                    final category = widget.availableCategories[index];
-                    final isSelected = currentCategories.contains(category);
-
-                    return FilterChip(
-                      label: Text(category),
-                      labelStyle: TextStyle(
-                        color: isSelected
-                            ? Colors.white
-                            : Colors.grey,
-                        fontSize: 15,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      selected: isSelected,
-                      selectedColor: Colors.redAccent,
-                      checkmarkColor: Colors.white,
-                      onSelected: (bool selected) {
-                        setState(() {
-                          if (selected) {
-                            currentCategories.add(category);
-                          } else {
-                            currentCategories.remove(category);
-                          }
-                        });
-                      },
-                    );
-                  }),
-                ),
-              ],
-            ),
-          ],
+                      );
+                    }),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

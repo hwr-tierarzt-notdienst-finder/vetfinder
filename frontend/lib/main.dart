@@ -5,6 +5,7 @@ import 'package:frontend/home.dart';
 import 'package:frontend/theme.dart';
 import 'package:frontend/setting.dart';
 import 'package:frontend/vet_information.dart';
+import 'package:frontend/components/search_filter_dialog.dart';
 import 'package:frontend/utils/preferences.dart';
 
 //
@@ -25,6 +26,7 @@ Future<void> main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => ThemeNotifier()),
+        ChangeNotifierProvider(create: (_) => FilterNotifier()),
       ],
       child: App(),
     ),
