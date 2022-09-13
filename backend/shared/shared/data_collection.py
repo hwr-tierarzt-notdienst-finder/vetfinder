@@ -3,7 +3,7 @@ import itertools
 from collections.abc import Iterable, Callable
 from logging import Logger
 from types import ModuleType
-from typing import NoReturn, cast
+from typing import NoReturn, cast, Any
 
 from .models import Vet, VetInDb
 from .pipeline import Pipeline
@@ -63,16 +63,23 @@ class PipelineFactory:
                 item,
                 infer_name=infer_shared_step_names
             )
-            for item in shared_steps
+            for item in (shared_steps or [])
         ]
 
     def create_from_module(
             self,
             module: ModuleType,
-    ) -> Pipeline[Vet, Vet]:
+    ) -> Pipeline[Iterable[Vet], Iterable[Vet]]:
         names_and_steps: list[tuple[str, _PipelineStep]] = []
 
-        for member in inspect.getmembers(module):
+        def getmembers_sort_key(item: tuple[str, Any]) -> int:
+            member = item[1]
+            try:
+                return inspect.getsourcelines(member)[1]
+            except:
+                return -1
+
+        for _, member in sorted(inspect.getmembers(module), key=getmembers_sort_key):
             if callable(member):
                 try:
                     name_and_step = self._create_valid_pipeline_name_step_pair(
@@ -103,8 +110,8 @@ class PipelineFactory:
         else:
             names_and_steps = names_and_steps + self._shared_pipeline_steps
 
-        pipeline: Pipeline[Vet, Vet] = Pipeline(
-            self._create_logger(module.__name__),
+        pipeline: Pipeline[Iterable[Vet], Iterable[Vet]] = Pipeline(
+            self._create_logger(module.__name__.split(".")[-1]),
             names_and_steps
         )
 
@@ -172,9 +179,9 @@ class PipelineFactory:
         for step_type in self._STEP_TYPES:
             if callable_name == step_type:
                 return callable_name
-            elif callable_name.startswith(f"{callable_name}_"):
+            elif callable_name.startswith(f"{step_type}_"):
                 name_end = callable_name.removeprefix(
-                    f"{callable_name}_"
+                    f"{step_type}_"
                 )
                 return f"{step_type}:{name_end}"
 
@@ -204,7 +211,7 @@ class PipelineFactory:
                     logger: Logger,
                     already_collected_vets: Iterable[Vet]
             ) -> Iterable[Vet]:
-                newly_collected_vets = step(logger)
+                newly_collected_vets = step(logger, already_collected_vets)
 
                 return itertools.chain(
                     already_collected_vets,
@@ -236,7 +243,7 @@ class PipelineFactory:
 
                 old_vets, new_vets = step(logger, all_vets_in_db, collected_vets)
 
-                if len(old_vets) != len(new_vets):
+                if len(list(old_vets)) != len(list(new_vets)):
                     raise ValueError(
                         f"Replace step must return the same amount of old vets as new"
                     )

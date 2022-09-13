@@ -75,6 +75,11 @@ def create_matcher(
             def check(s: str) -> bool:
                 return s == value
 
+        if matcher_type == "contains":
+
+            def check(s: str) -> bool:
+                return value in s
+
         elif matcher_type == "start":
 
             def check(s: str) -> bool:
