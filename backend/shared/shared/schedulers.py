@@ -3,40 +3,38 @@ import time
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from datetime import datetime
-from typing import TypeAlias, Literal, Callable, cast, Iterable, TypeVar, Type, Union
+from typing import Literal, Callable, Iterable, TypeVar, Type
 
 from dateutil import tz
 from dateutil.relativedelta import relativedelta
 
+from .constants import WEEKDAYS
+from .types import Weekday, Timezone
+from . import validate
+
 _T = TypeVar("_T")
-_Weekday: TypeAlias = Literal["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
-_Timezone: TypeAlias = Literal["Europe/Berlin"]
-
-
-_WEEKDAYS: list[_Weekday] = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
-_TIMEZONES: set[_Timezone] = {"Europe/Berlin"}
 
 
 @dataclass(init=False, frozen=True)
 class WeeklyExecutionTarget:
-    weekday: _Weekday
+    weekday: Weekday
     hour: int
     minute: int
-    timezone: Literal["Europe/Berlin"]
+    timezone: Timezone
 
     def __init__(
             self,
             *,
-            weekday: _Weekday,
+            weekday: Weekday,
             hour: int,
             minute: int,
-            timezone: Literal["Europe/Berlin"]
+            timezone: Timezone
     ) -> None:
         # We need to use object.__setattr__ because object is frozen
-        object.__setattr__(self, "weekday", validate_weekday(weekday))
-        object.__setattr__(self, "hour", validate_hour(hour))
-        object.__setattr__(self, "minute", validate_minute(minute))
-        object.__setattr__(self, "timezone", validate_timezone(timezone))
+        object.__setattr__(self, "weekday", validate.weekday(weekday))
+        object.__setattr__(self, "hour", validate.hour(hour))
+        object.__setattr__(self, "minute", validate.minute(minute))
+        object.__setattr__(self, "timezone", validate.timezone(timezone))
 
 
 @dataclass(frozen=True)
@@ -99,10 +97,14 @@ class Poller(ABC):
 
 
 class WeeklyScheduler:
-    _default_weekday: _Weekday
+    """
+
+    """
+
+    _default_weekdays: list[Weekday]
     _default_hour: int
     _default_minute: int
-    _default_timezone: _Timezone
+    _default_timezone: Timezone
     _poller: Poller
     _get_utcnow: Callable[[], datetime]
     _task_id: int
@@ -114,19 +116,35 @@ class WeeklyScheduler:
     def __init__(
             self,
             *,
-            default_weekday: _Weekday,
+            default_timezone: Timezone,
             default_hour: int,
-            default_timezone: _Timezone,
-            default_minute: int = 0,
+            default_minute: int,
+            default_weekday: Weekday | None = None,
+            default_weekdays: Literal["*"] | Iterable[Weekday] | None = None,
             poller: Poller | None = None,
             poll_when_unix_timestamp_seconds_is_multiple_of: int | None = None,
             event_loop: asyncio.AbstractEventLoop | None = None,
             get_utcnow: Callable[[], datetime] = datetime.utcnow
     ) -> None:
-        self._default_weekday = default_weekday
-        self._default_hour = default_hour
-        self._default_minute = default_minute
-        self._default_timezone = default_timezone
+        if default_weekday is not None and default_weekdays is not None:
+            raise ValueError(
+                "Either 'default_weekday' or 'default_weekdays' must be provided, not both"
+            )
+        elif default_weekday is not None:
+            self._default_weekdays = [validate.weekday(default_weekday)]
+        elif default_weekdays == "*":
+            self._default_weekdays = WEEKDAYS
+        elif default_weekdays is not None:
+            self._default_weekdays = [
+                validate.weekday(weekday) for weekday in default_weekdays
+            ]
+        else:
+            raise ValueError(
+                "Neither 'default_weekday' nor 'default_weekdays' was provided"
+            )
+        self._default_hour = validate.hour(default_hour)
+        self._default_minute = validate.minute(default_minute)
+        self._default_timezone = validate.timezone(default_timezone)
         self._get_utcnow = get_utcnow
 
         if poller:
@@ -146,7 +164,7 @@ class WeeklyScheduler:
                     "'poll_when_unix_timestamp_seconds_is_multiple_of' must be an integer if 'poller' is not provided"
                 )
 
-            poller_cls = create_async_event_loop_poller_cls(event_loop)
+            poller_cls = _create_async_event_loop_poller_cls(event_loop)
             self._poller = poller_cls(poll_when_unix_timestamp_seconds_is_multiple_of)
 
         self._poller.on_poll(self._handle_poll)
@@ -163,13 +181,13 @@ class WeeklyScheduler:
             name: str | None = None,
             *,
             infer_name: bool = False,
-            weekday: _Weekday | None = None,
-            weekdays: Literal["*"] | Iterable[_Weekday] | None = None,
+            weekday: Weekday | None = None,
+            weekdays: Literal["*"] | Iterable[Weekday] | None = None,
             hour: int | None = None,
             hours: Literal["*"] | Iterable[int] | None = None,
             minute: int | None = None,
             minutes: Literal["*"] | Iterable[int] | None = None,
-            timezone: _Timezone | None = None
+            timezone: Timezone | None = None
     ) -> list[PendingTask]:
         if name is None:
             if infer_name:
@@ -179,29 +197,43 @@ class WeeklyScheduler:
                     "If 'infer_name' is set to False, 'name' must be provided"
                 )
 
-        if weekday is None and weekdays is None:
-            weekday = self._default_weekday
+        if weekday is not None:
+            weekday = validate.weekday(weekday)
 
+        if weekday is None and weekdays is None:
+            weekdays = self._default_weekdays
         if weekdays == "*":
-            weekdays = _WEEKDAYS
+            weekdays = WEEKDAYS
+        if weekdays is not None:
+            weekdays = [validate.weekday(weekday) for weekday in weekdays]
 
         if hour is None and hours is None:
             hour = self._default_hour
+        if hour is not None:
+            hour = validate.hour(hour)
 
         if hours == "*":
             hours = list(range(24))
+        if hours is not None:
+            hours = [validate.hour(hour) for hour in hours]
 
         if minute is None and minutes is None:
             minute = self._default_minute
+        if minute is not None:
+            minute = validate.minute(minute)
 
         if minutes == "*":
             minutes = list(range(60))
+        if minutes is not None:
+            minutes = [validate.minute(minute) for minute in minutes]
 
         if timezone is None:
             timezone = self._default_timezone
+        if timezone is not None:
+            timezone = validate.timezone(timezone)
 
         result: list[PendingTask] = []
-        for execution_target in create_weekly_execution_targets(
+        for execution_target in _create_weekly_execution_targets(
                 weekday=weekday,
                 weekdays=weekdays,
                 hour=hour,
@@ -235,7 +267,7 @@ class WeeklyScheduler:
             execution_target: "WeeklyExecutionTarget"
     ) -> "PendingTask":
         self._task_id += 1
-        start_target_datetime = create_datetime_from_weekly_execution_target(
+        start_target_datetime = _create_datetime_from_weekly_execution_target(
             execution_target,
             self._get_utcnow
         )
@@ -253,7 +285,7 @@ class WeeklyScheduler:
         return task
 
     def _handle_poll(self, dt: datetime) -> None:
-        dt = ensure_datetime_is_timezone_aware(dt)
+        dt = validate.datetime_is_timezone_aware(dt)
 
         if not any(
             task.start_target_datetime <= dt
@@ -326,7 +358,7 @@ class WeeklyScheduler:
         return finished_task
 
 
-def create_async_event_loop_poller_cls(event_loop: asyncio.AbstractEventLoop | None = None) -> Type["Poller"]:
+def _create_async_event_loop_poller_cls(event_loop: asyncio.AbstractEventLoop | None = None) -> Type["Poller"]:
     if event_loop is None:
         event_loop = asyncio.get_event_loop()
 
@@ -374,29 +406,29 @@ def create_async_event_loop_poller_cls(event_loop: asyncio.AbstractEventLoop | N
     return AsyncEventLoopPoller
 
 
-def create_weekly_execution_targets(
+def _create_weekly_execution_targets(
         *,
-        weekday: _Weekday | None = None,
-        weekdays: Iterable[_Weekday] | None = None,
+        weekday: Weekday | None = None,
+        weekdays: Iterable[Weekday] | None = None,
         hour: int | None = None,
         hours: Iterable[int] | None = None,
         minute: int | None = None,
         minutes: Iterable[int] | None = None,
-        timezone: _Timezone = None
+        timezone: Timezone = None
 ) -> Iterable[WeeklyExecutionTarget]:
-    weekdays = create_list_from_single_obj_exclusively_or_iter(
+    weekdays = _create_list_from_single_obj_exclusively_or_iter(
         weekday,
         "weekday",
         weekdays,
         "weekdays"
     )
-    hours = create_list_from_single_obj_exclusively_or_iter(
+    hours = _create_list_from_single_obj_exclusively_or_iter(
         hour,
         "hour",
         hours,
         "hours"
     )
-    minutes = create_list_from_single_obj_exclusively_or_iter(
+    minutes = _create_list_from_single_obj_exclusively_or_iter(
         minute,
         "minute",
         minutes,
@@ -414,7 +446,7 @@ def create_weekly_execution_targets(
                 )
 
 
-def create_list_from_single_obj_exclusively_or_iter(
+def _create_list_from_single_obj_exclusively_or_iter(
         single: _T | None,
         single_name: str,
         iter_: Iterable[_T] | None,
@@ -432,18 +464,18 @@ def create_list_from_single_obj_exclusively_or_iter(
         raise ValueError(f"Either '{single_name}' or '{iter_name}' must be provided, not both")
 
 
-def create_datetime_from_weekly_execution_target(
+def _create_datetime_from_weekly_execution_target(
         execution_target: WeeklyExecutionTarget,
         get_utcnow: Callable[[], datetime]
 ) -> datetime:
     timezone_obj = tz.gettz(execution_target.timezone)
 
-    now = ensure_datetime_is_timezone_aware(get_utcnow()).astimezone(timezone_obj)
+    now = validate.datetime_is_timezone_aware(get_utcnow()).astimezone(timezone_obj)
 
     dt = (
-        ensure_datetime_is_timezone_aware(get_utcnow()).astimezone(timezone_obj)
+        validate.datetime_is_timezone_aware(get_utcnow()).astimezone(timezone_obj)
         + relativedelta(
-            weekday=_WEEKDAYS.index(execution_target.weekday),
+            weekday=WEEKDAYS.index(execution_target.weekday),
             hour=execution_target.hour,
             minute=execution_target.minute,
             second=0,
@@ -453,40 +485,5 @@ def create_datetime_from_weekly_execution_target(
 
     while dt <= now:
         dt += relativedelta(weeks=1)
-
-    return dt
-
-
-def validate_weekday(day: str) -> _Weekday:
-    if day in _WEEKDAYS:
-        return cast(_Weekday, day)
-
-    raise ValueError(f"Invalid weekday '{day}'")
-
-
-def validate_hour(hour: int) -> int:
-    if 0 <= hour <= 23:
-        return hour
-
-    raise ValueError(f"Hour must be between 0 and 23, not {hour}")
-
-
-def validate_minute(minute: int) -> int:
-    if 0 <= minute <= 60:
-        return minute
-
-    raise ValueError(f"Minute must be between 0 and 60, not {minute}")
-
-
-def validate_timezone(timezone: str) -> _Timezone:
-    if timezone in _TIMEZONES:
-        return cast(_Timezone, timezone)
-
-    raise ValueError(f"Invalid timezone '{timezone}'")
-
-
-def ensure_datetime_is_timezone_aware(dt: datetime) -> datetime:
-    if dt.tzinfo is None:
-        raise ValueError(f"Datetime {dt} is not timezone aware")
 
     return dt
