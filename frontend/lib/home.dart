@@ -153,6 +153,7 @@ class _HomeState extends State<Home> {
       // Update the list of vets if filter is applied
       if (notifier.filterUpdated) {
         vets = getFilteredVeterinarians();
+        createMarkers();
         notifier.filterUpdated = false;
       }
 
@@ -200,30 +201,32 @@ class _HomeState extends State<Home> {
                 ),
               ],
             ),
-            Container(
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height * 0.5,
-              child: Stack(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(8),
-                    child: FlutterMap(
-                      mapController: mapController,
-                      options: MapOptions(zoom: 11, rotation: 0),
-                      layers: [
-                        TileLayerOptions(
-                          minZoom: 1,
-                          maxZoom: 18,
-                          backgroundColor: Colors.black,
-                          urlTemplate:
-                              'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-                          subdomains: ['a', 'b', 'c'],
-                        ),
-                        MarkerLayerOptions(markers: markers)
-                      ],
+            Expanded(
+              child: Container(
+                width: MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.height * 0.5,
+                child: Stack(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(8),
+                      child: FlutterMap(
+                        mapController: mapController,
+                        options: MapOptions(zoom: 11, rotation: 0),
+                        layers: [
+                          TileLayerOptions(
+                            minZoom: 1,
+                            maxZoom: 18,
+                            backgroundColor: Colors.black,
+                            urlTemplate:
+                                'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+                            subdomains: ['a', 'b', 'c'],
+                          ),
+                          MarkerLayerOptions(markers: markers)
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
             Expanded(
