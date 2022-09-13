@@ -3,7 +3,6 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map/plugin_api.dart';
 import 'package:frontend/utils/preferences.dart';
 import 'package:string_similarity/string_similarity.dart';
-import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
 
@@ -25,9 +24,7 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  String address = 'home.current_address'.tr();
   MapController mapController = MapController();
-
   List<Marker> markers = [];
   List<Veterinarian> vets = getFilteredVeterinarians();
   String query = '';
@@ -104,7 +101,7 @@ class _HomeState extends State<Home> {
         similarityMap[vet.id] = comparison;
       }
 
-      var sortedMap = new SplayTreeMap<String, double>.from(similarityMap,
+      var sortedMap = SplayTreeMap<String, double>.from(similarityMap,
           (key1, key2) => (similarityMap[key1] > similarityMap[key2]) ? -1 : 1);
       vets = sortedMap.keys.map((id) => getVeterinarianById(id)).toList();
     });
@@ -130,11 +127,10 @@ class _HomeState extends State<Home> {
         ),
         builder: (BuildContext context) {
           return EditAddressModal(
-            currentAddress: 'Platzhalter Straße 123',
+            currentAddress: SharedPrefs().currentAddress,
             onPositionChanged: (position, address) => {
               setState(() {
-                // Use SharedPrefs to save address
-                this.address = address;
+                SharedPrefs().currentAddress = address;
                 SharedPrefs().currentPosition = position;
                 mapController.move(position, 18);
               })
@@ -180,7 +176,7 @@ class _HomeState extends State<Home> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(address),
+                    Text(SharedPrefs().currentAddress),
                     const Icon(Icons.arrow_drop_down_rounded),
                   ],
                 ),

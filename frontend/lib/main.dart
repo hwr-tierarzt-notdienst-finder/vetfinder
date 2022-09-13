@@ -34,7 +34,7 @@ Future<void> main() async {
         child: App(),
       ),
       supportedLocales: [Locale('en', ''), Locale('de', '')],
-      path: 'assets/translations',
+      path: 'translations',
       fallbackLocale: Locale('en', '')
     ),
   );

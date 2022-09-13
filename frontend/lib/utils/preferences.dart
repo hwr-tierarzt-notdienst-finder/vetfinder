@@ -2,6 +2,8 @@
 
 import 'package:latlong2/latlong.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:easy_localization/easy_localization.dart';
+
 import 'package:frontend/utils/constants.dart';
 
 class SharedPrefs {
@@ -28,6 +30,12 @@ class SharedPrefs {
   List<String> get categories => _sharedPrefs.getStringList(keyCategories) ?? [];
   set categories(List<String> value) {
     _sharedPrefs.setStringList(keyCategories, value);
+  }
+
+  // Location Settings
+  String get currentAddress => _sharedPrefs.getString(keyCurrentAddress) ?? "home.current_address".tr();
+  set currentAddress(String value) {
+    _sharedPrefs.setString(keyCurrentAddress, value);
   }
 
   LatLng get currentPosition {
