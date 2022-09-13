@@ -1,8 +1,9 @@
 from fastapi import FastAPI
 
+from shared.models import VetInDb
+
 from . import db
 from .data import collect_vets
-from models import VetGet
 
 app = FastAPI()
 
@@ -14,6 +15,9 @@ def startup() -> None:
         db.create_vet(vet)
 
 
-@app.get("/vets", response_model=list[VetGet])
-def get_vets() -> list[VetGet]:
+@app.get("/vets", response_model=list[VetInDb])
+def get_vets(
+        min_radius_in_km: int,
+        max_radius_in_km: int
+) -> list[VetInDb]:
     return db.get_vets()

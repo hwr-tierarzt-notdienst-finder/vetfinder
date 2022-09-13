@@ -5,7 +5,8 @@ from pymongo import MongoClient
 from pymongo.database import Database, Mapping, Collection
 from pymongo.results import InsertOneResult
 
-from models import Vet, Location, VetGet
+from shared import cache
+from shared.models import Vet, VetInDb, Location
 from .normalization import normalize_vet
 from . import config
 
@@ -19,11 +20,11 @@ def create_vet(vet: Vet) -> InsertOneResult:
     return result
 
 
-def get_vets() -> list[VetGet]:
+def get_vets() -> list[VetInDb]:
     vets = get_vets_collection()
 
     return [
-        VetGet(
+        VetInDb(
             id=str(vet_db_obj["_id"]),
             **vet_db_obj
         )
@@ -31,27 +32,60 @@ def get_vets() -> list[VetGet]:
     ]
 
 
-_vets_collection = None
+@cache.return_singleton(populate_cache_on="prepopulate_called")
 def get_vets_collection() -> Collection[Mapping[str, Any]]:
-    global _vets_collection
-
-    if _vets_collection is None:
-        db = get_db()
-        _vets_collection = db["vets"]
-
-    return _vets_collection
+    db = get_db()
+    return db["vets"]
 
 
-_db: Database[Mapping[str, Any]] | None = None
+def overwrite_normalized_locations_cache(
+        cache: dict[str, Location]
+) -> list[InsertOneResult]:
+    collection = get_normalized_locations_cache_collection()
+    collection.drop()
+
+    return [
+        create_normalized_locations_cache_entry(
+            key,
+            location
+        )
+        for key, location in cache.items()
+    ]
+
+
+def create_normalized_locations_cache_entry(
+        key: str,
+        location: Location,
+) -> InsertOneResult:
+    collection = get_normalized_locations_cache_collection()
+    result = collection.insert_one({
+        "key": key,
+        "location": location,
+    })
+
+    return result
+
+
+def get_normalized_locations_cache() -> dict[str, Location]:
+    collection = get_normalized_locations_cache_collection()
+
+    return {
+        dct["key"]: Location(**dct["location"])
+        for dct in collection.find({})
+    }
+
+
+@cache.return_singleton(populate_cache_on="prepopulate_called")
+def get_normalized_locations_cache_collection() -> Collection[Mapping[str, str]]:
+    db = get_db()
+    return db["normalized_location_cache"]
+
+
+@cache.return_singleton(populate_cache_on="prepopulate_called")
 def get_db() -> Database[Mapping[str, Any]]:
-    global _db
+    client = create_mongo_client()
 
-    if _db is None:
-        client = create_mongo_client()
-
-        _db = client["db"]
-
-    return _db
+    return client["db"]
 
 
 def create_mongo_client() -> MongoClient:
@@ -69,3 +103,6 @@ def get_connection_string() -> str:
     db_config = config.get().db
 
     return f"mongodb://{db_config.root_username}:{db_config.root_password}@127.0.0.1:{db_config.port}"
+
+
+cache.prepopulate()

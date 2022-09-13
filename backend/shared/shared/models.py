@@ -1,6 +1,6 @@
 """Shared pydantic models."""
-
 from datetime import datetime, timedelta
+from enum import Enum
 from typing import TypeVar, Generic, Literal, TypeAlias
 from typing_extensions import Annotated
 
@@ -124,6 +124,10 @@ AvailabilityConditionOr.update_forward_refs()
 AvailabilityConditionAnd.update_forward_refs()
 
 
+class Category(str, Enum):
+    ALL = "all"
+
+
 class Vet(BaseModel):
     title: Field[str]
     people: list[Person] = PydanticField(default_factory=list)
@@ -131,6 +135,9 @@ class Vet(BaseModel):
     contacts: list[Contact] = PydanticField(default_factory=list)
     available: AvailabilityCondition
     sources: dict[str, Source]
+    categories: Field[list[Category]] = PydanticField(
+        default_factory=lambda: Field(value=[])
+    )
 
 
 class VetInDb(Vet):
