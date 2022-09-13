@@ -8,3 +8,4 @@ const String keyIsDarkMode = "is_dark_mode";
 // Filter Settings
 const String keySearchRadius = "search_radius";
 const String keyCategories = "categories";
+const String keyCurrentPosition = "current_position";

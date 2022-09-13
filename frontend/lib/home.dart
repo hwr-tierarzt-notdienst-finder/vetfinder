@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map/plugin_api.dart';
+import 'package:frontend/utils/preferences.dart';
 import 'package:string_similarity/string_similarity.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 import 'package:frontend/components/veterinarian.dart';
 import 'package:frontend/components/search_widget.dart';
@@ -23,8 +25,7 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  String address = 'Current address';
-  LatLng currentPosition = LatLng(13.0, 13.0);
+  String address = 'home.current_address'.tr();
   MapController mapController = MapController();
 
   List<Marker> markers = [];
@@ -132,7 +133,9 @@ class _HomeState extends State<Home> {
             currentAddress: 'Platzhalter Straße 123',
             onPositionChanged: (position, address) => {
               setState(() {
+                // Use SharedPrefs to save address
                 this.address = address;
+                SharedPrefs().currentPosition = position;
                 mapController.move(position, 18);
               })
             },

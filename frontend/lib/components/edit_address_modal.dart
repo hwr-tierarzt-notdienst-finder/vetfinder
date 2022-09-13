@@ -1,9 +1,8 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_geocoder/geocoder.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:location/location.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class EditAddressModal extends StatefulWidget {
   final String currentAddress;
@@ -55,7 +54,7 @@ class _EditAddressModalState extends State<EditAddressModal> {
                     const Icon(Icons.my_location_rounded),
                     const SizedBox(width: 10),
                     Text(
-                      'Aktuellen Standort verwenden',
+                      'edit_location_modal.current_location'.tr(),
                       style: TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.bold,

@@ -1,5 +1,6 @@
 // Based on https://simondev.medium.com/use-sharedpreferences-in-flutter-effortlessly-835bba8f7418
 
+import 'package:latlong2/latlong.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:frontend/utils/constants.dart';
 
@@ -28,4 +29,16 @@ class SharedPrefs {
   set categories(List<String> value) {
     _sharedPrefs.setStringList(keyCategories, value);
   }
+
+  LatLng get currentPosition {
+    String value = _sharedPrefs.getString(keyCurrentPosition) ?? "0.0;0.0";
+    List<String> splitted = value.split(";");
+    double latitude = double.tryParse(splitted[0]) ?? 0.0;
+    double longitude = double.tryParse(splitted[1]) ?? 0.0;
+    return LatLng(latitude, longitude);
+  }
+  set currentPosition(LatLng position) {
+    _sharedPrefs.setString(keyCurrentPosition, "${position.latitude};${position.longitude}");
+  }
 }
+
