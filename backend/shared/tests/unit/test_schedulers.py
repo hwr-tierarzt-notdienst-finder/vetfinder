@@ -1,11 +1,10 @@
-import math
-import time
 from datetime import datetime, timezone
-from typing import Callable, Literal
+from typing import Callable
 
 from dateutil import tz
 
 from shared.schedulers import Poller, WeeklyScheduler
+from shared.types import Timezone
 
 
 class SimulatedClock:
@@ -134,7 +133,7 @@ def test_scheduler() -> None:
     # Setup
     # ----------------------------------------------------------------------
 
-    timezone_: Literal["Europe/Berlin"] = "Europe/Berlin"
+    timezone_: Timezone = "Europe/Berlin"
 
     start_dt = datetime(
         year=2022,
@@ -227,7 +226,6 @@ def test_scheduler() -> None:
     # ----------------------------------------------------------------------
 
     scheduler.start()
-    poller.start()
     clock.run_until_datetime(end_dt)
 
     # Test results
