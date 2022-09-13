@@ -8,6 +8,7 @@ from typing import NoReturn, cast, Any
 from .models import Vet, VetInDb
 from .pipeline import Pipeline
 from .human_readable import human_readable
+from . import import_
 
 
 _CollectStep = Callable[[Logger], Iterable[Vet]]
@@ -116,6 +117,13 @@ class PipelineFactory:
         )
 
         return pipeline
+
+    def create_multiple_from_submodules(
+            self,
+            module: ModuleType,
+    ) -> Iterable[Pipeline[Vet, Vet]]:
+        for sub_module in import_.iter_submodules(module):
+            yield self.create_from_module(sub_module)
 
     def _validate_steps_order(
             self,
