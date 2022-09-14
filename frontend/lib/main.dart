@@ -26,17 +26,16 @@ Future<void> main() async {
 
   runApp(
     EasyLocalization(
-      child: MultiProvider(
-        providers: [
-          ChangeNotifierProvider(create: (_) => ThemeNotifier()),
-          ChangeNotifierProvider(create: (_) => FilterNotifier()),
-        ],
-        child: App(),
-      ),
-      supportedLocales: [Locale('en'), Locale('de')],
-      path: 'translations',
-      fallbackLocale: Locale('en')
-    ),
+        child: MultiProvider(
+          providers: [
+            ChangeNotifierProvider(create: (_) => ThemeNotifier()),
+            ChangeNotifierProvider(create: (_) => FilterNotifier()),
+          ],
+          child: App(),
+        ),
+        supportedLocales: [Locale('en'), Locale('de')],
+        path: 'assets/translations',
+        fallbackLocale: Locale('en')),
   );
 }
 
@@ -62,7 +61,7 @@ class App extends StatelessWidget {
             '/setting': (context) => const Setting(),
           },
         );
-      } ,
+      },
     );
   }
 }
