@@ -21,6 +21,11 @@ class SharedPrefs {
     _sharedPrefs.setBool(keyIsDarkMode, value);
   }
 
+  String get language => _sharedPrefs.getString(keyLanguage) ?? 'en';
+  set language(String value) {
+    _sharedPrefs.setString(keyIsDarkMode, value);
+  }
+
   // Filter Settings
   int get searchRadius => _sharedPrefs.getInt(keySearchRadius) ?? minSearchRadius;
   set searchRadius(int value) {

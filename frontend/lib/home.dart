@@ -188,13 +188,13 @@ class _HomeState extends State<Home> {
                   child: SearchWidget(
                       text: query,
                       onSubmitted: searchVet,
-                      hintText: 'Name, Adresse, Posleitzahl'),
+                      hintText: 'home.query_hint'.tr()),
                 ),
                 Container(
-                  margin: EdgeInsets.fromLTRB(0, 0, 8, 0),
+                  margin: const EdgeInsets.fromLTRB(0, 0, 8, 0),
                   child: ElevatedButton(
                       onPressed: () => _showFilterDialog(context),
-                      child: Icon(
+                      child: const Icon(
                         Icons.filter_list_rounded,
                       )),
                 ),

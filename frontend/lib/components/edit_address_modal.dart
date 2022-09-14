@@ -34,8 +34,8 @@ class _EditAddressModalState extends State<EditAddressModal> {
         child: Column(
           children: [
             const SizedBox(height: 10),
-            const Text(
-              'Standort',
+            Text(
+              'edit_address_modal.title'.tr(),
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
@@ -54,8 +54,8 @@ class _EditAddressModalState extends State<EditAddressModal> {
                     const Icon(Icons.my_location_rounded),
                     const SizedBox(width: 10),
                     Text(
-                      'edit_location_modal.current_location'.tr(),
-                      style: TextStyle(
+                      'edit_address_modal.use_current_location'.tr(),
+                      style: const TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.bold,
                       ),

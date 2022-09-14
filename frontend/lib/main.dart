@@ -4,7 +4,7 @@ import 'package:easy_localization/easy_localization.dart';
 
 import 'package:frontend/home.dart';
 import 'package:frontend/theme.dart';
-import 'package:frontend/setting.dart';
+import 'package:frontend/settings.dart';
 import 'package:frontend/vet_information.dart';
 import 'package:frontend/components/search_filter_dialog.dart';
 import 'package:frontend/utils/preferences.dart';
@@ -33,9 +33,9 @@ Future<void> main() async {
         ],
         child: App(),
       ),
-      supportedLocales: [Locale('en', ''), Locale('de', '')],
+      supportedLocales: [Locale('en'), Locale('de')],
       path: 'translations',
-      fallbackLocale: Locale('en', '')
+      fallbackLocale: Locale('en')
     ),
   );
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/api.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class VetInformationScreenArguments {
   final String id;
@@ -31,7 +32,7 @@ class VetInformation extends StatelessWidget {
       resizeToAvoidBottomInset: false,
 
       appBar: AppBar(
-        title: const Text('Vet Information'),
+        title: Text('vet_information.title'.tr()),
       ),
       // 2 rows with 8 columns
       body: SingleChildScrollView(
@@ -118,8 +119,8 @@ class VetInformation extends StatelessWidget {
             Row(
               children: [
                 RaisedButton(
-                    child: const Text(
-                      'Open Website',
+                    child: Text(
+                      'vet_information.open_website'.tr(),
                       style: TextStyle(
                           color: Colors.white, fontWeight: FontWeight.bold),
                     ),
@@ -131,8 +132,8 @@ class VetInformation extends StatelessWidget {
             Row(
               children: [
                 RaisedButton(
-                    child: const Text(
-                      'Open Map',
+                    child: Text(
+                      'vet_information.open_map'.tr(),
                       style: TextStyle(
                           color: Colors.white, fontWeight: FontWeight.bold),
                     ),

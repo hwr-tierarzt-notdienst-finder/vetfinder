@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:frontend/api.dart';
 import 'package:frontend/vet_information.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class VetCard extends Card {
   const VetCard(
@@ -41,14 +42,16 @@ class VetCard extends Card {
                     onViewInMap(location.position);
                   },
                   icon: const Icon(Icons.map_rounded),
-                  label: const Text('Show in map')),
+                  label: Text('veterinarian.show_in_map'.tr())
+              ),
               TextButton.icon(
                   onPressed: () {
                     Navigator.pushNamed(context, '/vet_information',
                         arguments: VetInformationScreenArguments(id));
                   },
                   icon: const Icon(Icons.arrow_forward_ios_rounded),
-                  label: const Text('View vet')),
+                  label: Text('veterinarian.view_vet'.tr())
+              ),
             ],
           )
         ],

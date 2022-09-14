@@ -1,11 +1,9 @@
 {
     "home": {
         "current_address": "Current Address",
-        "query_hint": "Name, Address, ZIP Code",
-        "show_in_map": "Show in Map",
-        "view_vet": "View Vet"
+        "query_hint": "Name, Address, ZIP Code"
     },
-    "filter_dialog": {
+    "search_filter_dialog": {
         "title": "Filter Settings",
         "search_radius": "Search Radius",
         "category": "Animal Type",
@@ -13,11 +11,15 @@
         "cancel": "Cancel",
         "apply": "Apply"
     },
-    "edit_location_modal": {
+    "edit_address_modal": {
         "title": "Location",
-        "current_location": "Use Current Location"
+        "use_current_location": "Use Current Location"
     },
-    "vet_details": {
+    "veterinarian": {
+        "show_in_map": "Show in Map",
+        "view_vet": "View Vet"
+    },
+    "vet_information": {
         "title": "Vet Information",
         "open_website": "Open Website",
         "open_map": "Open Map"
@@ -25,6 +27,7 @@
     "settings": {
         "title": "Settings",
         "darkmode": "Darkmode",
+        "language": "Language",
         "publisher": "Publisher"
     }
 }

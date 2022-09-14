@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 import 'package:frontend/utils/preferences.dart';
 import 'package:frontend/utils/constants.dart';
@@ -70,7 +71,7 @@ class _SearchFilterDialogState extends State<SearchFilterDialog> {
 
     return Consumer<FilterNotifier>(
       builder: (context,notifier,child) => AlertDialog(
-        title: const Text('Suchfilter'),
+        title: Text('search_filter_dialog.title'.tr()),
         contentPadding: EdgeInsets.zero,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10),
@@ -80,7 +81,7 @@ class _SearchFilterDialogState extends State<SearchFilterDialog> {
             style: TextButton.styleFrom(
               textStyle: Theme.of(context).textTheme.labelLarge,
             ),
-            child: const Text('Zurücksetzen'),
+            child: Text('search_filter_dialog.reset'.tr()),
             onPressed: () {
               setState(() {
                 currentRadius = minSearchRadius;
@@ -92,7 +93,7 @@ class _SearchFilterDialogState extends State<SearchFilterDialog> {
             style: TextButton.styleFrom(
               textStyle: Theme.of(context).textTheme.labelLarge,
             ),
-            child: const Text('Abbrechen'),
+            child: Text('search_filter_dialog.cancel'.tr()),
             onPressed: () {
               Navigator.of(context).pop();
             },
@@ -101,7 +102,7 @@ class _SearchFilterDialogState extends State<SearchFilterDialog> {
             style: TextButton.styleFrom(
               textStyle: Theme.of(context).textTheme.labelLarge,
             ),
-            child: const Text('Anwenden'),
+            child: Text('search_filter_dialog.apply'.tr()),
             onPressed: () {
               _setFilterSetting();
               notifier.updateFilter();
@@ -110,7 +111,7 @@ class _SearchFilterDialogState extends State<SearchFilterDialog> {
           ),
         ],
         content: Container(
-          padding: EdgeInsets.symmetric(horizontal: 25),
+          padding: const EdgeInsets.symmetric(horizontal: 25),
           width: MediaQuery.of(context).size.width * 0.75,
           height: MediaQuery.of(context).size.height * 0.5,
           child: Column(
@@ -125,8 +126,8 @@ class _SearchFilterDialogState extends State<SearchFilterDialog> {
                 children: [
                   Row(
                     children: [
-                      const Text(
-                        'Suchradius:',
+                      Text(
+                        '${'search_filter_dialog.search_radius'.tr()}:',
                         style: TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.bold,
@@ -139,7 +140,7 @@ class _SearchFilterDialogState extends State<SearchFilterDialog> {
                         child: TextField(
                           controller: radiusFieldController
                                       ..text = currentRadius.toString(),
-                          decoration: InputDecoration(
+                          decoration: const InputDecoration(
                             border: OutlineInputBorder(),
                           ),
                           inputFormatters: <TextInputFormatter>[
@@ -192,8 +193,8 @@ class _SearchFilterDialogState extends State<SearchFilterDialog> {
                 children: [
                   Row(
                     children: [
-                      const Text(
-                        'Tierart',
+                      Text(
+                        '${'search_filter_dialog.category'.tr()}:',
                         style: TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.bold,
