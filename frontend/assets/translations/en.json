@@ -13,7 +13,8 @@
     },
     "edit_address_modal": {
         "title": "Location",
-        "use_current_location": "Use Current Location"
+        "use_current_location": "Use Current Location",
+        "address_hint": "Address Number ZIP Code"
     },
     "veterinarian": {
         "show_in_map": "Show in Map",
