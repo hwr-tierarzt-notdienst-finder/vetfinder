@@ -1,4 +1,4 @@
-from data_collection.scrapers import scrape_tieraertzekammer_berlin
+from backend.data_collection.scrapers import scrape_tieraertzekammer_berlin
 
 
 if __name__ == "__main__":

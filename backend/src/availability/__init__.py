@@ -1,17 +1,17 @@
-import inspect
 from datetime import datetime, timedelta
 from functools import wraps
 from typing import Iterable, TypeVar, Callable
 
 from dateutil.tz import gettz
 
-from shared import validate, cache
-from shared.models import (
+from .. import validate
+from .. import cache
+from ..models import (
     AvailabilityCondition,
     Vet,
     TimeSpan,
 )
-from shared.types import Timezone
+from ..types_ import Timezone
 
 from . import time_spans_from_non_primitive_conditions
 

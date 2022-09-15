@@ -7,7 +7,6 @@ from typing import Literal, cast, TypeAlias, TypedDict, Iterable, Protocol
 from . import path
 from . import cache
 
-
 # Standard library does not have type hints for levels
 LevelCritical = Literal[50]
 LevelError = Literal[40]

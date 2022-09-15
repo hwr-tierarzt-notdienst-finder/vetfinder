@@ -1,8 +1,8 @@
 import textwrap
 from pathlib import Path
 
-from shared import file_system
-from shared import import_
+from src import file_system
+from src import import_
 
 
 def test_iter_submodules() -> None:

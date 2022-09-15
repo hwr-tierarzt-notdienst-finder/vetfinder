@@ -4,7 +4,7 @@ from typing import cast
 
 from .human_readable import human_readable
 from .constants import TIMEZONES, WEEKDAYS, REGIONS
-from .types import Timezone, Weekday, Region
+from .types_ import Timezone, Weekday, Region
 
 
 def weekday(day: str) -> Weekday:

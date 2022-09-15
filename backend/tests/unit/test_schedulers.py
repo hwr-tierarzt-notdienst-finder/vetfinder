@@ -3,8 +3,8 @@ from typing import Callable
 
 from dateutil import tz
 
-from shared.schedulers import Poller, WeeklyScheduler
-from shared.types import Timezone
+from src.schedulers import Poller, WeeklyScheduler
+from src.types_ import Timezone
 
 
 class SimulatedClock:

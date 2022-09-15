@@ -7,11 +7,11 @@ from typing import Any, NoReturn
 
 from dateutil.tz import gettz
 
-from shared.constants import REGIONS
-from shared.types import Region
-from shared import validate
-from shared import cache
-from shared import import_
+from ...constants import REGIONS
+from ...types_ import Region
+from .. import validate
+from .. import cache
+from ... import import_
 
 if __name__ == "__main__":
     import sys

@@ -9,7 +9,7 @@ from dateutil import tz
 from dateutil.relativedelta import relativedelta
 
 from .constants import WEEKDAYS
-from .types import Weekday, Timezone
+from .types_ import Weekday, Timezone
 from . import validate
 
 _T = TypeVar("_T")
@@ -473,8 +473,8 @@ def _create_datetime_from_weekly_execution_target(
     now = validate.datetime_is_timezone_aware(get_utcnow()).astimezone(timezone_obj)
 
     dt = (
-        validate.datetime_is_timezone_aware(get_utcnow()).astimezone(timezone_obj)
-        + relativedelta(
+            validate.datetime_is_timezone_aware(get_utcnow()).astimezone(timezone_obj)
+            + relativedelta(
             weekday=WEEKDAYS.index(execution_target.weekday),
             hour=execution_target.hour,
             minute=execution_target.minute,

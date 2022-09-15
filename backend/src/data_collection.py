@@ -10,7 +10,6 @@ from .pipeline import Pipeline
 from .human_readable import human_readable
 from . import import_
 
-
 _CollectStep = Callable[[Logger], Iterable[Vet]]
 _NormalizeStep = Callable[[Logger, Iterable[Vet]], Iterable[Vet]]
 _ValidateStep = Callable[[Logger, Iterable[Vet]], NoReturn | None]

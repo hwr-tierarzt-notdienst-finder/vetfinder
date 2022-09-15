@@ -1,5 +1,5 @@
 from geopy.geocoders import Nominatim
-from shared.models import Vet, Location, Field
+from .models import Vet, Location, Field
 from . import db
 
 NOMINATIM_USER_AGENT = "nominatim.openstreetmap.org"

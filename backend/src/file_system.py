@@ -5,7 +5,7 @@ from shutil import rmtree
 from typing import TextIO, TypedDict, Literal, Iterable, TypeVar, NoReturn, cast
 
 from .human_readable import human_readable
-from . import types
+from . import types_
 from . import string
 
 _T = TypeVar("_T")
@@ -31,7 +31,7 @@ _DirContents = Iterable[_DirEntry] | None
 
 
 class _MatchDirBaseEntry(TypedDict):
-    match_name: types.string.Matcher
+    match_name: types_.string.Matcher
 
 
 class _MatchDirFileEntry(_MatchDirBaseEntry):
@@ -45,7 +45,7 @@ class _MatchDirDirEntry(_MatchDirBaseEntry):
 
 
 _MatchDirEntry = _MatchDirFileEntry | _MatchDirDirEntry
-_MatchFileContents = types.string.Matcher | Iterable[types.string.Matcher]
+_MatchFileContents = types_.string.Matcher | Iterable[types_.string.Matcher]
 _MatchDirContents = Iterable[_MatchDirEntry]
 
 

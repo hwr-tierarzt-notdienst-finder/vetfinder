@@ -4,28 +4,8 @@
 #
 #    pip-compile --output-file=requirements-dev.txt requirements-dev.in
 #
--e file:///home/oscar/Projects/vetfinder/backend/models
-    # via
-    #   -c requirements.txt
-    #   -r requirements-dev.in
--e file:///home/oscar/Projects/vetfinder/backend/shared
-    # via
-    #   -c requirements.txt
-    #   -r requirements-dev.in
 attrs==22.1.0
     # via pytest
-dnspython==2.2.1
-    # via
-    #   -c requirements.txt
-    #   email-validator
-email-validator==1.2.1
-    # via
-    #   -c requirements.txt
-    #   pydantic
-idna==3.3
-    # via
-    #   -c requirements.txt
-    #   email-validator
 iniconfig==1.1.1
     # via pytest
 lark==1.1.2
@@ -36,31 +16,15 @@ pluggy==1.0.0
     # via pytest
 py==1.11.0
     # via pytest
-pydantic[email]==1.10.1
-    # via
-    #   -c requirements.txt
-    #   models
 pyparsing==3.0.9
     # via packaging
 pytest==7.1.2
     # via -r requirements-dev.in
-python-dateutil==2.8.2
-    # via
-    #   -c requirements.txt
-    #   shared
 pyyaml==6.0
     # via -r requirements-dev.in
-six==1.16.0
-    # via
-    #   -c requirements.txt
-    #   python-dateutil
 tomli==2.0.1
     # via
     #   -c requirements.txt
     #   pytest
 types-beautifulsoup4==4.11.5
     # via -r requirements-dev.in
-typing-extensions==4.3.0
-    # via
-    #   -c requirements.txt
-    #   pydantic

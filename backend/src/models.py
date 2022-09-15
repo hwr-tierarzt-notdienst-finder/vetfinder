@@ -4,10 +4,10 @@ from enum import Enum
 from typing import TypeVar, Generic, Literal, TypeAlias
 from typing_extensions import Annotated
 
-from .types import Timezone, Region
-
 from pydantic import BaseModel, Field as PydanticField
 from pydantic.generics import GenericModel
+
+from .types_ import Timezone, Region
 
 
 __version__ = "1.0"

@@ -8,9 +8,9 @@ from typing import Callable
 from dateutil.tz import gettz
 import requests
 
-from shared import cache
-from shared.types import Region
-from shared.constants import REGIONS
+from .... import cache
+from ....types_ import Region
+from ....constants import REGIONS
 
 from ..types_ import CreateCacheRegionEntry
 from ..constants import CACHE_FOR_N_PAST_YEARS, CACHE_FOR_N_FUTURE_YEARS

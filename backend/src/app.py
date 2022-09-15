@@ -2,8 +2,7 @@ from datetime import datetime
 
 from fastapi import FastAPI, HTTPException, status
 
-from shared.models import VetInDb, VetResponse
-
+from .models import VetInDb, VetResponse
 from . import db
 from .data import collect_vets
 from . import availability

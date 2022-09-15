@@ -1,9 +1,9 @@
 import textwrap
 from pathlib import Path
 
-from shared import data_collection
-from shared import file_system
-from shared import log
+from src import data_collection
+from src import file_system
+from src import log
 
 
 class TestPipelineFactory:
@@ -33,7 +33,7 @@ class TestPipelineFactory:
                             from logging import Logger
                             from typing import Iterable
                             
-                            from shared.models import Vet
+                            from src.models import Vet
                             
                             
                             def collect(logger: Logger, vets: Iterable[Vet]) -> Iterable[Vet]:
@@ -51,7 +51,7 @@ class TestPipelineFactory:
                             from logging import Logger
                             from typing import Iterable
                             
-                            from shared.models import Vet
+                            from src.models import Vet
                             
                             
                             def collect_from_json(logger: Logger, vets: Iterable[Vet]) -> Iterable[Vet]:
@@ -79,7 +79,7 @@ class TestPipelineFactory:
                             from logging import Logger
                             from typing import Iterable
                             
-                            from shared.models import Vet
+                            from src.models import Vet
                             
                             
                             def collect_from_json(logger: Logger, vets: Iterable[Vet]) -> Iterable[Vet]:

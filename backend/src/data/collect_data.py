@@ -3,7 +3,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Iterable, Any, TypeVar, Type
 
-from shared.models import Vet, Source, Field, Location, Contact, ModelWithMetadata, AvailabilityCondition, \
+from ..models import Vet, Source, Field, Location, Contact, ModelWithMetadata, AvailabilityCondition, \
     AvailabilityConditionAll, AvailabilityConditionNot, AvailabilityConditionAnd, AvailabilityConditionOr, \
     AvailabilityConditionTimeSpanDuringDay, TimeDuringDay, AvailabilityConditionWeekdaysSpan, AvailabilityConditionHolidays, Person
 

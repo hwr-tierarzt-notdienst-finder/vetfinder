@@ -3,8 +3,8 @@ from typing import Iterable, TypeVar
 
 from dateutil.tz import gettz
 
-from shared.constants import WEEKDAYS
-from shared.models import (
+from ..constants import WEEKDAYS
+from ..models import (
     TimeSpan,
     AvailabilityConditionTimeSpanDuringDay,
     AvailabilityConditionWeekdaysSpan,
