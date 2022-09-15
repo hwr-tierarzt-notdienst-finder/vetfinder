@@ -5,7 +5,7 @@ from pymongo import MongoClient
 from pymongo.database import Database, Mapping, Collection
 from pymongo.results import InsertOneResult
 
-from . import cache
+from .utils import cache
 from .models import Vet, VetInDb, Location
 from .normalization import normalize_vet
 from . import config

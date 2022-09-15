@@ -10,9 +10,6 @@ from pydantic.generics import GenericModel
 from .types_ import Timezone, Region
 
 
-__version__ = "1.0"
-
-
 _T = TypeVar("_T")
 
 

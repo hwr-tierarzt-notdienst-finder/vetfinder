@@ -2,7 +2,7 @@ import re
 from typing import NoReturn, Callable, TypeVar, cast
 
 from .human_readable import human_readable
-from .types_.string import HowManyShouldMatch, Matcher
+from ..types_.string import HowManyShouldMatch, Matcher
 
 _TStr = TypeVar("_TStr", bound=str)
 

@@ -5,7 +5,6 @@ from pathlib import Path
 from typing import Literal, cast, TypeAlias, TypedDict, Iterable, Protocol
 
 from . import path
-from . import cache
 
 # Standard library does not have type hints for levels
 LevelCritical = Literal[50]
@@ -211,21 +210,4 @@ class _SpecificLogLevelFilter(Filter):
 
     def filter(self, record: LogRecord) -> bool:
         return record.levelname == self._log_level
-
-
-def create_logger(
-        *path_: str,
-        factory: LoggerFactory | None = None
-) -> Logger:
-    if factory is None:
-        factory = _create_default_logger_factory()
-
-    return factory.create(*path_)
-
-
-@cache.return_singleton
-def _create_default_logger_factory() -> LoggerFactory:
-    return LoggerFactoryTimeBasedRolloverSingleDirDotDelimitedFiles(
-        path.find_logs()
-    )
 

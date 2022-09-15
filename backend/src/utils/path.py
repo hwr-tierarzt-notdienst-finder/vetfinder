@@ -2,7 +2,6 @@ import dataclasses
 from dataclasses import dataclass
 from pathlib import Path
 
-from . import cache
 from . import validate
 
 
@@ -10,16 +9,6 @@ from . import validate
 class ExpectedDirectoryContents:
     files: set[str] = dataclasses.field(default_factory=set)
     dirs: set[str] = dataclasses.field(default_factory=set)
-
-
-# We don't want to make indicators too strict,
-# to avoid changes breaking path discovery
-_DIR_CONTENTS_INDICATING_PROJECT_ROOT = ExpectedDirectoryContents(
-    dirs={".git"}
-)
-_DIR_CONTENTS_INDICATING_BACKEND_DIR = ExpectedDirectoryContents(
-    files={"requirements.txt"}
-)
 
 
 def abs_from_str(s: str) -> Path:
@@ -68,30 +57,3 @@ def find_first_parent_with_contents(
         )
 
     return parent
-
-
-@cache.return_singleton
-def find_project_root() -> Path:
-    """
-    Returns the root of the git repository.
-    """
-    return find_first_parent_with_contents(
-        abs_from_str(__file__),
-        _DIR_CONTENTS_INDICATING_PROJECT_ROOT
-    )
-
-
-@cache.return_singleton
-def find_backend() -> Path:
-    """
-    Returns the directory containing the python backend source code.
-    """
-    return find_first_parent_with_contents(
-        abs_from_str(__file__),
-        _DIR_CONTENTS_INDICATING_BACKEND_DIR
-    )
-
-
-@cache.return_singleton
-def find_logs() -> Path:
-    return find_backend() / "logs"

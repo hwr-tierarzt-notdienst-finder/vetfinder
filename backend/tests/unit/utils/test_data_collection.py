@@ -1,9 +1,9 @@
 import textwrap
 from pathlib import Path
 
-from src import data_collection
-from src import file_system
-from src import log
+from src.utils import data_collection
+from src.utils import file_system
+from src.utils import log
 
 
 class TestPipelineFactory:

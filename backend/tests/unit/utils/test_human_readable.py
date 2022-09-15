@@ -1,4 +1,4 @@
-from src.human_readable import human_readable, Config
+from src.utils.human_readable import human_readable, Config
 
 
 class TestHumanReadable:

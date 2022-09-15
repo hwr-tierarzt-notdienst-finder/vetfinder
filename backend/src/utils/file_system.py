@@ -4,8 +4,8 @@ from pathlib import Path
 from shutil import rmtree
 from typing import TextIO, TypedDict, Literal, Iterable, TypeVar, NoReturn, cast
 
+from .. import types_
 from .human_readable import human_readable
-from . import types_
 from . import string
 
 _T = TypeVar("_T")

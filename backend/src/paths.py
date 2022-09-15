@@ -1,53 +1,42 @@
-from collections.abc import Callable
-from functools import wraps
 from pathlib import Path
 
-
-def _ensure_dir(func: Callable[[], Path]) -> Callable[[], Path]:
-    @wraps(func)
-    def wrapper() -> Path:
-        path = func()
-
-        assert path.is_dir()
-
-        return path
-
-    return wrapper
+from .utils import cache
+from .utils import path
 
 
-_project_path: Path | None = None
-@_ensure_dir
-def git_root() -> Path:
-    global _project_path
-
-    could_not_find_err = RuntimeError("Could not find git root path")
-
-    if _project_path is None:
-        # Climb until we find a directory with a .git subdirectory
-        path = Path(__file__).resolve()
-        while True:
-            parent = path.parent
-            is_root = path == parent
-            if is_root:
-                raise could_not_find_err
-
-            if (path / ".git").is_dir():
-                _project_path = path.resolve()
-                break
-
-            path = parent
-
-    if _project_path is None:
-        raise could_not_find_err
-
-    return _project_path
+# We don't want to make indicators too strict,
+# to avoid changes breaking path discovery
+_DIR_CONTENTS_INDICATING_PROJECT_ROOT = path.ExpectedDirectoryContents(
+    dirs={".git"}
+)
+_DIR_CONTENTS_INDICATING_BACKEND_DIR = path.ExpectedDirectoryContents(
+    files={"requirements.txt"}
+)
 
 
-@_ensure_dir
-def backend() -> Path:
-    return git_root() / "backend"
+@cache.return_singleton
+def find_project_root() -> Path:
+    """
+    Returns the root of the git repository.
+    """
+    return path.find_first_parent_with_contents(
+        path.abs_from_str(__file__),
+        _DIR_CONTENTS_INDICATING_PROJECT_ROOT
+    )
 
 
-@_ensure_dir
-def schemas() -> Path:
-    return git_root() / "schemas"
+@cache.return_singleton
+def find_backend() -> Path:
+    """
+    Returns the directory containing the python backend source code.
+    """
+    return path.find_first_parent_with_contents(
+        path.abs_from_str(__file__),
+        _DIR_CONTENTS_INDICATING_BACKEND_DIR
+    )
+
+
+@cache.return_singleton
+def find_logs() -> Path:
+    return find_backend() / "logs"
+

@@ -8,7 +8,7 @@ from typing import Callable
 from dateutil.tz import gettz
 import requests
 
-from .... import cache
+from ....utils import cache
 from ....types_ import Region
 from ....constants import REGIONS
 

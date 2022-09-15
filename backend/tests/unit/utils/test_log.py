@@ -1,8 +1,8 @@
 from pathlib import Path
 from typing import Iterable
 
-from src import log
-from src import file_system
+from src.utils import log
+from src.utils import file_system
 
 
 def test_log() -> None:
@@ -11,9 +11,9 @@ def test_log() -> None:
             log_dir
         )
 
-        logger1 = log.create_logger("logger1", factory=logger_factory)
-        logger2 = log.create_logger("logger2", factory=logger_factory)
-        logger3 = log.create_logger("logger", "num3", factory=logger_factory)
+        logger1 = logger_factory.create("logger1")
+        logger2 = logger_factory.create("logger2")
+        logger3 = logger_factory.create("logger", "num3")
 
         loggers = [logger1, logger2, logger3]
 

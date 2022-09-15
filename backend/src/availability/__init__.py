@@ -4,8 +4,7 @@ from typing import Iterable, TypeVar, Callable
 
 from dateutil.tz import gettz
 
-from .. import validate
-from .. import cache
+from ..utils import cache, validate
 from ..models import (
     AvailabilityCondition,
     Vet,
