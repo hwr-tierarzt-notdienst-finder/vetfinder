@@ -3,8 +3,8 @@ from pathlib import Path
 from typing import cast
 
 from .human_readable import human_readable
-from .constants import TIMEZONES, WEEKDAYS
-from .types import Timezone, Weekday
+from .constants import TIMEZONES, WEEKDAYS, REGIONS
+from .types import Timezone, Weekday, Region
 
 
 def weekday(day: str) -> Weekday:
@@ -38,6 +38,16 @@ def timezone(s: str) -> Timezone:
     raise ValueError(
         f"Invalid timezone '{timezone}'. "
         f"Timezone must be {human_readable(TIMEZONES).ored()}"
+    )
+
+
+def region(s: str) -> Region:
+    if s in REGIONS:
+        return cast(Region, s)
+
+    raise ValueError(
+        f"Invalid region '{region}'. "
+        f"Region must be {human_readable(Region).quoted().ored()}"
     )
 
 

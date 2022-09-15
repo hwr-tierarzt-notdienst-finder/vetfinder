@@ -3,9 +3,9 @@ from datetime import datetime
 from pathlib import Path
 from typing import Iterable, Any, TypeVar, Type
 
-from models import Vet, Source, Field, Location, Contact, ModelWithMetadata, AvailabilityCondition, \
+from shared.models import Vet, Source, Field, Location, Contact, ModelWithMetadata, AvailabilityCondition, \
     AvailabilityConditionAll, AvailabilityConditionNot, AvailabilityConditionAnd, AvailabilityConditionOr, \
-    AvailabilityConditionTimespan, Time, AvailabilityConditionWeekdaysSpan, AvailabilityConditionHolidays, Person
+    AvailabilityConditionTimeSpanDuringDay, TimeDuringDay, AvailabilityConditionWeekdaysSpan, AvailabilityConditionHolidays, Person
 
 _DEFAULT_TIMEZONE = "Europe/Berlin"
 
@@ -222,16 +222,16 @@ def _create_availability_condition_from_dct(
             source,
             dt,
         )
-    elif type_ == "timespan":
+    elif type_ == "time_span_during_day":
         return _create_model_with_metadata(
-            AvailabilityConditionTimespan,
+            AvailabilityConditionTimeSpanDuringDay,
             {
                 "type": type_,
-                "start_time": Time(
+                "start_time": TimeDuringDay(
                     hour=dct["start_time"]["hour"],
                     minute=dct["start_time"].get("minute", None)
                 ),
-                "end_time": Time(
+                "end_time": TimeDuringDay(
                     hour=dct["end_time"]["hour"],
                     minute=dct["end_time"].get("minute", None)
                 ),

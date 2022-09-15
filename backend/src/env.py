@@ -1,7 +1,7 @@
 import os
 from typing import Literal, cast
 
-from .human_readable import human_readable
+from shared.human_readable import human_readable
 
 Context = Literal["prod", "dev", "test"]
 

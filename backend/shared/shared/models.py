@@ -4,6 +4,8 @@ from enum import Enum
 from typing import TypeVar, Generic, Literal, TypeAlias
 from typing_extensions import Annotated
 
+from .types import Timezone, Region
+
 from pydantic import BaseModel, Field as PydanticField
 from pydantic.generics import GenericModel
 
@@ -12,6 +14,17 @@ __version__ = "1.0"
 
 
 _T = TypeVar("_T")
+
+
+class TimeSpan(BaseModel):
+    """
+    Object representing the half-open datetime interval: [start,end).
+    """
+    start: datetime
+    end: datetime
+
+    def __hash__(self) -> int:
+        return hash(self.start) + hash(self.end)
 
 
 class Source(BaseModel):
@@ -79,18 +92,18 @@ class AvailabilityConditionAll(ModelWithMetadata):
 
 
 class TimezoneAware(ModelWithMetadata):
-    timezone: Literal["Europe/Berlin"]
+    timezone: Timezone
 
 
-class Time(BaseModel):
+class TimeDuringDay(BaseModel):
     hour: int
     minute: int
 
 
-class AvailabilityConditionTimespan(TimezoneAware):
-    type: Literal["timespan"]
-    start_time: Time
-    end_time: Time
+class AvailabilityConditionTimeSpanDuringDay(TimezoneAware):
+    type: Literal["time_span_during_day"]
+    start_time: TimeDuringDay
+    end_time: TimeDuringDay
 
 
 Weekday: TypeAlias = Literal["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
@@ -104,7 +117,7 @@ class AvailabilityConditionWeekdaysSpan(TimezoneAware):
 
 class AvailabilityConditionHolidays(ModelWithMetadata):
     type: Literal["holidays"]
-    region: Literal["Berlin"]
+    region: Region
 
 
 AvailabilityCondition = Annotated[
@@ -112,7 +125,7 @@ AvailabilityCondition = Annotated[
     | AvailabilityConditionAnd
     | AvailabilityConditionOr
     | AvailabilityConditionAll
-    | AvailabilityConditionTimespan
+    | AvailabilityConditionTimeSpanDuringDay
     | AvailabilityConditionWeekdaysSpan
     | AvailabilityConditionHolidays,
     PydanticField(discriminator="type")
@@ -142,3 +155,7 @@ class Vet(BaseModel):
 
 class VetInDb(Vet):
     id: str
+
+
+class VetResponse(VetInDb):
+    availability: list[TimeSpan] | None = None

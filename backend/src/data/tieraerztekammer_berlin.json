@@ -58,11 +58,11 @@
                 "type": "not",
                 "child": {
                   "type": "holidays",
-                  "region": "Berlin"
+                  "region": "Bundesland:Berlin"
                 }
               },
               {
-                "type":"timespan",
+                "type":"time_span_during_day",
                 "start_time": {
                   "hour": 9,
                   "minute": 0
@@ -87,12 +87,12 @@
                   },
                   {
                     "type": "holidays",
-                    "region": "Berlin"
+                    "region": "Bundesland:Berlin"
                   }
                 ]
               },
               {
-                "type": "timespan",
+                "type": "time_span_during_day",
                 "start_time": {
                   "hour": 10,
                   "minute": 0
