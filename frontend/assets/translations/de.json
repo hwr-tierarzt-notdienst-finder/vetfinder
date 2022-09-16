@@ -29,6 +29,8 @@
         "title": "Einstellungen",
         "darkmode": "Dunkelmodus",
         "language": "Sprache",
-        "publisher": "Impressum"
+        "publisher": "Impressum",
+        "snackbar_language_change": "Starten Sie die App neu, um die Änderung anzuwenden.",
+        "snackbar_close": "Schließen"
     }
 }

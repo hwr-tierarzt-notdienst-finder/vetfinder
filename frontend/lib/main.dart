@@ -31,7 +31,6 @@ Future<void> main() async {
       child: MultiProvider(
         providers: [
           ChangeNotifierProvider(create: (_) => ThemeNotifier()),
-          ChangeNotifierProvider(create: (_) => LanguageNotifier()),
           ChangeNotifierProvider(create: (_) => FilterNotifier()),
         ],
         child: App(),
@@ -45,15 +44,15 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer2<ThemeNotifier, LanguageNotifier>(
-      builder: (context, ThemeNotifier, LanguageNotifier, child) {
-        context.setLocale(LanguageNotifier.locale);
+    return Consumer<ThemeNotifier>(
+      builder: (context, ThemeNotifier notifier, child) {
+        context.setLocale(Locale(SharedPrefs().language));
         return MaterialApp(
           title: 'VetFinder',
           localizationsDelegates: context.localizationDelegates,
           supportedLocales: context.supportedLocales,
           locale: context.locale,
-          theme: ThemeNotifier.isDarkMode ? darkTheme : lightTheme,
+          theme: notifier.isDarkMode ? darkTheme : lightTheme,
           initialRoute: '/home',
           routes: {
             '/home': (context) => const Home(

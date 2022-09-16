@@ -29,6 +29,8 @@
         "title": "Settings",
         "darkmode": "Darkmode",
         "language": "Language",
-        "publisher": "Publisher"
+        "publisher": "Publisher",
+        "snackbar_language_change": "Restart the application to apply the change.",
+        "snackbar_close": "Close"
     }
 }

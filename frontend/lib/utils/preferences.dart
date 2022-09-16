@@ -2,7 +2,6 @@
 
 import 'package:latlong2/latlong.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:easy_localization/easy_localization.dart';
 
 import 'package:frontend/utils/constants.dart';
 
@@ -21,7 +20,7 @@ class SharedPrefs {
     _sharedPrefs.setBool(keyIsDarkMode, value);
   }
 
-  String get language => _sharedPrefs.getString(keyLanguage) ?? 'en';
+  String get language => _sharedPrefs.getString(keyLanguage) ?? "en";
   set language(String value) {
     _sharedPrefs.setString(keyLanguage, value);
   }
