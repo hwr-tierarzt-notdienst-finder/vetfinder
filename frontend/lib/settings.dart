@@ -108,36 +108,39 @@ class _SettingState extends State<Setting> {
                       fontSize: 20,
                     ),
                   ),
-                  DropdownButton<String>(
-                    value: _selectedLanguage,
-                    icon: const Icon(Icons.arrow_downward),
-                    elevation: 16,
-                    style: const TextStyle(color: Colors.deepPurple),
-                    underline: Container(
-                      height: 2,
-                      color: Colors.deepPurpleAccent,
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: 30, vertical: 5),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(10),
                     ),
-                    onChanged: (String? value) {
-                      setState(() {
-                        SharedPrefs().language = value!;
-                      });
-                      final snackBar = SnackBar(
-                        content: Text('settings.snackbar_language_change'.tr()),
-                        backgroundColor: Colors.black,
-                        action: SnackBarAction(
-                          label: 'settings.snackbar_close'.tr(),
-                          onPressed: () {
-                          },
-                        ),
-                      );
-                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                    },
-                    items: languagesList.map<DropdownMenuItem<String>>((String option) {
-                      return DropdownMenuItem<String>(
-                        value: availableLanguages[option],
-                        child: Text(option),
-                      );
-                    }).toList(),
+                    child: DropdownButton<String>(
+                      value: _selectedLanguage,
+                      icon: Icon(Icons.arrow_drop_down),
+                      iconSize: 42,
+                      elevation: 16,
+                      onChanged: (String? value) {
+                        setState(() {
+                          SharedPrefs().language = value!;
+                        });
+                        final snackBar = SnackBar(
+                          content: Text('settings.snackbar_language_change'.tr()),
+                          backgroundColor: Colors.black,
+                          action: SnackBarAction(
+                            label: 'settings.snackbar_close'.tr(),
+                            onPressed: () {
+                            },
+                          ),
+                        );
+                        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                      },
+                      items: languagesList.map<DropdownMenuItem<String>>((String option) {
+                        return DropdownMenuItem<String>(
+                          value: availableLanguages[option],
+                          child: Text(option),
+                        );
+                      }).toList(),
+                    ),
                   ),
                 ],
               ),
