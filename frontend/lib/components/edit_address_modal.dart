@@ -1,5 +1,13 @@
+import 'dart:collection';
+import 'dart:convert';
+import 'dart:ffi';
+import 'package:frontend/api.dart' as api;
+import 'package:http/http.dart' as Http;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_geocoder/geocoder.dart';
+import 'package:frontend/components/search_widget.dart';
+import 'package:frontend/utils/preferences.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:location/location.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -20,15 +28,14 @@ class EditAddressModal extends StatefulWidget {
 
 class _EditAddressModalState extends State<EditAddressModal> {
   Location location = Location();
-  late LocationData currentPosition;
   String address = "";
-  LatLng position = LatLng(0, 0);
+  List<api.AddressSuggestion> suggestions = [];
 
   @override
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(borderRadius: BorderRadius.circular(20)),
-      height: MediaQuery.of(context).size.height * 0.4,
+      height: MediaQuery.of(context).size.height * 0.9,
       child: Padding(
         padding: const EdgeInsets.all(5),
         child: Column(
@@ -71,6 +78,52 @@ class _EditAddressModalState extends State<EditAddressModal> {
               indent: 20,
               endIndent: 20,
             ),
+            SearchWidget(
+              text: SharedPrefs().currentAddress,
+              onSubmitted: (text) {
+                fetchAddressCompletion(text);
+              },
+              hintText: 'edit_address_modal.address_hint'.tr(),
+            ),
+            Expanded(
+              child: ListView.builder(
+                  itemCount: suggestions.length,
+                  itemBuilder: (context, index) {
+                    return Center(
+                      child: Column(
+                        children: [
+                          TextButton(
+                            child: Text(
+                              suggestions[index].displayName,
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black),
+                              textAlign: TextAlign.center,
+                            ),
+                            onPressed: () {
+                              SharedPrefs().currentPosition = LatLng(
+                                  suggestions[index].latitude,
+                                  suggestions[index].longitude);
+                              getAddress(SharedPrefs().currentPosition.latitude,
+                                      SharedPrefs().currentPosition.longitude)
+                                  .then((value) {
+                                print("ADDRESS");
+                                print(value.first.addressLine);
+                                SharedPrefs().currentAddress =
+                                    value.first.addressLine ?? "";
+                                Navigator.pop(context); // close the modal
+                              });
+                              print(suggestions[index].displayName);
+                            },
+                          ),
+                          const SizedBox(
+                            height: 20,
+                          )
+                        ],
+                      ),
+                    );
+                  }),
+            )
           ],
         ),
       ),
@@ -97,14 +150,15 @@ class _EditAddressModalState extends State<EditAddressModal> {
       }
     }
 
-    currentPosition = await location.getLocation();
+    LocationData currentPosition = await location.getLocation();
     if (currentPosition.latitude != null && currentPosition.longitude != null) {
-      position = LatLng(currentPosition.latitude!, currentPosition.longitude!);
+      SharedPrefs().currentPosition =
+          LatLng(currentPosition.latitude!, currentPosition.longitude!);
 
       LocationData currentLocation = await location.onLocationChanged.first;
       setState(() {
         currentPosition = currentLocation;
-        position =
+        SharedPrefs().currentPosition =
             LatLng(currentPosition.latitude!, currentPosition.longitude!);
 
         getAddress(currentPosition.latitude!, currentPosition.longitude!)
@@ -113,7 +167,7 @@ class _EditAddressModalState extends State<EditAddressModal> {
             address = "${value.first.addressLine}";
             Navigator.pop(context); // close the modal
           });
-          widget.onPositionChanged(position, address);
+          widget.onPositionChanged(SharedPrefs().currentPosition, address);
         });
       });
     }
@@ -124,5 +178,45 @@ class _EditAddressModalState extends State<EditAddressModal> {
     List<Address> add =
         await Geocoder.local.findAddressesFromCoordinates(coordinates);
     return add;
+  }
+
+  Future<void> fetchAddressCompletion(String input) async {
+    var uri = Uri(
+        scheme: "https",
+        host: "nominatim.openstreetmap.org",
+        pathSegments: ["search"],
+        query: "format=json&city=Berlin&street=$input");
+
+    print(uri);
+    try {
+      // Make the GET request
+      Map<String, String> headers = HashMap();
+      headers.putIfAbsent('Accept', () => 'application/json');
+
+      Http.Response response = await Http.get(uri, headers: headers);
+      // The request succeeded. Process the JSON.
+
+      List<dynamic> result = json.decode(response.body);
+      List<api.AddressSuggestion> localSuggestions = [];
+
+      for (final entry in result) {
+        api.AddressSuggestion suggestion = api.AddressSuggestion(
+            displayName: entry["display_name"],
+            latitude: double.tryParse(entry["lat"].toString()) ?? 0,
+            longitude: double.tryParse(entry["lon"].toString()) ?? 0,
+            type: entry["type"],
+            importance: double.tryParse(entry["importance"].toString()) ?? 0);
+        localSuggestions.add(suggestion);
+      }
+      setState(() {
+        var len = localSuggestions.length;
+        print("$len suggestions found!");
+        suggestions = localSuggestions;
+      });
+    } catch (e) {
+      // The GET request failed. Handle the error.
+      print("Couldn't open $uri");
+      print(e);
+    }
   }
 }
