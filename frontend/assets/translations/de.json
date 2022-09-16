@@ -1,33 +1,33 @@
 {
     "home": {
-        "current_address": "Current Address",
-        "query_hint": "Name, Address, ZIP Code"
+        "current_address": "Aktuelle Adresse",
+        "query_hint": "Name, Addresse, PLZ"
     },
     "search_filter_dialog": {
-        "title": "Filter Settings",
-        "search_radius": "Search Radius",
-        "category": "Animal Type",
-        "reset": "Reset",
-        "cancel": "Cancel",
-        "apply": "Apply"
+        "title": "Suchfilter",
+        "search_radius": "Suchradius",
+        "category": "Tierart",
+        "reset": "Zurücksetzen",
+        "cancel": "Abbrechen",
+        "apply": "Anwenden"
     },
     "edit_address_modal": {
-        "title": "Location",
-        "use_current_location": "Use Current Location"
+        "title": "Standort",
+        "use_current_location": "Aktuellen Standort Verwenden"
     },
     "veterinarian": {
-        "show_in_map": "Show in Map",
-        "view_vet": "View Vet"
+        "show_in_map": "In Karte anzeigen",
+        "view_vet": "Details ansehen"
     },
     "vet_information": {
-        "title": "Vet Information",
-        "open_website": "Open Website",
-        "open_map": "Open Map"
+        "title": "Tierarzt Information",
+        "open_website": "Webseite öffnen",
+        "open_map": "Karte öffnen"
     },
     "settings": {
-        "title": "Settings",
-        "darkmode": "Darkmode",
-        "language": "Language",
-        "publisher": "Publisher"
+        "title": "Einstellungen",
+        "darkmode": "Dunkelmodus",
+        "language": "Sprache",
+        "publisher": "Impressum"
     }
 }

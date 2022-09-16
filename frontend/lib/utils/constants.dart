@@ -1,5 +1,8 @@
 // App Settings
-const List<String> availableLanguages = ["English", "Deutsch"];
+const Map availableLanguages = {
+  "English": "en",
+  "Deutsch": "de"
+};
 
 // Filter Settings
 const int maxSearchRadius = 50;

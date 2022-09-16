@@ -36,7 +36,7 @@ class _EditAddressModalState extends State<EditAddressModal> {
             const SizedBox(height: 10),
             Text(
               'edit_address_modal.title'.tr(),
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
               ),

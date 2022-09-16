@@ -2,9 +2,70 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
 
-import 'package:frontend/theme.dart';
 import 'package:frontend/utils/preferences.dart';
 import 'package:frontend/utils/constants.dart';
+
+ThemeData lightTheme = ThemeData(
+  brightness: Brightness.light,
+  primarySwatch: Colors.red,
+  buttonTheme: const ButtonThemeData(
+    buttonColor: Colors.red
+  ),
+  scaffoldBackgroundColor: const Color(0xfff1f1f1)
+);
+
+ThemeData darkTheme = ThemeData(
+  brightness: Brightness.dark,
+  primarySwatch: Colors.grey,
+);
+
+class ThemeNotifier extends ChangeNotifier {
+  late bool _isDarkMode;
+  bool get isDarkMode => _isDarkMode;
+  
+  ThemeNotifier() {
+    _loadFromPrefs();
+  }
+
+  toggleTheme() {
+    _isDarkMode = !_isDarkMode;
+    _saveToPrefs();
+    notifyListeners();
+  }
+
+  _loadFromPrefs() async {
+    _isDarkMode = SharedPrefs().isDarkMode;
+    notifyListeners();
+  }
+
+  _saveToPrefs()async {
+    SharedPrefs().isDarkMode = _isDarkMode;
+  }
+}
+
+class LanguageNotifier extends ChangeNotifier {
+  late String _locale;
+  Locale get locale => Locale(_locale);
+  
+  LanguageNotifier() {
+    _loadFromPrefs();
+  }
+
+  changeLanguage(String newLanguage) {
+    _locale = newLanguage;
+    _saveToPrefs();
+    notifyListeners();
+  }
+
+  _loadFromPrefs() async {
+    _locale = SharedPrefs().language;
+    notifyListeners();
+  }
+
+  _saveToPrefs()async {
+    SharedPrefs().language = _locale;
+  }
+}
 
 class Setting extends StatefulWidget {
   const Setting({Key? key}) : super(key: key);
@@ -14,8 +75,12 @@ class Setting extends StatefulWidget {
 }
 
 class _SettingState extends State<Setting> {
+  List<String> languagesList = List<String>.from(availableLanguages.keys);
+  late String _selectedLanguage;
+
   @override
   Widget build(BuildContext context) {
+    _selectedLanguage = SharedPrefs().language;
     return Scaffold(
       appBar: AppBar(
         title: Text('settings.title'.tr()),
@@ -31,7 +96,7 @@ class _SettingState extends State<Setting> {
                 children: [
                   Text(
                     'settings.darkmode'.tr(),
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 20,
                     ),
                   ),
@@ -63,31 +128,30 @@ class _SettingState extends State<Setting> {
                 children: [
                   Text(
                     'settings.language'.tr(),
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 20,
                     ),
                   ),
-                  DropdownButton<String>(
-                    value: availableLanguages.first,
-                    icon: const Icon(Icons.arrow_downward),
-                    elevation: 16,
-                    style: const TextStyle(color: Colors.deepPurple),
-                    underline: Container(
-                      height: 2,
-                      color: Colors.deepPurpleAccent,
+                  Consumer<LanguageNotifier>(
+                    builder: (context,notifier,child) => DropdownButton<String>(
+                      value: _selectedLanguage,
+                      icon: const Icon(Icons.arrow_downward),
+                      elevation: 16,
+                      style: const TextStyle(color: Colors.deepPurple),
+                      underline: Container(
+                        height: 2,
+                        color: Colors.deepPurpleAccent,
+                      ),
+                      onChanged: (String? value) {
+                        notifier.changeLanguage(value!);
+                      },
+                      items: languagesList.map<DropdownMenuItem<String>>((String option) {
+                        return DropdownMenuItem<String>(
+                          value: availableLanguages[option],
+                          child: Text(option),
+                        );
+                      }).toList(),
                     ),
-                    onChanged: (String? value) {
-                      // This is called when the user selects an item.
-                      setState(() {
-                        context.setLocale(Locale('de'));
-                      });
-                    },
-                    items: availableLanguages.map<DropdownMenuItem<String>>((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(value),
-                      );
-                    }).toList(),
                   ),
                 ],
               ),
@@ -108,7 +172,7 @@ class _SettingState extends State<Setting> {
                 children: [
                   Text(
                     'settings.publisher'.tr(),
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 20,
                     ),
                   ),

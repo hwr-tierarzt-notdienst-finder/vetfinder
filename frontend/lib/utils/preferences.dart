@@ -23,7 +23,7 @@ class SharedPrefs {
 
   String get language => _sharedPrefs.getString(keyLanguage) ?? 'en';
   set language(String value) {
-    _sharedPrefs.setString(keyIsDarkMode, value);
+    _sharedPrefs.setString(keyLanguage, value);
   }
 
   // Filter Settings
@@ -38,7 +38,7 @@ class SharedPrefs {
   }
 
   // Location Settings
-  String get currentAddress => _sharedPrefs.getString(keyCurrentAddress) ?? "home.current_address".tr();
+  String get currentAddress => _sharedPrefs.getString(keyCurrentAddress) ?? "";
   set currentAddress(String value) {
     _sharedPrefs.setString(keyCurrentAddress, value);
   }
