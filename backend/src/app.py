@@ -1,4 +1,6 @@
 from datetime import datetime
+from functools import wraps
+from typing import Callable, TypeVar, ParamSpec, Any
 
 from fastapi import FastAPI, HTTPException, status
 
@@ -6,6 +8,12 @@ from .models import VetInDb, VetResponse
 from . import db
 from .data import collect_vets
 from . import availability
+
+
+
+_T = TypeVar('_T')
+_P = ParamSpec('_P')
+
 
 app = FastAPI()
 
@@ -62,7 +70,7 @@ def get_vets(
                     upper_bound=availability_to,
                     vet=vet,
                 )),
-                **vet.dict()
+                **vet.dict(by_alias=False)
             )
             for vet in vets
         ]

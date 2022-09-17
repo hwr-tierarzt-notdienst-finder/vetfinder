@@ -6,7 +6,7 @@ from typing import TextIO, TypedDict, Literal, Iterable, TypeVar, NoReturn, cast
 
 from .. import types_
 from .human_readable import human_readable
-from . import string
+from . import string_
 
 _T = TypeVar("_T")
 
@@ -149,7 +149,7 @@ def matching_contents(
 
     name_matcher = expected_contents["match_name"]
 
-    if not string.matches(path.name, name_matcher):
+    if not string_.matches(path.name, name_matcher):
         raise ValueError(
             f"Path '{path}' name '{path.name}' does not match '{name_matcher}'"
         )
@@ -168,7 +168,7 @@ def matching_contents(
             err: ValueError | None = None
 
             try:
-                if not string.matches(f.read(), contents_matcher):
+                if not string_.matches(f.read(), contents_matcher):
                     err = ValueError(
                         f"Contents of file '{path}' does not match '{contents_matcher}'"
                     )
@@ -195,7 +195,7 @@ def matching_contents(
                             f"File '{path}' has at least {line_num} lines"
                         ) from err
 
-                    if not string.matches(line, line_matcher):
+                    if not string_.matches(line, line_matcher):
                         raise ValueError(
                             f"Line {line_num} '{line}' of file '{path}' does not match '{line_matcher}'"
                         )
@@ -225,7 +225,7 @@ def matching_contents(
             # Narrow search space
             children_with_matching_name = {
                 child for child in children
-                if string.matches(child.name, name_matcher)
+                if string_.matches(child.name, name_matcher)
             }
 
             for child in children_with_matching_name:
@@ -363,7 +363,7 @@ def create_file(
                 elif hasattr(contents, "__iter__"):
                     f.write(os.linesep.join(contents))
                 else:
-                    raise ValueError("Contents must be a string or list of strings")
+                    raise ValueError("Contents must be a string_ or list of strings")
 
             return f
     except Exception as err:

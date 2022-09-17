@@ -203,3 +203,21 @@ def create_match_validator(
         )
 
     return validator
+
+
+def as_camel_case(s: str) -> str:
+    return "".join(_as_camel_case_chars_iter(s))
+
+
+def _as_camel_case_chars_iter(s: str) -> str:
+    is_word_start = False
+
+    for char in s:
+        if char == "_":
+            is_word_start = True
+        elif is_word_start:
+            yield char.upper()
+
+            is_word_start = False
+        else:
+            yield char

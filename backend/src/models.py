@@ -2,15 +2,25 @@
 from datetime import datetime, timedelta
 from enum import Enum
 from typing import TypeVar, Generic, Literal, TypeAlias
+
+from pydantic.config import BaseConfig
 from typing_extensions import Annotated
 
-from pydantic import BaseModel, Field as PydanticField
+import pydantic
+from pydantic import Field as PydanticField
 from pydantic.generics import GenericModel
 
+from .utils import string_
 from .types_ import Timezone, Region
 
 
 _T = TypeVar("_T")
+
+class BaseModel(pydantic.BaseModel):
+    class Config(BaseConfig):
+        orm_mode = True
+        allow_population_by_field_name = True
+        alias_generator = string_.as_camel_case
 
 
 class TimeSpan(BaseModel):
