@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
 
 import 'package:frontend/home.dart';
-import 'package:frontend/theme.dart';
 import 'package:frontend/settings.dart';
 import 'package:frontend/vet_information.dart';
 import 'package:frontend/components/search_filter_dialog.dart';
@@ -26,16 +25,17 @@ Future<void> main() async {
 
   runApp(
     EasyLocalization(
-        child: MultiProvider(
-          providers: [
-            ChangeNotifierProvider(create: (_) => ThemeNotifier()),
-            ChangeNotifierProvider(create: (_) => FilterNotifier()),
-          ],
-          child: App(),
-        ),
-        supportedLocales: [Locale('en'), Locale('de')],
-        path: 'assets/translations',
-        fallbackLocale: Locale('en')),
+      supportedLocales: [Locale('en'), Locale('de')],
+      path: 'assets/translations',
+      fallbackLocale: Locale('en'),
+      child: MultiProvider(
+        providers: [
+          ChangeNotifierProvider(create: (_) => ThemeNotifier()),
+          ChangeNotifierProvider(create: (_) => FilterNotifier()),
+        ],
+        child: App(),
+      )
+    )
   );
 }
 
@@ -46,6 +46,7 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<ThemeNotifier>(
       builder: (context, ThemeNotifier notifier, child) {
+        context.setLocale(Locale(SharedPrefs().language));
         return MaterialApp(
           title: 'VetFinder',
           localizationsDelegates: context.localizationDelegates,

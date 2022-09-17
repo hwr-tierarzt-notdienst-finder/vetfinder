@@ -1,6 +1,24 @@
+import 'dart:ffi';
+
 import 'package:latlong2/latlong.dart';
 
 import 'package:frontend/utils/preferences.dart';
+
+class AddressSuggestion {
+  const AddressSuggestion(
+      {required this.latitude,
+      required this.longitude,
+      required this.displayName,
+      required this.type,
+      required this.importance})
+      : super();
+
+  final double latitude;
+  final double longitude;
+  final String displayName;
+  final String type;
+  final double importance;
+}
 
 class Address {
   const Address({

@@ -47,8 +47,8 @@ class _SearchFilterDialogState extends State<SearchFilterDialog> {
   // TextEditingController
   final radiusFieldController = TextEditingController();
 
-  int currentRadius = minSearchRadius; // Current Radius (km)
-  List<String> currentCategories = []; // Chosen animal categories
+  int currentRadius = SharedPrefs().searchRadius; // Current Radius (km)
+  List<String> currentCategories = SharedPrefs().categories; // Chosen animal categories
   bool isUpdated = false;
 
   void _setFilterSetting() {
@@ -128,7 +128,7 @@ class _SearchFilterDialogState extends State<SearchFilterDialog> {
                     children: [
                       Text(
                         '${'search_filter_dialog.search_radius'.tr()}:',
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.bold,
                         ),
@@ -195,7 +195,7 @@ class _SearchFilterDialogState extends State<SearchFilterDialog> {
                     children: [
                       Text(
                         '${'search_filter_dialog.category'.tr()}:',
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.bold,
                         ),
