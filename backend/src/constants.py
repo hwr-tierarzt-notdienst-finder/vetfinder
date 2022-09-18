@@ -20,3 +20,7 @@ REGIONS: set[Region] = {
      "Bundesland:Schleswig-Holstein",
      "Bundesland:Thüringen",
 }
+VET_COLLECTIONS: set[str] = {
+     "hidden",
+     "public",
+}
