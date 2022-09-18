@@ -23,8 +23,6 @@ pytest==7.1.2
 pyyaml==6.0
     # via -r requirements-dev.in
 tomli==2.0.1
-    # via
-    #   -c requirements.txt
-    #   pytest
+    # via pytest
 types-beautifulsoup4==4.11.5
     # via -r requirements-dev.in
