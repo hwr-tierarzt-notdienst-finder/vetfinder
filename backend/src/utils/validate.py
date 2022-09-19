@@ -2,8 +2,8 @@ from datetime import datetime
 from pathlib import Path
 from typing import cast
 
-from ..constants import TIMEZONES, WEEKDAYS, REGIONS
-from ..types_ import Timezone, Weekday, Region
+from constants import TIMEZONES, WEEKDAYS, REGIONS
+from types_ import Timezone, Weekday, Region
 from .human_readable import human_readable
 
 
@@ -56,6 +56,16 @@ def datetime_is_timezone_aware(dt: datetime) -> datetime:
         raise ValueError(f"Datetime {dt} is not timezone aware")
 
     return dt
+
+
+def path_is_file(path: Path) -> Path:
+    if path.is_file():
+        return path
+
+    # Better to give a more specific error message if the path does not exist
+    path_exists(path)
+
+    raise ValueError(f"Path '{path}' is not a file")
 
 
 def path_is_dir(path: Path) -> Path:

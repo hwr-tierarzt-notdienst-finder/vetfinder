@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import TypedDict
 
-from ...types_ import Region
+from types_ import Region
 
 
 class CreateCacheRegionEntry(TypedDict):

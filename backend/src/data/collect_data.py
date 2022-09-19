@@ -3,7 +3,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Iterable, Any, TypeVar, Type
 
-from ..models import Vet, Source, Field, Location, Contact, ModelWithMetadata, AvailabilityCondition, \
+from models import Vet, Source, Field, Location, Contact, ModelWithMetadata, AvailabilityCondition, \
     AvailabilityConditionAll, AvailabilityConditionNot, AvailabilityConditionAnd, AvailabilityConditionOr, \
     AvailabilityConditionTimeSpanDuringDay, TimeDuringDay, AvailabilityConditionWeekdaysSpan, AvailabilityConditionHolidays, Person
 
@@ -100,7 +100,6 @@ def _create_person_from_dct(
         source,
         dt
     )
-
 
 
 def _extract_location_from_json_vet_dct(

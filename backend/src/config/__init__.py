@@ -1,6 +1,7 @@
 from dotenv import dotenv_values
 
-from .. import env
+import env
+import paths
 from ._schema import *
 
 
@@ -15,7 +16,8 @@ def get() -> Config:
 
     if _cached_config is None:
         _cached_config = Config(
-            db=_get_db_config(env_context)
+            db=_get_db_config(env_context),
+            auth=_get_auth_config(env_context),
         )
 
     return _cached_config
@@ -53,6 +55,18 @@ def _get_db_config(env_context: env.Context) -> DbConfig:
     )
 
 
+def _get_auth_config(env_context: env.Context) -> AuthConfig:
+    return AuthConfig(
+        tokens_file_path=(
+                paths.find_backend()
+                / _get_auth_dotenv_var_value(
+                    "TOKEN_FILE",
+                    context=env_context
+                )
+        )
+    )
+
+
 def _get_mongo_dotenv_var_value(
         name: str,
         context: env.Context | None = None,
@@ -60,6 +74,17 @@ def _get_mongo_dotenv_var_value(
     return _get_dotenv_var_value(
         name,
         category="MONGO",
+        context=context
+    )
+
+
+def _get_auth_dotenv_var_value(
+        name: str,
+        context: env.Context | None = None,
+) -> str:
+    return _get_dotenv_var_value(
+        name,
+        category="AUTH",
         context=context
     )
 
@@ -86,8 +111,8 @@ def _get_dotenv_var_value(
 
     if _cached_dotenv_vars is None:
         _cached_dotenv_vars = {
-            **dotenv_values(".env"),
-            **dotenv_values(".env.local")
+            **dotenv_values(paths.find_backend() / ".env"),
+            **dotenv_values(paths.find_backend() / ".env.local")
         }
 
     return _cached_dotenv_vars[env_var_name]

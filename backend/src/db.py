@@ -1,3 +1,4 @@
+from functools import lru_cache
 from typing import Any
 
 import pymongo
@@ -5,23 +6,24 @@ from pymongo import MongoClient
 from pymongo.database import Database, Mapping, Collection
 from pymongo.results import InsertOneResult
 
-from .utils import cache
-from .models import Vet, VetInDb, Location
-from .normalization import normalize_vet
-from . import config
+from constants import VET_COLLECTIONS
+from utils import cache
+from models import Vet, VetInDb, Location
+from normalization import normalize_vet
+import config
 
 
-def create_vet(vet: Vet) -> InsertOneResult:
+def create_vet(collection: str, vet: Vet) -> InsertOneResult:
     vet = normalize_vet(vet)
 
-    vets = get_vets_collection()
+    vets = get_vets_collection(collection)
     result = vets.insert_one(vet.dict())
 
     return result
 
 
-def get_vets() -> list[VetInDb]:
-    vets = get_vets_collection()
+def get_vets(collection: str) -> list[VetInDb]:
+    vets = get_vets_collection(collection)
 
     return [
         VetInDb(
@@ -32,10 +34,13 @@ def get_vets() -> list[VetInDb]:
     ]
 
 
-@cache.return_singleton(populate_cache_on="prepopulate_called")
-def get_vets_collection() -> Collection[Mapping[str, Any]]:
+@lru_cache(maxsize=10)
+def get_vets_collection(collection: str) -> Collection[Mapping[str, Any]]:
+    if collection not in VET_COLLECTIONS:
+        raise ValueError(f"No vet collection '{collection}'")
+
     db = get_db()
-    return db["vets"]
+    return db[f"vets_{collection}"]
 
 
 def overwrite_normalized_locations_cache(
@@ -64,21 +69,6 @@ def create_normalized_locations_cache_entry(
     })
 
     return result
-
-
-def get_normalized_locations_cache() -> dict[str, Location]:
-    collection = get_normalized_locations_cache_collection()
-
-    return {
-        dct["key"]: Location(**dct["location"])
-        for dct in collection.find({})
-    }
-
-
-@cache.return_singleton(populate_cache_on="prepopulate_called")
-def get_normalized_locations_cache_collection() -> Collection[Mapping[str, str]]:
-    db = get_db()
-    return db["normalized_location_cache"]
 
 
 @cache.return_singleton(populate_cache_on="prepopulate_called")

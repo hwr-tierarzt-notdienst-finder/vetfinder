@@ -10,11 +10,12 @@ import pydantic
 from pydantic import Field as PydanticField
 from pydantic.generics import GenericModel
 
-from .utils import string_
-from .types_ import Timezone, Region
+from utils import string_
+from types_ import Timezone, Region
 
 
 _T = TypeVar("_T")
+
 
 class BaseModel(pydantic.BaseModel):
     class Config(BaseConfig):

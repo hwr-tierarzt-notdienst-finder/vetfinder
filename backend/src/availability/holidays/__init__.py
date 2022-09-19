@@ -7,9 +7,9 @@ from typing import Any, NoReturn
 
 from dateutil.tz import gettz
 
-from ...constants import REGIONS
-from ...types_ import Region
-from ...utils import cache, import_, validate
+from constants import REGIONS
+from types_ import Region
+from utils import cache, import_, validate
 
 if __name__ == "__main__":
     import sys

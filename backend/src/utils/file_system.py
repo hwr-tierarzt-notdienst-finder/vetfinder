@@ -1,12 +1,14 @@
 import os
+import shutil
 from contextlib import contextmanager
 from pathlib import Path
 from shutil import rmtree
-from typing import TextIO, TypedDict, Literal, Iterable, TypeVar, NoReturn, cast
+from typing import TextIO, TypedDict, Literal, Iterable, TypeVar, NoReturn, cast, IO, Any
 
-from .. import types_
+import types_
 from .human_readable import human_readable
 from . import string_
+from . import path
 
 _T = TypeVar("_T")
 
@@ -409,3 +411,71 @@ def create_dir(
         raise err
 
     return path
+
+
+@contextmanager
+def open_transactional(
+        file_path: Path | str,
+        mode: str,
+        *args: Any,
+        backup_file_suffix: str = ".back",
+        **kwargs: Any,
+) -> Iterable[IO]:
+    file_path = path.from_(file_path)
+
+    backup_file_path: Path | None = None
+    if file_path.exists():
+        backup_file_path = file_path.parent / f"{file_path.name}{backup_file_suffix}"
+
+        if backup_file_path.exists():
+            raise IOError(
+                f"Backup file path '{backup_file_path}' for transactional file open already exists. "
+                "Consider renaming the file or changing 'backup_file_suffix'"
+            )
+
+        shutil.copyfile(file_path, backup_file_path)
+
+    try:
+        with open(file_path, mode, *args, **kwargs) as f:
+            yield f
+    except Exception as err:
+        if backup_file_path is not None:
+            try:
+                # Rollback
+                shutil.copyfile(backup_file_path, file_path)
+                backup_file_path.unlink()
+            except Exception as err:
+                raise RuntimeError(
+                    f"Failed to rollback file open transaction for '{file_path}' ."
+                    f"Backup file with contents from before transaction can be found at '{backup_file_path}'. "
+                    f"Original error: {err}"
+                ) from err
+
+        raise IOError(
+            f"Transaction file IO failed with error: {err}"
+        ) from err
+    else:
+        if backup_file_path is not None:
+            backup_file_path.unlink()
+
+
+def ensure_secrets_file_is_ignored_by_git(
+        file_path: Path | str,
+) -> None:
+    file_path = path.from_(file_path)
+
+    dir_path = path.dir_(file_path.parent)
+    file_name = file_path.name
+
+    file_is_ignored_by_git = False
+    gitignore_file_path = dir_path / ".gitignore"
+    with open(gitignore_file_path) as f:
+        for line in f.readlines():
+            if line.strip() == file_name:
+                file_is_ignored_by_git = True
+                break
+
+    if not file_is_ignored_by_git:
+        raise RuntimeError(
+            f"Secrets file name '{file_name}' must be in gitignore '{gitignore_file_path}'!"
+        )

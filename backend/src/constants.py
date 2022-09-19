@@ -1,4 +1,4 @@
-from .types_ import Weekday, Timezone, Region
+from types_ import Weekday, Timezone, Region
 
 WEEKDAYS: list[Weekday] = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
 TIMEZONES: set[Timezone] = {"Europe/Berlin"}

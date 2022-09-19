@@ -33,7 +33,7 @@ class TestPipelineFactory:
                             from logging import Logger
                             from typing import Iterable
                             
-                            from src.models import Vet
+                            from models import Vet
                             
                             
                             def collect(logger: Logger, vets: Iterable[Vet]) -> Iterable[Vet]:
@@ -51,7 +51,7 @@ class TestPipelineFactory:
                             from logging import Logger
                             from typing import Iterable
                             
-                            from src.models import Vet
+                            from models import Vet
                             
                             
                             def collect_from_json(logger: Logger, vets: Iterable[Vet]) -> Iterable[Vet]:
@@ -79,7 +79,7 @@ class TestPipelineFactory:
                             from logging import Logger
                             from typing import Iterable
                             
-                            from src.models import Vet
+                            from models import Vet
                             
                             
                             def collect_from_json(logger: Logger, vets: Iterable[Vet]) -> Iterable[Vet]:
@@ -111,9 +111,9 @@ class TestPipelineFactory:
                     },
                 ],
             ):
-                from temp_module import child_module1
-                from temp_module import child_module2
-                from temp_module import child_module3
+                from .temp_module import child_module1
+                from .temp_module import child_module2
+                from .temp_module import child_module3
 
                 pipeline1 = factory.create_from_module(child_module1)
                 pipeline1.run([])

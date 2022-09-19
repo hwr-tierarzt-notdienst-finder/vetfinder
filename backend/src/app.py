@@ -1,14 +1,13 @@
 from datetime import datetime
-from functools import wraps
-from typing import Callable, TypeVar, ParamSpec, Any
+from typing import TypeVar, ParamSpec
 
 from fastapi import FastAPI, HTTPException, status
 
-from .models import VetInDb, VetResponse
-from . import db
-from .data import collect_vets
-from . import availability
-
+import auth
+from models import VetInDb, VetResponse
+import db
+from data import collect_vets
+import availability
 
 
 _T = TypeVar('_T')
@@ -20,19 +19,28 @@ app = FastAPI()
 
 @app.on_event("startup")
 def startup() -> None:
-    db.get_vets_collection().drop()
+    db.get_vets_collection("hidden").drop()
+
     for vet in collect_vets():
-        db.create_vet(vet)
+        db.create_vet("hidden", vet)
 
 
 @app.get("/vets", response_model=list[VetResponse])
 def get_vets(
         min_radius_in_km: int,
         max_radius_in_km: int,
+        token: str,
         availability_from: datetime | None = None,
         availability_to: datetime | None = None,
 ) -> list[VetInDb]:
-    vets = db.get_vets()
+    for token_id in auth.token.get_vets_collection_token_ids():
+        if auth.token.is_authentic(token_id, token):
+            collection = auth.token.get_vets_collection_by_token_id(token_id)
+            vets = db.get_vets(collection)
+
+            break
+    else:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
 
     if availability_from is None and availability_to is None:
         return [

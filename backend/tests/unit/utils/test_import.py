@@ -63,7 +63,7 @@ def test_iter_submodules() -> None:
             },
         ]
     ):
-        import temp_module
+        from . import temp_module
 
         sub_modules = list(import_.iter_submodules(temp_module))
 
@@ -71,9 +71,9 @@ def test_iter_submodules() -> None:
         assert {
             module.__name__ for module in sub_modules
         } == {
-            "temp_module.sub_module1",
-            "temp_module.sub_module2",
-            "temp_module.sub_module3",
+            "unit.utils.temp_module.sub_module1",
+            "unit.utils.temp_module.sub_module2",
+            "unit.utils.temp_module.sub_module3",
         }
         for sub_module in sub_modules:
             if sub_module.__name__.endswith("sub_module1"):
