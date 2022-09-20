@@ -82,21 +82,6 @@ class VetInformation extends StatelessWidget {
             const SizedBox(height: 10),
             Row(
               children: [
-                const Icon(Icons.phone),
-                Padding(
-                  padding: const EdgeInsets.only(left: 10),
-                  child: Text(
-                    vet.telephoneNumber,
-                    style: const TextStyle(
-                      fontSize: 15,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 10),
-            Row(
-              children: [
                 const Icon(Icons.pets),
                 Padding(
                   padding: const EdgeInsets.only(left: 10),
@@ -121,33 +106,39 @@ class VetInformation extends StatelessWidget {
             const SizedBox(height: 30),
             Row(
               children: [
-                ElevatedButton(
-                    child: Text(
-                      'vet_information.open_website'.tr(),
-                      style: const TextStyle(
-                          color: Colors.white, fontWeight: FontWeight.bold),
-                    ),
-                    onPressed: () {
-                      launch(vet.websiteUrl);
-                    }),
+                ElevatedButton.icon(
+                  onPressed: () {
+                    launch('tel:${vet.telephoneNumber}');
+                  },
+                  icon: const Icon(Icons.phone), //icon data for elevated button
+                  label: const Text("Call Vet"), //label text
+                ),
               ],
             ),
-            const SizedBox(height: 30),
             Row(
               children: [
-                ElevatedButton(
-                    child: Text(
-                      'vet_information.open_map'.tr(),
-                      style: TextStyle(
-                          color: Colors.white, fontWeight: FontWeight.bold),
-                    ),
-                    onPressed: () {
-                      launch(
-                          'https://www.google.com/maps/search/?api=1&query=${vet.location.position.latitude},${vet.location.position.longitude}');
-                    }),
+                ElevatedButton.icon(
+                  onPressed: () {
+                    launch(
+                        'https://www.google.com/maps/search/?api=1&query=${vet.location.position.latitude},${vet.location.position.longitude}');
+                  },
+                  icon: const Icon(Icons.map), //icon data for elevated button
+                  label: const Text("Open In Google Maps"), //label text
+                ),
               ],
             ),
-            const SizedBox(height: 10),
+            Row(
+              children: [
+                ElevatedButton.icon(
+                  onPressed: () {
+                    launch(vet.websiteUrl);
+                  },
+                  icon:
+                      const Icon(Icons.public), //icon data for elevated button
+                  label: const Text("Open Website"), //label text
+                ),
+              ],
+            ),
           ],
         ),
       ),
