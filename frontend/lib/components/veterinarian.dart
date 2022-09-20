@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/api.dart';
+import 'package:frontend/utils/notifiers.dart';
 import 'package:frontend/vet_information.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -26,31 +27,27 @@ class VetCard extends Card {
   final String websiteUrl;
   final Function(LatLng) onViewInMap;
 
-  double _countDistance(double userLatitude, double userLongitude) {
-    return Distance().as(
-      LengthUnit.Kilometer,
-      LatLng(SharedPrefs().currentPosition.latitude,
-          SharedPrefs().currentPosition.longitude),
+  double _countDistance(
+      LatLng currentPosition, double userLatitude, double userLongitude) {
+    return const Distance().as(
+      LengthUnit.Meter,
+      currentPosition,
       LatLng(userLatitude, userLongitude),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<FilterNotifier>(
-      builder: (context, FilterNotifier notifier, child) {
-        // Update the list of vets if filter is applied
-        if (notifier.filterUpdated) {
-          print('test');
-          notifier.filterUpdated = false;
-        }
+    return Consumer<LocationNotifier>(
+      builder: (context, notifier, child) {
         return Card(
           child: Column(
             children: [
               const SizedBox(height: 10),
               Text(name, style: const TextStyle(fontWeight: FontWeight.bold)),
               const SizedBox(height: 5),
-              Text("${location.address.street} ${location.address.number}"),
+              Text(
+                  "${location.address.street} ${location.address.number}, ${location.address.zipCode} ${location.address.city}"),
               Text(telephoneNumber),
               const SizedBox(height: 5),
               Text(websiteUrl),
@@ -84,7 +81,7 @@ class VetCard extends Card {
                   child: FittedBox(
                     fit: BoxFit.scaleDown,
                     child: Text(
-                      '${_countDistance(location.position.latitude, location.position.longitude).toStringAsFixed(2)} km',
+                      '${(_countDistance(notifier.position, location.position.latitude, location.position.longitude) / 1000).toStringAsFixed(2)} km',
                       style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ),

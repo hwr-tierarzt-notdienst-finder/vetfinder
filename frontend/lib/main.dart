@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/utils/notifiers.dart';
 import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
 
@@ -23,20 +24,18 @@ Future<void> main() async {
   await SharedPrefs().init();
   await EasyLocalization.ensureInitialized();
 
-  runApp(
-    EasyLocalization(
-      supportedLocales: [Locale('en'), Locale('de')],
+  runApp(EasyLocalization(
+      supportedLocales: const [Locale('en'), Locale('de')],
       path: 'assets/translations',
-      fallbackLocale: Locale('en'),
+      fallbackLocale: const Locale('en'),
       child: MultiProvider(
         providers: [
           ChangeNotifierProvider(create: (_) => ThemeNotifier()),
           ChangeNotifierProvider(create: (_) => FilterNotifier()),
+          ChangeNotifierProvider(create: (_) => LocationNotifier()),
         ],
-        child: App(),
-      )
-    )
-  );
+        child: const App(),
+      )));
 }
 
 class App extends StatelessWidget {

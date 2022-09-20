@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map/plugin_api.dart';
+import 'package:frontend/utils/notifiers.dart';
 import 'package:frontend/utils/preferences.dart';
 import 'package:string_similarity/string_similarity.dart';
 import 'package:provider/provider.dart';
@@ -149,15 +150,18 @@ class _HomeState extends State<Home> {
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
     return Consumer<FilterNotifier>(
-      builder: (context, FilterNotifier notifier, child) {
-        // Update the list of vets if filter is applied
-        if (notifier.filterUpdated) {
-          vets = getFilteredVeterinarians();
-          createMarkers();
-          notifier.filterUpdated = false;
-        }
-        currentAddress = SharedPrefs().currentAddress.isNotEmpty ?
-          SharedPrefs().currentAddress : 'home.current_address'.tr();
+        builder: (context, FilterNotifier notifier, child) {
+      // Update the list of vets if filter is applied
+      if (notifier.filterUpdated) {
+        vets = getFilteredVeterinarians();
+        createMarkers();
+        notifier.filterUpdated = false;
+      }
+
+      return Consumer<LocationNotifier>(builder: (context, notifier, child) {
+        currentAddress = notifier.address.isNotEmpty
+            ? notifier.address
+            : 'home.current_address'.tr();
 
         return Scaffold(
           appBar: AppBar(
@@ -249,7 +253,7 @@ class _HomeState extends State<Home> {
             ],
           ),
         );
-      }
-    );
+      });
+    });
   }
 }

@@ -14,7 +14,7 @@
     "edit_address_modal": {
         "title": "Standort",
         "use_current_location": "Aktuellen Standort Verwenden",
-        "address_hint": "Addresse Nummer PLZ"
+        "address_hint": "Addresse, Nummer, PLZ"
     },
     "veterinarian": {
         "show_in_map": "In Karte anzeigen",

@@ -25,11 +25,13 @@ class Address {
     required this.street,
     required this.number,
     required this.zipCode,
+    required this.city,
   }) : super();
 
   final String street;
   final String number;
   final int zipCode;
+  final String city;
 }
 
 class Location {
@@ -76,7 +78,10 @@ List<Veterinarian> getVeterinarians() {
         location: Location(
             position: LatLng(52.5278578, 13.6243765),
             address: const Address(
-                street: "Hönower Straße", number: "263", zipCode: 16000)),
+                street: "Hönower Straße",
+                number: "263",
+                zipCode: 16000,
+                city: "Berlin")),
         categories: ["Hunde"]),
   );
   vets.add(
@@ -88,7 +93,10 @@ List<Veterinarian> getVeterinarians() {
         location: Location(
             position: LatLng(52.5373378, 13.2664472),
             address: const Address(
-                street: "Wattstraße", number: "10", zipCode: 13629)),
+                street: "Wattstraße",
+                number: "10",
+                zipCode: 13629,
+                city: "Berlin")),
         categories: ["Hunde", "Katzen"]),
   );
   vets.add(
@@ -100,7 +108,10 @@ List<Veterinarian> getVeterinarians() {
         location: Location(
             position: LatLng(10.4, 20.5),
             address: const Address(
-                street: "Teststraße", number: "10", zipCode: 16000)),
+                street: "Teststraße",
+                number: "10",
+                zipCode: 16000,
+                city: "Berlin")),
         categories: ["Hunde", "Katzen", "Pferde"]),
   );
   vets.add(
@@ -112,7 +123,10 @@ List<Veterinarian> getVeterinarians() {
         location: Location(
             position: LatLng(10.4, 20.5),
             address: const Address(
-                street: "Teststraße", number: "10", zipCode: 16000)),
+                street: "Teststraße",
+                number: "10",
+                zipCode: 16000,
+                city: "Berlin")),
         categories: ["Katzen", "Pferde"]),
   );
 
