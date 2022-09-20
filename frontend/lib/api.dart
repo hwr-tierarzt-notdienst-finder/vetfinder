@@ -1,4 +1,4 @@
-import 'dart:ffi';
+// import 'dart:ffi';
 
 import 'package:latlong2/latlong.dart';
 
@@ -45,6 +45,8 @@ class Veterinarian {
   Veterinarian(
       {required this.id,
       required this.name,
+      required this.email,
+      required this.clinicName,
       required this.telephoneNumber,
       required this.websiteUrl,
       required this.location,
@@ -53,6 +55,8 @@ class Veterinarian {
 
   final String id;
   final String name;
+  final String clinicName;
+  final String email;
   final String telephoneNumber;
   final String websiteUrl;
   final Location location;
@@ -73,6 +77,8 @@ List<Veterinarian> getVeterinarians() {
     Veterinarian(
         id: '0',
         name: 'Mr. Happy',
+        clinicName: 'Happy Clinic 1',
+        email: 'vet_mail_1@gmail.com',
         telephoneNumber: '+49 123 456 789',
         websiteUrl: 'https://www.google.com',
         location: Location(
@@ -88,6 +94,8 @@ List<Veterinarian> getVeterinarians() {
     Veterinarian(
         id: '1',
         name: 'Mr. Unappy',
+        clinicName: 'Unappy Clinic 1',
+        email: 'vet_mail_2@gmail.com',
         telephoneNumber: '+49 123 456 789',
         websiteUrl: 'https://www.google.com',
         location: Location(
@@ -103,6 +111,8 @@ List<Veterinarian> getVeterinarians() {
     Veterinarian(
         id: '2',
         name: 'Mr. Happy1',
+        clinicName: 'Happy Clinic 3',
+        email: 'vet_mail_3@gmail.com',
         telephoneNumber: '+49 123 456 789',
         websiteUrl: 'https://www.google.com',
         location: Location(
@@ -118,6 +128,8 @@ List<Veterinarian> getVeterinarians() {
     Veterinarian(
         id: '3',
         name: 'Mr. Unappy2',
+        clinicName: 'Unappy Clinic 2',
+        email: 'vet_mail_4@gmail.com',
         telephoneNumber: '+49 123 456 789',
         websiteUrl: 'https://www.google.com',
         location: Location(

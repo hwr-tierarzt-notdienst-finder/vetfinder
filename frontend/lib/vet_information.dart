@@ -57,9 +57,9 @@ class VetInformation extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 10),
-            const Text(
-              'vet.praxisName',
-              style: TextStyle(
+            Text(
+              vet.clinicName,
+              style: const TextStyle(
                 fontStyle: FontStyle.italic,
                 fontSize: 20,
               ),
@@ -68,10 +68,13 @@ class VetInformation extends StatelessWidget {
             Row(
               children: [
                 const Icon(Icons.location_on),
-                Text(
-                  vet.getAddress(),
-                  style: const TextStyle(
-                    fontSize: 15,
+                Padding(
+                  padding: const EdgeInsets.only(left: 10),
+                  child: Text(
+                    vet.getAddress(),
+                    style: const TextStyle(
+                      fontSize: 15,
+                    ),
                   ),
                 ),
               ],
@@ -80,38 +83,38 @@ class VetInformation extends StatelessWidget {
             Row(
               children: [
                 const Icon(Icons.phone),
-                Text(
-                  vet.telephoneNumber,
-                  style: const TextStyle(
-                    fontSize: 15,
+                Padding(
+                  padding: const EdgeInsets.only(left: 10),
+                  child: Text(
+                    vet.telephoneNumber,
+                    style: const TextStyle(
+                      fontSize: 15,
+                    ),
                   ),
                 ),
               ],
             ),
             const SizedBox(height: 10),
             Row(
-              children: const [
-                Text(
-                  'vet.services',
-                  style: descTextStyle,
+              children: [
+                const Icon(Icons.pets),
+                Padding(
+                  padding: const EdgeInsets.only(left: 10),
+                  child: Text(vet.categories
+                      .toString()
+                      .substring(1, vet.categories.toString().length - 1)),
                 ),
               ],
             ),
             const SizedBox(height: 10),
             Row(
-              children: const [
-                Text(
-                  'vet.pets',
-                  style: descTextStyle,
-                ),
-              ],
-            ),
-            const SizedBox(height: 10),
-            Row(
-              children: const [
-                Text(
-                  'vet.mail',
-                  style: descTextStyle,
+              children: [
+                const Icon(Icons.email),
+                Padding(
+                  padding: const EdgeInsets.only(left: 10),
+                  child: Text(
+                    vet.email,
+                  ),
                 ),
               ],
             ),
@@ -121,7 +124,7 @@ class VetInformation extends StatelessWidget {
                 ElevatedButton(
                     child: Text(
                       'vet_information.open_website'.tr(),
-                      style: TextStyle(
+                      style: const TextStyle(
                           color: Colors.white, fontWeight: FontWeight.bold),
                     ),
                     onPressed: () {
@@ -129,6 +132,7 @@ class VetInformation extends StatelessWidget {
                     }),
               ],
             ),
+            const SizedBox(height: 30),
             Row(
               children: [
                 ElevatedButton(
@@ -144,22 +148,6 @@ class VetInformation extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 10),
-            Container(
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.black),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              width: MediaQuery.of(context).size.width * 0.9,
-              height: MediaQuery.of(context).size.height * 0.4,
-              margin: const EdgeInsets.only(bottom: 20.0, top: 30.0),
-              child: const Center(
-                child: Text(
-                  'Hier nur den Standort anzeigen',
-                  style: TextStyle(fontSize: 20),
-                  textAlign: TextAlign.center,
-                ),
-              ),
-            ),
           ],
         ),
       ),
