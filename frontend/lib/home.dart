@@ -150,16 +150,16 @@ class _HomeState extends State<Home> {
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
     return Consumer2<FilterNotifier, LocationNotifier>(
-      builder: (context, FilterNotifier, LocationNotifier, child) {
+      builder: (context, filterNotifier, locationNotifier, child) {
       // Update the list of vets if filter is applied
-      if (FilterNotifier.filterUpdated) {
+      if (filterNotifier.filterUpdated) {
         vets = getFilteredVeterinarians();
         createMarkers();
-        FilterNotifier.filterUpdated = false;
+        filterNotifier.filterUpdated = false;
       }
 
-      currentAddress = LocationNotifier.address.isNotEmpty
-          ? LocationNotifier.address
+      currentAddress = locationNotifier.address.isNotEmpty
+          ? locationNotifier.address
           : 'home.current_address'.tr();
 
       return Scaffold(
