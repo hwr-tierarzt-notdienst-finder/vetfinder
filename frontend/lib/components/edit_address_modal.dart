@@ -138,7 +138,7 @@ class _EditAddressModalState extends State<EditAddressModal> {
       // Location services are not enabled don't continue
       // accessing the position and request users of the
       // App to enable the location services.
-      return Future.error('Location services are disabled.');
+      print('Location services are disabled.');
     }
 
     permission = await Geolocator.checkPermission();
@@ -150,13 +150,13 @@ class _EditAddressModalState extends State<EditAddressModal> {
         // Android's shouldShowRequestPermissionRationale
         // returned true. According to Android guidelines
         // your App should show an explanatory UI now.
-        return Future.error('Location permissions are denied');
+        print('Location permissions are denied');
       }
     }
 
     if (permission == LocationPermission.deniedForever) {
       // Permissions are denied forever, handle appropriately.
-      return Future.error(
+      print(
           'Location permissions are permanently denied, we cannot request permissions.');
     }
 

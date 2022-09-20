@@ -29,7 +29,7 @@ class _HomeState extends State<Home> {
   List<Marker> markers = [];
   List<Veterinarian> vets = getFilteredVeterinarians();
   String query = '';
-  String currentAddress = '';
+  Marker? currentLocationMarker;
 
   TextButton createMarkerWidget(Veterinarian vet) {
     return TextButton.icon(
@@ -79,7 +79,7 @@ class _HomeState extends State<Home> {
     );
   }
 
-  void createMarkers() {
+  void createMarkers(LocationNotifier notifier) {
     markers.clear();
     for (Veterinarian vet in vets) {
       markers.add(Marker(
@@ -88,6 +88,20 @@ class _HomeState extends State<Home> {
           point: vet.getPosition(),
           builder: (context) => createMarkerWidget(vet)));
     }
+  }
+
+  void addCurrentLocationMarker(LocationNotifier notifier) {
+    if (currentLocationMarker != null) {
+      markers.remove(currentLocationMarker);
+    }
+
+    currentLocationMarker = Marker(
+        width: 100,
+        height: 50,
+        point: notifier.position,
+        builder: (context) =>
+            const Icon(Icons.location_pin, color: Colors.blue, size: 35.0));
+    markers.add(currentLocationMarker!);
   }
 
   void searchVet(String query) {
@@ -150,17 +164,15 @@ class _HomeState extends State<Home> {
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
     return Consumer2<FilterNotifier, LocationNotifier>(
-      builder: (context, filterNotifier, locationNotifier, child) {
+        builder: (context, filterNotifier, locationNotifier, child) {
       // Update the list of vets if filter is applied
       if (filterNotifier.filterUpdated) {
         vets = getFilteredVeterinarians();
-        createMarkers();
+        createMarkers(locationNotifier);
         filterNotifier.filterUpdated = false;
       }
 
-      currentAddress = locationNotifier.address.isNotEmpty
-          ? locationNotifier.address
-          : 'home.current_address'.tr();
+      addCurrentLocationMarker(locationNotifier);
 
       return Scaffold(
         appBar: AppBar(
@@ -182,7 +194,9 @@ class _HomeState extends State<Home> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(currentAddress),
+                    Text(locationNotifier.address.isNotEmpty
+                        ? locationNotifier.address
+                        : 'home.current_address'.tr()),
                     const Icon(Icons.arrow_drop_down_rounded),
                   ],
                 ),
@@ -230,6 +244,28 @@ class _HomeState extends State<Home> {
                         ],
                       ),
                     ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(12.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              FloatingActionButton(
+                                mini: true,
+                                onPressed: () => {
+                                  mapController.move(
+                                      locationNotifier.position, 18)
+                                },
+                                child: const Icon(Icons.search),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    )
                   ],
                 ),
               ),
