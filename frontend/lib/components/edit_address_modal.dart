@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:frontend/api.dart' as api;
 import 'package:frontend/utils/notifiers.dart';
 import 'package:http/http.dart' as Http;
+import 'package:geolocator/geolocator.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_geocoder/geocoder.dart';
@@ -27,7 +28,6 @@ class EditAddressModal extends StatefulWidget {
 }
 
 class _EditAddressModalState extends State<EditAddressModal> {
-  Location location = Location();
   List<api.AddressSuggestion> suggestions = [];
 
   @override
@@ -130,36 +130,51 @@ class _EditAddressModalState extends State<EditAddressModal> {
 
   fetchCurrentLocation(LocationNotifier notifier) async {
     bool serviceEnabled;
-    PermissionStatus permissionGranted;
+    LocationPermission permission;
 
-    serviceEnabled = await location.serviceEnabled();
+    // Test if location services are enabled.
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
-      serviceEnabled = await location.requestService();
-      if (!serviceEnabled) {
-        return;
+      // Location services are not enabled don't continue
+      // accessing the position and request users of the
+      // App to enable the location services.
+      return Future.error('Location services are disabled.');
+    }
+
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        // Permissions are denied, next time you could try
+        // requesting permissions again (this is also where
+        // Android's shouldShowRequestPermissionRationale
+        // returned true. According to Android guidelines
+        // your App should show an explanatory UI now.
+        return Future.error('Location permissions are denied');
       }
     }
 
-    permissionGranted = await location.hasPermission();
-    if (permissionGranted == PermissionStatus.denied) {
-      permissionGranted = await location.requestPermission();
-      if (permissionGranted != PermissionStatus.granted) {
-        return;
-      }
+    if (permission == LocationPermission.deniedForever) {
+      // Permissions are denied forever, handle appropriately.
+      return Future.error(
+          'Location permissions are permanently denied, we cannot request permissions.');
     }
 
-    LocationData currentPosition = await location.getLocation();
-    if (currentPosition.latitude != null && currentPosition.longitude != null) {
-      notifier.setPosition(
-          LatLng(currentPosition.latitude!, currentPosition.longitude!));
+    // When we reach here, permissions are granted and we can
+    // continue accessing the position of the device.
+    Position currentPosition =
+        await Geolocator.getCurrentPosition(forceAndroidLocationManager: true);
+    notifier.setPosition(
+        LatLng(currentPosition.latitude, currentPosition.longitude));
+    print(notifier.position);
 
-      getAddress(currentPosition.latitude!, currentPosition.longitude!)
-          .then((values) {
-        notifier.setAddress(values.first.addressLine ?? "");
-        Navigator.pop(context); // close the modal
-        widget.onPositionChanged(notifier.position, notifier.address);
-      });
-    }
+    getAddress(currentPosition.latitude, currentPosition.longitude)
+        .then((values) {
+      notifier.setAddress(values.first.addressLine ?? "");
+      print(notifier.address);
+      Navigator.pop(context); // close the modal
+      widget.onPositionChanged(notifier.position, notifier.address);
+    });
   }
 
   Future<List<Address>> getAddress(double lat, double lang) async {
