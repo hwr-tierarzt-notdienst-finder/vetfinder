@@ -33,96 +33,94 @@ class _EditAddressModalState extends State<EditAddressModal> {
   @override
   Widget build(BuildContext context) {
     return Consumer<LocationNotifier>(builder: (context, notifier, child) {
-      return Container(
-        decoration: BoxDecoration(borderRadius: BorderRadius.circular(20)),
-        height: MediaQuery.of(context).size.height * 0.9,
-        child: Padding(
-          padding: const EdgeInsets.all(5),
-          child: Column(
-            children: [
-              const SizedBox(height: 10),
-              Text(
-                'edit_address_modal.title'.tr(),
-                style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
+      return Padding(
+        padding: MediaQuery.of(context).viewInsets,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const SizedBox(height: 10),
+            Text(
+              'edit_address_modal.title'.tr(),
+              style: const TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
               ),
-              const SizedBox(height: 20),
-              TextButton(
-                onPressed: () {
-                  fetchCurrentLocation(notifier);
-                },
-                child: Padding(
-                  padding: const EdgeInsets.all(20.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Icon(Icons.my_location_rounded),
-                      const SizedBox(width: 10),
-                      Text(
-                        'edit_address_modal.use_current_location'.tr(),
-                        style: const TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.bold,
-                        ),
+            ),
+            const SizedBox(height: 20),
+            TextButton(
+              onPressed: () {
+                fetchCurrentLocation(notifier);
+              },
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(Icons.my_location_rounded),
+                    const SizedBox(width: 10),
+                    Text(
+                      'edit_address_modal.use_current_location'.tr(),
+                      style: const TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
-              const Divider(
-                height: 10,
-                thickness: 1,
-                color: Colors.grey,
-                indent: 20,
-                endIndent: 20,
-              ),
-              SearchWidget(
-                text: notifier.address,
-                onSubmitted: (text) {
-                  fetchAddressCompletion(text);
-                },
-                hintText: 'edit_address_modal.address_hint'.tr(),
-              ),
-              Expanded(
-                child: ListView.builder(
-                    itemCount: suggestions.length,
-                    itemBuilder: (context, index) {
-                      return Center(
-                        child: Column(
-                          children: [
-                            TextButton(
-                              child: Text(
-                                suggestions[index].displayName,
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black),
-                                textAlign: TextAlign.center,
-                              ),
-                              onPressed: () {
-                                notifier.setPosition(LatLng(
-                                    suggestions[index].latitude,
-                                    suggestions[index].longitude));
-                                getAddress(notifier.position.latitude,
-                                        notifier.position.longitude)
-                                    .then((value) {
-                                  notifier.setAddress(
-                                      value.first.addressLine ?? "");
-                                  Navigator.pop(context); // close the modal
-                                });
-                              },
+            ),
+            const Divider(
+              height: 10,
+              thickness: 1,
+              color: Colors.grey,
+              indent: 20,
+              endIndent: 20,
+            ),
+            SearchWidget(
+              text: notifier.address,
+              onSubmitted: (text) {
+                fetchAddressCompletion(text);
+              },
+              hintText: 'edit_address_modal.address_hint'.tr(),
+            ),
+            Container(
+              height: 160,
+              child: ListView.builder(
+                  itemCount: suggestions.length,
+                  itemBuilder: (context, index) {
+                    return Center(
+                      child: Column(
+                        children: [
+                          TextButton(
+                            child: Text(
+                              suggestions[index].displayName,
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black),
+                              textAlign: TextAlign.center,
                             ),
-                            const SizedBox(
-                              height: 20,
-                            )
-                          ],
-                        ),
-                      );
-                    }),
-              )
-            ],
-          ),
+                            onPressed: () {
+                              notifier.setPosition(LatLng(
+                                  suggestions[index].latitude,
+                                  suggestions[index].longitude));
+                              getAddress(notifier.position.latitude,
+                                      notifier.position.longitude)
+                                  .then((value) {
+                                notifier.setAddress(
+                                    value.first.addressLine ?? "");
+                                Navigator.pop(context); // close the modal
+                              });
+                            },
+                          ),
+                          const SizedBox(
+                            height: 20,
+                          )
+                        ],
+                      ),
+                    );
+                  }),
+            )
+          ],
         ),
       );
     });

@@ -125,22 +125,24 @@ class _HomeState extends State<Home> {
 
   void _showEditAddressModalBottomSheet(BuildContext context) {
     showModalBottomSheet(
-        context: context,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-        ),
-        builder: (BuildContext context) {
-          return EditAddressModal(
-            currentAddress: SharedPrefs().currentAddress,
-            onPositionChanged: (position, address) => {
-              setState(() {
-                SharedPrefs().currentAddress = address;
-                SharedPrefs().currentPosition = position;
-                mapController.move(position, 18);
-              })
-            },
-          );
-        });
+      isScrollControlled: true,
+      context: context,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadiusDirectional.circular(20),
+      ),
+      builder: (_) {
+        return EditAddressModal(
+          currentAddress: SharedPrefs().currentAddress,
+          onPositionChanged: (position, address) => {
+            setState(() {
+              SharedPrefs().currentAddress = address;
+              SharedPrefs().currentPosition = position;
+              mapController.move(position, 18);
+            })
+          },
+        );
+      }
+    );
   }
 
   @override
