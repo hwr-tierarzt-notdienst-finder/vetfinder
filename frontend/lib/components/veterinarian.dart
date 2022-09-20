@@ -10,15 +10,16 @@ import 'package:frontend/components/search_filter_dialog.dart';
 import 'package:frontend/utils/preferences.dart';
 
 class VetCard extends Card {
-  const VetCard(
-      {Key? key,
-      required this.id,
-      required this.name,
-      required this.telephoneNumber,
-      required this.location,
-      required this.websiteUrl,
-      required this.onViewInMap})
-      : super(key: key);
+  const VetCard({
+    Key? key,
+    required this.id,
+    required this.name,
+    required this.telephoneNumber,
+    required this.location,
+    required this.websiteUrl,
+    required this.onViewInMap,
+    required this.distance,
+  }) : super(key: key);
 
   final String id;
   final String name;
@@ -26,15 +27,7 @@ class VetCard extends Card {
   final Location location;
   final String websiteUrl;
   final Function(LatLng) onViewInMap;
-
-  double _countDistance(
-      LatLng currentPosition, double userLatitude, double userLongitude) {
-    return const Distance().as(
-      LengthUnit.Meter,
-      currentPosition,
-      LatLng(userLatitude, userLongitude),
-    );
-  }
+  final double distance;
 
   @override
   Widget build(BuildContext context) {
@@ -81,7 +74,7 @@ class VetCard extends Card {
                   child: FittedBox(
                     fit: BoxFit.scaleDown,
                     child: Text(
-                      '${(_countDistance(notifier.position, location.position.latitude, location.position.longitude) / 1000).toStringAsFixed(2)} km',
+                      '${(distance.toStringAsFixed(2))} km',
                       style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ),

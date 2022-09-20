@@ -1,5 +1,6 @@
 // import 'dart:ffi';
 
+import 'package:frontend/utils/notifiers.dart';
 import 'package:latlong2/latlong.dart';
 
 import 'package:frontend/utils/preferences.dart';
@@ -42,16 +43,16 @@ class Location {
 }
 
 class Veterinarian {
-  Veterinarian(
-      {required this.id,
-      required this.name,
-      required this.email,
-      required this.clinicName,
-      required this.telephoneNumber,
-      required this.websiteUrl,
-      required this.location,
-      required this.categories})
-      : super();
+  Veterinarian({
+    required this.id,
+    required this.name,
+    required this.email,
+    required this.clinicName,
+    required this.telephoneNumber,
+    required this.websiteUrl,
+    required this.location,
+    required this.categories,
+  }) : super();
 
   final String id;
   final String name;
@@ -61,6 +62,7 @@ class Veterinarian {
   final String websiteUrl;
   final Location location;
   final List<String> categories;
+  double distanceToCurrentLocation = 0;
 
   String getAddress() {
     return "${location.address.street} ${location.address.number}";
@@ -159,7 +161,7 @@ List<String> getAvailableCategories() {
   return availableCategories;
 }
 
-List<Veterinarian> getFilteredVeterinarians() {
+List<Veterinarian> getFilteredVeterinarians(LocationNotifier notifier) {
   List<Veterinarian> vets = getVeterinarians();
   List<Veterinarian> filteredVets = [];
 
@@ -168,6 +170,11 @@ List<Veterinarian> getFilteredVeterinarians() {
     for (Veterinarian vet in vets) {
       for (String category in SharedPrefs().categories) {
         if (vet.categories.contains(category)) {
+          vet.distanceToCurrentLocation = const Distance().as(
+            LengthUnit.Meter,
+            notifier.position,
+            vet.getPosition(),
+          );
           filteredVets.add(vet);
           break;
         }

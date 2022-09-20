@@ -27,7 +27,7 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   MapController mapController = MapController();
   List<Marker> markers = [];
-  List<Veterinarian> vets = getFilteredVeterinarians();
+  List<Veterinarian> vets = [];
   String query = '';
   Marker? currentLocationMarker;
 
@@ -167,7 +167,7 @@ class _HomeState extends State<Home> {
         builder: (context, filterNotifier, locationNotifier, child) {
       // Update the list of vets if filter is applied
       if (filterNotifier.filterUpdated) {
-        vets = getFilteredVeterinarians();
+        vets = getFilteredVeterinarians(locationNotifier);
         createMarkers(locationNotifier);
         filterNotifier.filterUpdated = false;
       }
@@ -275,14 +275,16 @@ class _HomeState extends State<Home> {
                   itemCount: vets.length,
                   itemBuilder: (context, index) {
                     return VetCard(
-                        id: vets[index].id,
-                        name: vets[index].name,
-                        telephoneNumber: vets[index].telephoneNumber,
-                        location: vets[index].location,
-                        onViewInMap: (position) {
-                          mapController.move(position, 16);
-                        },
-                        websiteUrl: vets[index].websiteUrl);
+                      id: vets[index].id,
+                      name: vets[index].name,
+                      telephoneNumber: vets[index].telephoneNumber,
+                      location: vets[index].location,
+                      onViewInMap: (position) {
+                        mapController.move(position, 16);
+                      },
+                      websiteUrl: vets[index].websiteUrl,
+                      distance: vets[index].distanceToCurrentLocation,
+                    );
                   }),
             )
           ],
