@@ -118,7 +118,7 @@ class VetInformation extends StatelessWidget {
             const SizedBox(height: 30),
             Row(
               children: [
-                RaisedButton(
+                ElevatedButton(
                     child: Text(
                       'vet_information.open_website'.tr(),
                       style: TextStyle(
@@ -131,7 +131,7 @@ class VetInformation extends StatelessWidget {
             ),
             Row(
               children: [
-                RaisedButton(
+                ElevatedButton(
                     child: Text(
                       'vet_information.open_map'.tr(),
                       style: TextStyle(
