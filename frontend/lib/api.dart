@@ -1,7 +1,10 @@
 // import 'dart:ffi';
 
+import 'dart:collection';
+
 import 'package:frontend/utils/notifiers.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:string_similarity/string_similarity.dart';
 
 import 'package:frontend/utils/preferences.dart';
 
@@ -62,7 +65,6 @@ class Veterinarian {
   final String websiteUrl;
   final Location location;
   final List<String> categories;
-  double distanceToCurrentLocation = 0;
 
   String getAddress() {
     return "${location.address.street} ${location.address.number}";
@@ -71,10 +73,36 @@ class Veterinarian {
   LatLng getPosition() {
     return location.position;
   }
+
+  double getDistanceInMeters(LatLng position) {
+    return const Distance().as(
+      LengthUnit.Meter,
+      position,
+      getPosition(),
+    );
+  }
 }
 
 List<Veterinarian> getVeterinarians() {
   List<Veterinarian> vets = [];
+  vets.add(
+    Veterinarian(
+        id: '3',
+        name: 'Mr. Unappy2',
+        clinicName: 'Unappy Clinic 2',
+        email: 'vet_mail_4@gmail.com',
+        telephoneNumber: '+49 123 456 789',
+        websiteUrl: 'https://www.google.com',
+        location: Location(
+            position: LatLng(10.4, 20.5),
+            address: const Address(
+                street: "Teststraße",
+                number: "10",
+                zipCode: 16000,
+                city: "Berlin")),
+        categories: ["Katzen", "Pferde"]),
+  );
+
   vets.add(
     Veterinarian(
         id: '0',
@@ -126,23 +154,6 @@ List<Veterinarian> getVeterinarians() {
                 city: "Berlin")),
         categories: ["Hunde", "Katzen", "Pferde"]),
   );
-  vets.add(
-    Veterinarian(
-        id: '3',
-        name: 'Mr. Unappy2',
-        clinicName: 'Unappy Clinic 2',
-        email: 'vet_mail_4@gmail.com',
-        telephoneNumber: '+49 123 456 789',
-        websiteUrl: 'https://www.google.com',
-        location: Location(
-            position: LatLng(10.4, 20.5),
-            address: const Address(
-                street: "Teststraße",
-                number: "10",
-                zipCode: 16000,
-                city: "Berlin")),
-        categories: ["Katzen", "Pferde"]),
-  );
 
   return vets;
 }
@@ -161,32 +172,67 @@ List<String> getAvailableCategories() {
   return availableCategories;
 }
 
-List<Veterinarian> getFilteredVeterinarians(LocationNotifier notifier) {
+List<Veterinarian> getFilteredVeterinarians(
+    LatLng currentPosition, String query) {
   List<Veterinarian> vets = getVeterinarians();
   List<Veterinarian> filteredVets = [];
 
-  // Filter animal categories
-  if (SharedPrefs().categories.isNotEmpty) {
-    for (Veterinarian vet in vets) {
-      for (String category in SharedPrefs().categories) {
-        if (vet.categories.contains(category)) {
-          vet.distanceToCurrentLocation = const Distance().as(
-            LengthUnit.Meter,
-            notifier.position,
-            vet.getPosition(),
-          );
-          filteredVets.add(vet);
-          break;
+  for (Veterinarian vet in vets) {
+    if ((vet.getDistanceInMeters(currentPosition) / 1000) <
+        SharedPrefs().searchRadius) {
+      if (SharedPrefs().categories.isNotEmpty) {
+        for (String category in SharedPrefs().categories) {
+          if (vet.categories.contains(category)) {
+            filteredVets.add(vet);
+            break;
+          }
         }
+      } else {
+        filteredVets.add(vet);
       }
     }
   }
 
+  List<Veterinarian> returnedVets = [];
+
   if (filteredVets.isNotEmpty) {
-    return filteredVets;
+    returnedVets = List.of(filteredVets);
   } else {
-    return vets;
+    returnedVets = List.of(vets);
   }
+
+  if (query.isEmpty) {
+    returnedVets.sort((a, b) {
+      double distance1 = a.getDistanceInMeters(currentPosition);
+      double distance2 = b.getDistanceInMeters(currentPosition);
+
+      if (distance1 == distance2) {
+        return 0;
+      } else if (distance1 > distance2) {
+        return 1;
+      } else {
+        return -1;
+      }
+    });
+  } else {
+    returnedVets.sort((a, b) {
+      String vetInfo1 = '${a.name} ${a.getAddress()}';
+      String vetInfo2 = '${b.name} ${b.getAddress()}';
+
+      double similarityScore1 = query.similarityTo(vetInfo1);
+      double similarityScore2 = query.similarityTo(vetInfo2);
+
+      if (similarityScore1 == similarityScore2) {
+        return 0;
+      } else if (similarityScore1 > similarityScore2) {
+        return -1;
+      } else {
+        return 1;
+      }
+    });
+  }
+
+  return returnedVets;
 }
 
 Veterinarian getVeterinarianById(String id) {

@@ -3,6 +3,7 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map/plugin_api.dart';
 import 'package:frontend/utils/notifiers.dart';
 import 'package:frontend/utils/preferences.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:string_similarity/string_similarity.dart';
 import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -107,19 +108,6 @@ class _HomeState extends State<Home> {
   void searchVet(String query) {
     setState(() {
       this.query = query.toLowerCase();
-
-      // Create a list of veterinarians based on query
-      Map similarityMap = {};
-
-      for (Veterinarian vet in vets) {
-        String vetInfo = '${vet.name} ${vet.getAddress()}';
-        final comparison = this.query.similarityTo(vetInfo);
-        similarityMap[vet.id] = comparison;
-      }
-
-      var sortedMap = SplayTreeMap<String, double>.from(similarityMap,
-          (key1, key2) => (similarityMap[key1] > similarityMap[key2]) ? -1 : 1);
-      vets = sortedMap.keys.map((id) => getVeterinarianById(id)).toList();
     });
   }
 
@@ -166,11 +154,8 @@ class _HomeState extends State<Home> {
     return Consumer2<FilterNotifier, LocationNotifier>(
         builder: (context, filterNotifier, locationNotifier, child) {
       // Update the list of vets if filter is applied
-      if (filterNotifier.filterUpdated) {
-        vets = getFilteredVeterinarians(locationNotifier);
-        createMarkers(locationNotifier);
-        filterNotifier.filterUpdated = false;
-      }
+      vets = getFilteredVeterinarians(locationNotifier.position, query);
+      createMarkers(locationNotifier);
 
       addCurrentLocationMarker(locationNotifier);
 
@@ -283,7 +268,8 @@ class _HomeState extends State<Home> {
                         mapController.move(position, 16);
                       },
                       websiteUrl: vets[index].websiteUrl,
-                      distance: vets[index].distanceToCurrentLocation,
+                      distance: vets[index]
+                          .getDistanceInMeters(locationNotifier.position),
                     );
                   }),
             )

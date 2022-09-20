@@ -74,7 +74,7 @@ class VetCard extends Card {
                   child: FittedBox(
                     fit: BoxFit.scaleDown,
                     child: Text(
-                      '${(distance.toStringAsFixed(2))} km',
+                      '${((distance / 1000).toStringAsFixed(2))} km',
                       style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ),
