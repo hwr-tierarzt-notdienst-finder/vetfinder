@@ -47,7 +47,7 @@ class App extends StatelessWidget {
       builder: (context, ThemeNotifier notifier, child) {
         context.setLocale(Locale(SharedPrefs().language));
         return MaterialApp(
-          title: 'VetFinder',
+          title: 'Tierarzt-Notdienst-Finder',
           localizationsDelegates: context.localizationDelegates,
           supportedLocales: context.supportedLocales,
           locale: context.locale,
@@ -55,7 +55,7 @@ class App extends StatelessWidget {
           initialRoute: '/home',
           routes: {
             '/home': (context) => const Home(
-                  title: 'VetFinder',
+                  title: 'Tierarzt-Notdienst-Finder',
                 ),
             '/vet_information': (context) => const VetInformation(),
             '/setting': (context) => const Setting(),

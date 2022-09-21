@@ -177,6 +177,7 @@ List<Veterinarian> getFilteredVeterinarians(
   List<Veterinarian> vets = getVeterinarians();
   List<Veterinarian> filteredVets = [];
 
+  // Filter vets list based on categories and search radius
   for (Veterinarian vet in vets) {
     if ((vet.getDistanceInMeters(currentPosition) / 1000) <
         SharedPrefs().searchRadius) {
@@ -197,39 +198,40 @@ List<Veterinarian> getFilteredVeterinarians(
 
   if (filteredVets.isNotEmpty) {
     returnedVets = List.of(filteredVets);
-  } else {
-    returnedVets = List.of(vets);
-  }
 
-  if (query.isEmpty) {
-    returnedVets.sort((a, b) {
-      double distance1 = a.getDistanceInMeters(currentPosition);
-      double distance2 = b.getDistanceInMeters(currentPosition);
+    // Sort based on search query or distance
+    if (query.isEmpty) {
+      returnedVets.sort((a, b) {
+        double distance1 = a.getDistanceInMeters(currentPosition);
+        double distance2 = b.getDistanceInMeters(currentPosition);
 
-      if (distance1 == distance2) {
-        return 0;
-      } else if (distance1 > distance2) {
-        return 1;
-      } else {
-        return -1;
+        if (distance1 == distance2) {
+          return 0;
+        } else if (distance1 > distance2) {
+          return 1;
+        } else {
+          return -1;
+        }
       }
-    });
-  } else {
-    returnedVets.sort((a, b) {
-      String vetInfo1 = '${a.name} ${a.getAddress()}';
-      String vetInfo2 = '${b.name} ${b.getAddress()}';
+    );
+    } else {
+      returnedVets.sort((a, b) {
+        String vetInfo1 = '${a.name} ${a.getAddress()}';
+        String vetInfo2 = '${b.name} ${b.getAddress()}';
 
-      double similarityScore1 = query.similarityTo(vetInfo1);
-      double similarityScore2 = query.similarityTo(vetInfo2);
+        double similarityScore1 = query.similarityTo(vetInfo1);
+        double similarityScore2 = query.similarityTo(vetInfo2);
 
-      if (similarityScore1 == similarityScore2) {
-        return 0;
-      } else if (similarityScore1 > similarityScore2) {
-        return -1;
-      } else {
-        return 1;
-      }
-    });
+        if (similarityScore1 == similarityScore2) {
+          return 0;
+        } else if (similarityScore1 > similarityScore2) {
+          return -1;
+        } else {
+          return 1;
+        }
+      });
+    }
+  
   }
 
   return returnedVets;

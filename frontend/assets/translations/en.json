@@ -1,7 +1,8 @@
 {
     "home": {
         "current_address": "Current Address",
-        "query_hint": "Name, Address, ZIP Code"
+        "query_hint": "Name, Address, ZIP Code",
+        "no_vet_found": "No clinic found."
     },
     "search_filter_dialog": {
         "title": "Filter Settings",

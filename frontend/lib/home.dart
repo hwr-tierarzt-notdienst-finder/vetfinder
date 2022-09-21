@@ -147,19 +147,48 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
     return Consumer2<FilterNotifier, LocationNotifier>(
         builder: (context, filterNotifier, locationNotifier, child) {
       // Update the list of vets if filter is applied
       vets = getFilteredVeterinarians(locationNotifier.position, query);
       createMarkers(locationNotifier);
-
       addCurrentLocationMarker(locationNotifier);
+
+      // Check if the filtered vets list is empty
+      Widget vetsListWidget;
+      if (vets.isNotEmpty) {
+        vetsListWidget = Expanded(
+        child: ListView.builder(
+          itemCount: vets.length,
+          itemBuilder: (context, index) {
+            return VetCard(
+              id: vets[index].id,
+              name: vets[index].name,
+              telephoneNumber: vets[index].telephoneNumber,
+              location: vets[index].location,
+              onViewInMap: (position) {
+                mapController.move(position, 16);
+              },
+              websiteUrl: vets[index].websiteUrl,
+              distance: vets[index]
+                  .getDistanceInMeters(locationNotifier.position),
+            );
+          }
+        ));
+      } else {
+        vetsListWidget = Expanded(
+          child: Center(
+            child: Text(
+              "home.no_vet_found".tr(),
+              style: const TextStyle(
+                fontSize: 15,
+                fontStyle: FontStyle.italic,
+                color: Colors.grey,
+              ),
+            ),
+          ),
+        );
+      }
 
       return Scaffold(
         appBar: AppBar(
@@ -257,24 +286,7 @@ class _HomeState extends State<Home> {
                 ),
               ),
             ),
-            Expanded(
-              child: ListView.builder(
-                  itemCount: vets.length,
-                  itemBuilder: (context, index) {
-                    return VetCard(
-                      id: vets[index].id,
-                      name: vets[index].name,
-                      telephoneNumber: vets[index].telephoneNumber,
-                      location: vets[index].location,
-                      onViewInMap: (position) {
-                        mapController.move(position, 16);
-                      },
-                      websiteUrl: vets[index].websiteUrl,
-                      distance: vets[index]
-                          .getDistanceInMeters(locationNotifier.position),
-                    );
-                  }),
-            )
+            vetsListWidget,
           ],
         ),
       );

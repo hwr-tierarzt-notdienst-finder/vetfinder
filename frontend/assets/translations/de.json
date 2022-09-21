@@ -1,7 +1,8 @@
 {
     "home": {
         "current_address": "Aktuelle Adresse",
-        "query_hint": "Name, Addresse, PLZ"
+        "query_hint": "Name, Addresse, PLZ",
+        "no_vet_found": "Kein Tierarzt gefunden."
     },
     "search_filter_dialog": {
         "title": "Suchfilter",
