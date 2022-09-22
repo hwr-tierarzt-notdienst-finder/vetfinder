@@ -87,72 +87,88 @@ List<Veterinarian> getVeterinarians() {
   List<Veterinarian> vets = [];
   vets.add(
     Veterinarian(
-        id: '3',
-        name: 'Mr. Unappy2',
-        clinicName: 'Unappy Clinic 2',
-        email: 'vet_mail_4@gmail.com',
-        telephoneNumber: '+49 123 456 789',
-        websiteUrl: 'https://www.google.com',
-        location: Location(
-            position: LatLng(10.4, 20.5),
-            address: const Address(
-                street: "Teststraße",
-                number: "10",
-                zipCode: 16000,
-                city: "Berlin")),
-        categories: ["Katzen", "Pferde"]),
-  );
-
-  vets.add(
-    Veterinarian(
         id: '0',
-        name: 'Mr. Happy',
-        clinicName: 'Happy Clinic 1',
-        email: 'vet_mail_1@gmail.com',
-        telephoneNumber: '+49 123 456 789',
-        websiteUrl: 'https://www.google.com',
+        name: 'Tierklinik Berlin-Biesdorf',
+        clinicName: 'Tierärztliche Klinik für Klein- und Heimtiere',
+        email: 'kontakt@tierklinik-in-biesdorf.de',
+        telephoneNumber: '+49305143760',
+        websiteUrl: 'https://www.tierklinik-in-biesdorf.de/',
         location: Location(
-            position: LatLng(52.5278578, 13.6243765),
+            position: LatLng(52.50878687199156, 13.555776987579236),
             address: const Address(
-                street: "Hönower Straße",
-                number: "263",
-                zipCode: 16000,
+                street: "Alt-Biesdorf",
+                number: "22",
+                zipCode: 12683,
                 city: "Berlin")),
-        categories: ["Hunde"]),
+        categories: ["Heimtiere"]),
   );
   vets.add(
     Veterinarian(
         id: '1',
-        name: 'Mr. Unappy',
-        clinicName: 'Unappy Clinic 1',
-        email: 'vet_mail_2@gmail.com',
-        telephoneNumber: '+49 123 456 789',
-        websiteUrl: 'https://www.google.com',
+        name: 'Dr. Robert Höpfner / Dr. Kay Schmerbach',
+        clinicName: 'Kleintierspezialisten Berlin-Brandenburg',
+        email: 'kontakt@kleintierspezialisten.de',
+        telephoneNumber: '+493043662200',
+        websiteUrl: 'https://www.kleintierspezialisten.de/de',
         location: Location(
-            position: LatLng(52.5373378, 13.2664472),
+            position: LatLng(52.580648779854506, 13.294731784658856),
             address: const Address(
-                street: "Wattstraße",
-                number: "10",
-                zipCode: 13629,
+                street: "Wittestraße",
+                number: "30P",
+                zipCode: 13509,
                 city: "Berlin")),
-        categories: ["Hunde", "Katzen"]),
+        categories: ["Heimtiere"]),
   );
   vets.add(
     Veterinarian(
         id: '2',
-        name: 'Mr. Happy1',
-        clinicName: 'Happy Clinic 3',
-        email: 'vet_mail_3@gmail.com',
-        telephoneNumber: '+49 123 456 789',
-        websiteUrl: 'https://www.google.com',
+        name: 'Olof Löwe',
+        clinicName: 'Klinik für Kleintiere',
+        email: 'kontakt@tierklinik-in-berlin.de',
+        telephoneNumber: '+49309322093',
+        websiteUrl: 'https://www.tierklinik-in-berlin.de/',
         location: Location(
-            position: LatLng(10.4, 20.5),
+            position: LatLng(52.55563564107943, 13.553283642580288),
             address: const Address(
-                street: "Teststraße",
-                number: "10",
-                zipCode: 16000,
+                street: "Märkische Allee",
+                number: "258",
+                zipCode: 12679,
                 city: "Berlin")),
-        categories: ["Hunde", "Katzen", "Pferde"]),
+        categories: ["Heimtiere"]),
+  );
+  vets.add(
+    Veterinarian(
+        id: '3',
+        name: 'Freie Universität Berlin',
+        clinicName: 'Klinik für Pferde, allgemeine Chirurgie und Radiologie (WE17)',
+        email: 'pferdeklinik@vetmed.fu-berlin.de',
+        telephoneNumber: '+493083862299',
+        websiteUrl: 'https://www.vetmed.fu-berlin.de/einrichtungen/kliniken/we17',
+        location: Location(
+            position: LatLng(52.43006758423042, 13.237440001529311),
+            address: const Address(
+                street: "Oertzenweg",
+                number: "19B",
+                zipCode: 14163,
+                city: "Berlin")),
+        categories: ["Pferde"]),
+  );
+  vets.add(
+    Veterinarian(
+        id: '4',
+        name: 'Freie Universität Berlin',
+        clinicName: 'Klinik für Klauentiere (WE18)',
+        email: 'klauentierklinik@vetmed.fu-berlin.de',
+        telephoneNumber: '+493083862261',
+        websiteUrl: 'https://www.vetmed.fu-berlin.de/einrichtungen/kliniken/we18/index.html',
+        location: Location(
+            position: LatLng(52.427122150532384, 13.234963828118532),
+            address: const Address(
+                street: "Königsweg",
+                number: "65",
+                zipCode: 14163,
+                city: "Berlin")),
+        categories: ["Klauentiere"]),
   );
 
   return vets;
