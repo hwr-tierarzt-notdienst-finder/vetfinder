@@ -16,7 +16,7 @@ class VetCard extends Card {
     required this.name,
     required this.telephoneNumber,
     required this.location,
-    required this.websiteUrl,
+    required this.clinicName,
     required this.onViewInMap,
     required this.distance,
   }) : super(key: key);
@@ -25,7 +25,7 @@ class VetCard extends Card {
   final String name;
   final String telephoneNumber;
   final Location location;
-  final String websiteUrl;
+  final String clinicName;
   final Function(LatLng) onViewInMap;
   final double distance;
 
@@ -39,11 +39,11 @@ class VetCard extends Card {
               const SizedBox(height: 10),
               Text(name, style: const TextStyle(fontWeight: FontWeight.bold)),
               const SizedBox(height: 5),
+              Text(clinicName),
+              const SizedBox(height: 5),
               Text(
                   "${location.address.street} ${location.address.number}, ${location.address.zipCode} ${location.address.city}"),
               Text(telephoneNumber),
-              const SizedBox(height: 5),
-              Text(websiteUrl),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [

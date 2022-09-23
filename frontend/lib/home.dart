@@ -169,7 +169,7 @@ class _HomeState extends State<Home> {
               onViewInMap: (position) {
                 mapController.move(position, 16);
               },
-              websiteUrl: vets[index].websiteUrl,
+              clinicName: vets[index].clinicName,
               distance: vets[index]
                   .getDistanceInMeters(locationNotifier.position),
             );
