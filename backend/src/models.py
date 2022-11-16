@@ -1,16 +1,15 @@
 """Shared pydantic models."""
 from __future__ import annotations
 
-from datetime import datetime, timedelta
+from datetime import datetime
 from enum import Enum
-from typing import TypeVar, Generic, Literal, TypeAlias
+from typing import TypeVar, Literal, TypeAlias
 
 from pydantic.config import BaseConfig
 from pydantic.main import BaseModel
 from typing_extensions import Annotated
 
 from pydantic import Field as PydanticField
-from pydantic.generics import GenericModel
 
 from utils import string_
 from types_ import Timezone, Region
@@ -33,39 +32,21 @@ class ApiBaseModel(BaseModel):
         alias_generator = string_.as_camel_case
 
 
-class ModelWithApiMetadata(ApiBaseModel):
-    creation_source_id: str = "manual"
-    modification_source_id: str = "manual"
-    created_at: datetime = PydanticField(
-        default_factory=datetime.utcnow
-    )
-    modified_at: datetime = PydanticField(
-        default_factory=datetime.utcnow
-    )
-    valid_until: datetime = PydanticField(
-        default_factory=lambda: datetime.utcnow() + timedelta(days=365 * 1000)
-    )
-
-
-class ApiField(ModelWithApiMetadata, GenericModel, Generic[_T]):
-    value: _T
-
-
 # Vet
 # ----------------------------------------------------------------------------
 
-class Person(ModelWithApiMetadata):
+class Person(ApiBaseModel):
     name: str
     rolls: list[Literal["owner"]]
 
 
 class Location(ApiBaseModel):
-    address: ApiField[str]
-    lat: ApiField[float] | None = None
-    lon: ApiField[float] | None = None
+    address: str
+    lat: float | None = None
+    lon: float | None = None
 
 
-class Contact(ModelWithApiMetadata):
+class Contact(ApiBaseModel):
     type: Literal[
         "tel:landline",
         "tel:mobile",
@@ -75,26 +56,26 @@ class Contact(ModelWithApiMetadata):
     value: str
 
 
-class AvailabilityConditionNot(ModelWithApiMetadata):
+class AvailabilityConditionNot(ApiBaseModel):
     type: Literal["not"]
     child: "AvailabilityCondition"
 
 
-class AvailabilityConditionAnd(ModelWithApiMetadata):
+class AvailabilityConditionAnd(ApiBaseModel):
     type: Literal["and"]
     children: list["AvailabilityCondition"]
 
 
-class AvailabilityConditionOr(ModelWithApiMetadata):
+class AvailabilityConditionOr(ApiBaseModel):
     type: Literal["or"]
     children: list["AvailabilityCondition"]
 
 
-class AvailabilityConditionAll(ModelWithApiMetadata):
+class AvailabilityConditionAll(ApiBaseModel):
     type: Literal["all"]
 
 
-class TimezoneAware(ModelWithApiMetadata):
+class TimezoneAware(ApiBaseModel):
     timezone: Timezone
 
 
@@ -118,7 +99,7 @@ class AvailabilityConditionWeekdaysSpan(TimezoneAware):
     end_day: Weekday
 
 
-class AvailabilityConditionHolidays(ModelWithApiMetadata):
+class AvailabilityConditionHolidays(ApiBaseModel):
     type: Literal["holidays"]
     region: Region
 
@@ -144,12 +125,6 @@ class Category(str, Enum):
     ALL = "all"
 
 
-class Source(ApiBaseModel):
-    id: str
-    url: str
-    data: dict = PydanticField(default_factory=dict)
-
-
 class TimeSpan(ApiBaseModel):
     """
     Object representing the half-open datetime interval: [start,end).
@@ -162,15 +137,12 @@ class TimeSpan(ApiBaseModel):
 
 
 class Vet(ApiBaseModel):
-    title: ApiField[str]
+    title: str
     people: list[Person] = PydanticField(default_factory=list)
     location: Location
     contacts: list[Contact] = PydanticField(default_factory=list)
     available: AvailabilityCondition
-    categories: ApiField[list[Category]] = PydanticField(
-        default_factory=lambda: ApiField(value=[])
-    )
-    sources: dict[str, Source]
+    categories: list[Category] = PydanticField(default_factory=list)
 
 
 class VetInDb(Vet, InDbModel):

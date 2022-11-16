@@ -5,7 +5,7 @@ from time import sleep
 
 import geopy
 
-from models import ApiField, Location, Vet
+from models import Location, Vet
 from utils import cache
 
 _NOMINATIM_GEOLOCATOR_USER_AGENT = "hwr_tierarzt_notdienst"
@@ -22,20 +22,20 @@ def normalize(vet: Vet) -> Vet:
 def _normalize_location(vet: Vet) -> Vet:
     denormalized_location = vet.location
 
-    address_obj = denormalized_location.address
-    lat_obj = denormalized_location.lat
-    lon_obj = denormalized_location.lon
+    address = denormalized_location.address
+    lat = denormalized_location.lat
+    lon = denormalized_location.lon
 
-    has_address = address_obj is not None
-    has_lat_lon = lat_obj is not None and lon_obj is not None
+    has_address = address is not None
+    has_lat_lon = lat is not None and lon is not None
 
     if has_address and has_lat_lon:
         return vet.copy()
 
     if has_address and not has_lat_lon:
-        geopy_location = _get_geopy_location_from_address(address_obj.value)
+        geopy_location = _get_geopy_location_from_address(address)
     elif not has_address and has_lat_lon:
-        geopy_location = _get_geopy_location_from_lat_lon(lat_obj.value, lon_obj.value)
+        geopy_location = _get_geopy_location_from_lat_lon(lat, lon)
     else:
         raise ValueError(
             f"Expected vet.location={denormalized_location} "
@@ -49,9 +49,9 @@ def _normalize_location(vet: Vet) -> Vet:
     return vet.copy(
         update={
             "location": Location(
-                address=ApiField(value=address),
-                lat=ApiField(value=lat),
-                lon=ApiField(value=lon),
+                address=address,
+                lat=lat,
+                lon=lon,
             )
         }
     )

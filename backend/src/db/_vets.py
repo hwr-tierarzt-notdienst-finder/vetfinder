@@ -4,11 +4,18 @@ import geopy.distance
 
 from constants import VET_COLLECTIONS
 from models import Vet, VetInDb
+import normalization
 from ._core import BaseRepository
 
 
 class Repository(BaseRepository[Vet, VetInDb]):
     _IN_DB_CLS = VetInDb
+
+    def insert(
+            self,
+            vet: Vet
+    ) -> VetInDb:
+        return super().insert(normalization.vet.normalize(vet))
 
     def in_ring(
             self,
@@ -20,7 +27,7 @@ class Repository(BaseRepository[Vet, VetInDb]):
         center_pos = (c_lat, c_lon)
 
         def is_in_ring(vet: VetInDb) -> bool:
-            vet_pos = (vet.location.lat.value, vet.location.lon.value)
+            vet_pos = (vet.location.lat, vet.location.lon)
 
             dist = geopy.distance.distance(center_pos, vet_pos).km
 

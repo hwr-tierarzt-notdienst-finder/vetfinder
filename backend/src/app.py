@@ -23,7 +23,7 @@ def startup() -> None:
     db.vets["hidden"].delete_all()
 
     for vet in collect_vets():
-        db.vets["hidden"].insert(normalization.vet.normalize(vet))
+        db.vets["hidden"].insert(vet)
 
 
 @app.get(
