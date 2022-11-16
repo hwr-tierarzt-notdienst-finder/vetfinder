@@ -7,6 +7,7 @@ import 'package:latlong2/latlong.dart';
 import 'package:string_similarity/string_similarity.dart';
 import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:frontend/vet_information.dart';
 
 import 'package:frontend/components/veterinarian.dart';
 import 'package:frontend/components/search_widget.dart';
@@ -34,41 +35,10 @@ class _HomeState extends State<Home> {
 
   TextButton createMarkerWidget(Veterinarian vet) {
     return TextButton.icon(
+      // when pressed open the veterinarian detail page
       onPressed: () {
-        showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return AlertDialog(
-                title: Text(vet.name),
-                content: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    Text("Adresse: ${vet.getAddress()}"),
-                    const SizedBox(height: 10),
-                    Text("Telefonnummer: ${vet.telephoneNumber}"),
-                    const SizedBox(height: 10),
-                    Text("Webseite: ${vet.websiteUrl}"),
-                  ],
-                ),
-                actions: <Widget>[
-                  TextButton(
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: const <Widget>[
-                        Text("Okay"),
-                        SizedBox(width: 5),
-                        Icon(Icons.arrow_forward)
-                      ],
-                    ),
-                    onPressed: () {
-                      // Close the dialog
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                ],
-              );
-            });
+        Navigator.pushNamed(context, '/vet_information',
+            arguments: VetInformationScreenArguments(vet.id));
       },
       icon: const Icon(Icons.location_on, color: Colors.red, size: 35.0),
       label: Text(
@@ -125,24 +95,23 @@ class _HomeState extends State<Home> {
 
   void _showEditAddressModalBottomSheet(BuildContext context) {
     showModalBottomSheet(
-      isScrollControlled: true,
-      context: context,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadiusDirectional.circular(20),
-      ),
-      builder: (_) {
-        return EditAddressModal(
-          currentAddress: SharedPrefs().currentAddress,
-          onPositionChanged: (position, address) => {
-            setState(() {
-              SharedPrefs().currentAddress = address;
-              SharedPrefs().currentPosition = position;
-              mapController.move(position, 18);
-            })
-          },
-        );
-      }
-    );
+        isScrollControlled: true,
+        context: context,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadiusDirectional.circular(20),
+        ),
+        builder: (_) {
+          return EditAddressModal(
+            currentAddress: SharedPrefs().currentAddress,
+            onPositionChanged: (position, address) => {
+              setState(() {
+                SharedPrefs().currentAddress = address;
+                SharedPrefs().currentPosition = position;
+                mapController.move(position, 18);
+              })
+            },
+          );
+        });
   }
 
   @override
@@ -158,23 +127,22 @@ class _HomeState extends State<Home> {
       Widget vetsListWidget;
       if (vets.isNotEmpty) {
         vetsListWidget = Expanded(
-        child: ListView.builder(
-          itemCount: vets.length,
-          itemBuilder: (context, index) {
-            return VetCard(
-              id: vets[index].id,
-              name: vets[index].name,
-              telephoneNumber: vets[index].telephoneNumber,
-              location: vets[index].location,
-              onViewInMap: (position) {
-                mapController.move(position, 16);
-              },
-              clinicName: vets[index].clinicName,
-              distance: vets[index]
-                  .getDistanceInMeters(locationNotifier.position),
-            );
-          }
-        ));
+            child: ListView.builder(
+                itemCount: vets.length,
+                itemBuilder: (context, index) {
+                  return VetCard(
+                    id: vets[index].id,
+                    name: vets[index].name,
+                    telephoneNumber: vets[index].telephoneNumber,
+                    location: vets[index].location,
+                    onViewInMap: (position) {
+                      mapController.move(position, 16);
+                    },
+                    clinicName: vets[index].clinicName,
+                    distance: vets[index]
+                        .getDistanceInMeters(locationNotifier.position),
+                  );
+                }));
       } else {
         vetsListWidget = Expanded(
           child: Center(
