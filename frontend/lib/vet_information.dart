@@ -111,7 +111,7 @@ class VetInformation extends StatelessWidget {
                     launch('tel:${vet.telephoneNumber}');
                   },
                   icon: const Icon(Icons.phone), //icon data for elevated button
-                  label: const Text("Call Vet"), //label text
+                  label: Text('vet_information.call_vet'.tr()), //label text
                 ),
               ],
             ),
@@ -123,7 +123,7 @@ class VetInformation extends StatelessWidget {
                         'https://www.google.com/maps/search/?api=1&query=${vet.location.position.latitude},${vet.location.position.longitude}');
                   },
                   icon: const Icon(Icons.map), //icon data for elevated button
-                  label: const Text("Open In Google Maps"), //label text
+                  label: Text('vet_information.open_map'.tr()), //label text
                 ),
               ],
             ),
@@ -135,7 +135,7 @@ class VetInformation extends StatelessWidget {
                   },
                   icon:
                       const Icon(Icons.public), //icon data for elevated button
-                  label: const Text("Open Website"), //label text
+                  label: Text('vet_information.open_website'.tr()), //label text
                 ),
               ],
             ),

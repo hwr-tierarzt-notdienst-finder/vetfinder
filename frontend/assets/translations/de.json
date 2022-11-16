@@ -23,6 +23,7 @@
     },
     "vet_information": {
         "title": "Tierarzt Information",
+        "call_vet": "Anrufen",
         "open_website": "Webseite öffnen",
         "open_map": "Karte öffnen"
     },

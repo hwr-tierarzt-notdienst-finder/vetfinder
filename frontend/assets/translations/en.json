@@ -23,6 +23,7 @@
     },
     "vet_information": {
         "title": "Vet Information",
+        "call_vet": "Call Vet",
         "open_website": "Open Website",
         "open_map": "Open Map"
     },
