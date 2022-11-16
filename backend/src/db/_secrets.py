@@ -1,8 +1,9 @@
-from models import SecretInDb
-from ._core import create_repo
+from models import Secret, SecretInDb
+from ._core import BaseRepository
 
 
-repo = create_repo(
-    SecretInDb,
-    "secrets"
-)
+class _Repository(BaseRepository[Secret, SecretInDb]):
+    _IN_DB_CLS = SecretInDb
+
+
+repository = _Repository("secrets")

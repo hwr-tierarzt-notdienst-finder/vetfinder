@@ -1,2 +1,2 @@
-from ._vets import repos as vets
-from ._secrets import repo as secrets
+from ._vets import repositories as vets
+from ._secrets import repository as secrets
