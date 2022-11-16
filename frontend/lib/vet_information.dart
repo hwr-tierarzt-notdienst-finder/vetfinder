@@ -35,7 +35,19 @@ class VetInformation extends StatelessWidget {
         title: Text('vet_information.title'.tr()),
       ),
       // 2 rows with 8 columns
-      body: SingleChildScrollView(
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              // convert f44336 to RGBO
+              Color.fromRGBO(244, 67, 54, 1),
+              Color.fromRGBO(255, 255, 255, 1),
+            ],
+          ),
+        ),
+
         // add margin all around with 0.9 size of screen
         // margin: const EdgeInsets.all(0.9),
         padding: EdgeInsets.only(
@@ -46,7 +58,6 @@ class VetInformation extends StatelessWidget {
         ),
 
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
           children: [
             const SizedBox(height: 10),
             Text(
@@ -67,75 +78,175 @@ class VetInformation extends StatelessWidget {
             const SizedBox(height: 20),
             Row(
               children: [
-                const Icon(Icons.location_on),
-                Padding(
-                  padding: const EdgeInsets.only(left: 10),
-                  child: Text(
-                    vet.getAddress(),
-                    style: const TextStyle(
-                      fontSize: 15,
+                // add a container with a border
+                Container(
+                  width: deviceWidth(context) * 0.9,
+                  height: deviceHeight(context) * 0.12,
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      border: Border.all(
+                        color: Colors.white,
+                        width: 4,
+                      ),
+                      borderRadius:
+                          const BorderRadius.all(Radius.circular(20))),
+                  child: Row(
+                    // mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.only(left: 10),
+                        child: const Icon(
+                          Icons.location_on,
+                          size: 30,
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      Container(
+                        // padding on the left side
+                        padding: const EdgeInsets.only(left: 10),
+                        child: Text(
+                          vet.getAddress(),
+                          style: const TextStyle(
+                            fontSize: 18,
+                            // padding left
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
+            Row(
+              children: [
+                // add a container with a border
+                Container(
+                  width: deviceWidth(context) * 0.9,
+                  height: deviceHeight(context) * 0.12,
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      border: Border.all(
+                        color: Colors.white,
+                        width: 4,
+                      ),
+                      borderRadius:
+                          const BorderRadius.all(Radius.circular(20))),
+                  child: Row(
+                    // mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.only(left: 10),
+                        child: const Icon(
+                          Icons.pets,
+                          size: 30,
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      Container(
+                        // padding on the left side
+                        padding: const EdgeInsets.only(left: 10),
+                        child: Text(
+                          vet.categories.toString().substring(
+                              1, vet.categories.toString().length - 1),
+                          style: const TextStyle(
+                            fontSize: 18,
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
+            Row(
+              children: [
+                // add a container with a border
+                Container(
+                  width: deviceWidth(context) * 0.9,
+                  height: deviceHeight(context) * 0.12,
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      border: Border.all(
+                        color: Colors.white,
+                        width: 4,
+                      ),
+                      borderRadius:
+                          const BorderRadius.all(Radius.circular(20))),
+                  child: Row(
+                    // mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.only(left: 10),
+                        child: const Icon(
+                          Icons.email,
+                          size: 30,
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      Container(
+                        // padding on the left side
+                        padding: const EdgeInsets.only(left: 10),
+                        child: Text(
+                          vet.email,
+                          style: const TextStyle(
+                            fontSize: 18,
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 50),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                // 1st column
+                Column(
+                  children: [
+                    ElevatedButton(
+                      onPressed: () {
+                        launch('tel:${vet.telephoneNumber}');
+                      },
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.all(20),
+                      ),
+                      child: const Icon(Icons.phone_outlined),
                     ),
-                  ),
+                  ],
                 ),
-              ],
-            ),
-            const SizedBox(height: 10),
-            Row(
-              children: [
-                const Icon(Icons.pets),
-                Padding(
-                  padding: const EdgeInsets.only(left: 10),
-                  child: Text(vet.categories
-                      .toString()
-                      .substring(1, vet.categories.toString().length - 1)),
+                // 2nd column
+                Column(
+                  children: [
+                    ElevatedButton(
+                      onPressed: () {
+                        launch(vet.websiteUrl);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.all(20),
+                      ),
+                      child: const Icon(Icons.public),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-            const SizedBox(height: 10),
-            Row(
-              children: [
-                const Icon(Icons.email),
-                Padding(
-                  padding: const EdgeInsets.only(left: 10),
-                  child: Text(
-                    vet.email,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 30),
-            Row(
-              children: [
-                ElevatedButton.icon(
-                  onPressed: () {
-                    launch('tel:${vet.telephoneNumber}');
-                  },
-                  icon: const Icon(Icons.phone), //icon data for elevated button
-                  label: Text('vet_information.call_vet'.tr()), //label text
-                ),
-              ],
-            ),
-            Row(
-              children: [
-                ElevatedButton.icon(
-                  onPressed: () {
-                    launch(
-                        'https://www.google.com/maps/search/?api=1&query=${vet.location.position.latitude},${vet.location.position.longitude}');
-                  },
-                  icon: const Icon(Icons.map), //icon data for elevated button
-                  label: Text('vet_information.open_map'.tr()), //label text
-                ),
-              ],
-            ),
-            Row(
-              children: [
-                ElevatedButton.icon(
-                  onPressed: () {
-                    launch(vet.websiteUrl);
-                  },
-                  icon:
-                      const Icon(Icons.public), //icon data for elevated button
-                  label: Text('vet_information.open_website'.tr()), //label text
+                Column(
+                  children: [
+                    // add button
+                    ElevatedButton(
+                      onPressed: () {
+                        launch(
+                            'https://www.google.com/maps/search/?api=1&query=${vet.location.position.latitude},${vet.location.position.longitude}');
+                      },
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.all(20),
+                      ),
+                      child: const Icon(Icons.map),
+                    ),
+                  ],
                 ),
               ],
             ),
