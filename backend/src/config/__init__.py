@@ -112,6 +112,7 @@ def _get_dotenv_var_value(
     if _cached_dotenv_vars is None:
         _cached_dotenv_vars = {
             **dotenv_values(paths.find_backend() / ".env"),
+            **dotenv_values(paths.find_backend() / ".env.secret"),
             **dotenv_values(paths.find_backend() / ".env.local")
         }
 

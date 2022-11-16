@@ -10,7 +10,7 @@ _DIR_CONTENTS_INDICATING_PROJECT_ROOT = path.ExpectedDirectoryContents(
     dirs={".git"}
 )
 _DIR_CONTENTS_INDICATING_BACKEND_DIR = path.ExpectedDirectoryContents(
-    files={"requirements.txt"}
+    dirs={"src"}
 )
 
 

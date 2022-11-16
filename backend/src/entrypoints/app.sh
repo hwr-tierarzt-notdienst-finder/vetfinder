@@ -4,4 +4,8 @@ ENTRYPOINTS_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && p
 
 cd "$ENTRYPOINTS_DIR/.."
 
-uvicorn app:app --reload
+if [ "$ENV" = 'prod' ]; then
+    uvicorn app:app
+else
+    uvicorn app:app --reload
+fi

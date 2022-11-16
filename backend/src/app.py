@@ -8,6 +8,7 @@ from models import VetInDb, VetResponse
 import db
 from data import collect_vets
 import availability
+import normalization
 
 
 _T = TypeVar('_T')
@@ -19,10 +20,10 @@ app = FastAPI()
 
 @app.on_event("startup")
 def startup() -> None:
-    db.get_vets_collection("hidden").drop()
+    db.vets["hidden"].delete_all()
 
     for vet in collect_vets():
-        db.create_vet("hidden", vet)
+        db.vets["hidden"].insert(normalization.vet.normalize(vet))
 
 
 @app.get(
@@ -84,8 +85,7 @@ def get_vets(
     for token_id in auth.token.get_vets_collection_token_ids():
         if auth.token.is_authentic(token_id, token):
             collection = auth.token.get_vets_collection_by_token_id(token_id)
-            vets = db.get_vets_in_ring(
-                collection,
+            vets = db.vets[collection].in_ring(
                 c_lat,
                 c_lon,
                 r_inner,
