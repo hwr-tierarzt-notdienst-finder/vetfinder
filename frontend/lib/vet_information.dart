@@ -2,6 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:frontend/api.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:frontend/utils/preferences.dart';
+
+bool isDarkMode = SharedPrefs().isDarkMode;
+ThemeData darkThemeVet = ThemeData(
+  brightness: Brightness.dark,
+  primarySwatch: Colors.grey,
+);
+ThemeData lightThemeVet = ThemeData(
+  brightness: Brightness.light,
+  primarySwatch: Colors.red,
+  buttonTheme: const ButtonThemeData(buttonColor: Colors.red),
+  scaffoldBackgroundColor: const Color(0xfff1f1f1),
+);
 
 class VetInformationScreenArguments {
   final String id;
@@ -68,9 +81,11 @@ class VetInformation extends StatelessWidget {
                   width: deviceWidth(context) * 0.9,
                   height: deviceHeight(context) * 0.12,
                   decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? Color.fromRGBO(48, 48, 48, 1)
+                          : Colors.grey[200],
                       border: Border.all(
-                        color: Colors.white,
+                        color: Color.fromRGBO(244, 67, 54, 1),
                         width: 4,
                       ),
                       borderRadius:
@@ -109,9 +124,11 @@ class VetInformation extends StatelessWidget {
                   width: deviceWidth(context) * 0.9,
                   height: deviceHeight(context) * 0.12,
                   decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? Color.fromRGBO(48, 48, 48, 1)
+                          : Colors.grey[200],
                       border: Border.all(
-                        color: Colors.white,
+                        color: Color.fromRGBO(244, 67, 54, 1),
                         width: 4,
                       ),
                       borderRadius:
@@ -151,9 +168,11 @@ class VetInformation extends StatelessWidget {
                   width: deviceWidth(context) * 0.9,
                   height: deviceHeight(context) * 0.12,
                   decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? Color.fromRGBO(48, 48, 48, 1)
+                          : Colors.grey[200],
                       border: Border.all(
-                        color: Colors.white,
+                        color: Color.fromRGBO(244, 67, 54, 1),
                         width: 4,
                       ),
                       borderRadius:
