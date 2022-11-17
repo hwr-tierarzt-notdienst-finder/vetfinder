@@ -6,13 +6,10 @@ import 'package:frontend/utils/preferences.dart';
 import 'package:frontend/utils/constants.dart';
 
 ThemeData lightTheme = ThemeData(
-  brightness: Brightness.light,
-  primarySwatch: Colors.red,
-  buttonTheme: const ButtonThemeData(
-    buttonColor: Colors.red
-  ),
-  scaffoldBackgroundColor: const Color(0xfff1f1f1)
-);
+    brightness: Brightness.light,
+    primarySwatch: Colors.red,
+    buttonTheme: const ButtonThemeData(buttonColor: Colors.red),
+    scaffoldBackgroundColor: const Color(0xfff1f1f1));
 
 ThemeData darkTheme = ThemeData(
   brightness: Brightness.dark,
@@ -22,7 +19,7 @@ ThemeData darkTheme = ThemeData(
 class ThemeNotifier extends ChangeNotifier {
   late bool _isDarkMode;
   bool get isDarkMode => _isDarkMode;
-  
+
   ThemeNotifier() {
     _loadFromPrefs();
   }
@@ -38,7 +35,7 @@ class ThemeNotifier extends ChangeNotifier {
     notifyListeners();
   }
 
-  _saveToPrefs()async {
+  _saveToPrefs() async {
     SharedPrefs().isDarkMode = _isDarkMode;
   }
 }
@@ -77,8 +74,8 @@ class _SettingState extends State<Setting> {
                     ),
                   ),
                   Consumer<ThemeNotifier>(
-                    builder: (context,notifier,child) => Switch(
-                      onChanged: (bool value){
+                    builder: (context, notifier, child) => Switch(
+                      onChanged: (bool value) {
                         notifier.toggleTheme();
                       },
                       value: SharedPrefs().isDarkMode,
@@ -111,7 +108,9 @@ class _SettingState extends State<Setting> {
                   Container(
                     padding: EdgeInsets.symmetric(horizontal: 30, vertical: 5),
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? Color.fromRGBO(48, 48, 48, 1)
+                          : Colors.grey[200],
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: DropdownButton<String>(
@@ -124,17 +123,19 @@ class _SettingState extends State<Setting> {
                           SharedPrefs().language = value!;
                         });
                         final snackBar = SnackBar(
-                          content: Text('settings.snackbar_language_change'.tr()),
+                          content:
+                              Text('settings.snackbar_language_change'.tr()),
                           backgroundColor: Colors.black,
+                          // if darkmode is checked make text color light
                           action: SnackBarAction(
                             label: 'settings.snackbar_close'.tr(),
-                            onPressed: () {
-                            },
+                            onPressed: () {},
                           ),
                         );
                         ScaffoldMessenger.of(context).showSnackBar(snackBar);
                       },
-                      items: languagesList.map<DropdownMenuItem<String>>((String option) {
+                      items: languagesList
+                          .map<DropdownMenuItem<String>>((String option) {
                         return DropdownMenuItem<String>(
                           value: availableLanguages[option],
                           child: Text(option),
