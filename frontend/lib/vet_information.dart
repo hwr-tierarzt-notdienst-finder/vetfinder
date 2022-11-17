@@ -36,27 +36,12 @@ class VetInformation extends StatelessWidget {
       ),
       // 2 rows with 8 columns
       body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              // convert f44336 to RGBO
-              Color.fromRGBO(244, 67, 54, 1),
-              Color.fromRGBO(255, 255, 255, 1),
-            ],
-          ),
-        ),
-
-        // add margin all around with 0.9 size of screen
-        // margin: const EdgeInsets.all(0.9),
         padding: EdgeInsets.only(
           // top: deviceHeight(context) * 0.05,
           left: deviceWidth(context) * 0.05,
           right: deviceWidth(context) * 0.05,
           bottom: deviceHeight(context) * 0.05,
         ),
-
         child: Column(
           children: [
             const SizedBox(height: 10),
@@ -91,7 +76,6 @@ class VetInformation extends StatelessWidget {
                       borderRadius:
                           const BorderRadius.all(Radius.circular(20))),
                   child: Row(
-                    // mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Container(
                         padding: const EdgeInsets.only(left: 10),
