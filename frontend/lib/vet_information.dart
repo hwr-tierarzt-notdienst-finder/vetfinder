@@ -81,15 +81,17 @@ class VetInformation extends StatelessWidget {
                   width: deviceWidth(context) * 0.9,
                   height: deviceHeight(context) * 0.12,
                   decoration: BoxDecoration(
-                      color: Theme.of(context).brightness == Brightness.dark
-                          ? Color.fromRGBO(48, 48, 48, 1)
-                          : Colors.grey[200],
-                      border: Border.all(
-                        color: Color.fromRGBO(244, 67, 54, 1),
-                        width: 4,
-                      ),
-                      borderRadius:
-                          const BorderRadius.all(Radius.circular(20))),
+                    color: Theme.of(context).brightness == Brightness.dark
+                        ? Color.fromRGBO(48, 48, 48, 1)
+                        : Colors.grey[200],
+                    border: Border.all(
+                      color: Color.fromRGBO(244, 67, 54, 1),
+                      width: 4,
+                    ),
+                    borderRadius: const BorderRadius.all(
+                      Radius.circular(20),
+                    ),
+                  ),
                   child: Row(
                     children: [
                       Container(
@@ -107,7 +109,6 @@ class VetInformation extends StatelessWidget {
                           vet.getAddress(),
                           style: const TextStyle(
                             fontSize: 18,
-                            // padding left
                           ),
                         ),
                       )
