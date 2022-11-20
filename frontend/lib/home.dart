@@ -178,9 +178,16 @@ class _HomeState extends State<Home> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(locationNotifier.address.isNotEmpty
-                        ? locationNotifier.address
-                        : 'home.current_address'.tr()),
+                    Expanded(
+                      child: Center(
+                        child: Text(locationNotifier.address.isNotEmpty
+                            ? locationNotifier.address
+                            : 'home.current_address'.tr(),
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
+                        ),
+                      ),
+                    ),
                     const Icon(Icons.arrow_drop_down_rounded),
                   ],
                 ),
