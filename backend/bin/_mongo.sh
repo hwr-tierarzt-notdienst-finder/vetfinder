@@ -3,7 +3,7 @@
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 
 . "$SCRIPT_DIR/../../shared-bash.sh"
-. "$SCRIPT_DIR/../.env"
+. "$SCRIPT_DIR/_load_dotenv_vars.sh"
 
 
 function is_env_context() {

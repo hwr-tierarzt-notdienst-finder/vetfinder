@@ -8,7 +8,6 @@ from models import VetInDb, VetResponse
 import db
 from data import collect_vets
 import availability
-import normalization
 
 
 _T = TypeVar('_T')

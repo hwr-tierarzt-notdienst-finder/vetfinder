@@ -1,5 +1,7 @@
 .env.local
-tokens.secret.txt
+.env.secret
+tokens.prod.secret.txt
+tokens.prod.secret.txt.back
 
 # Python
 # ======

@@ -22,7 +22,7 @@ function echo_token() {
     fi
 }
 
-_terminal_supports_escape_sequences="$(( $(tput colors 2>/dev/null) >= 256 ))"
+_terminal_supports_escape_sequences="$(( $(tput colors 2>/dev/null || echo "0") >= 256 ))"
 function check_terminal_supports_escape_sequences() {
     echo $_terminal_supports_escape_sequences
 }

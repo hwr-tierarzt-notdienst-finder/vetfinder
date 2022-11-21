@@ -1,7 +1,9 @@
+#!/bin/bash
+
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+
 . "$SCRIPT_DIR/../../shared-bash.sh"
-if [ -f "$SCRIPT_DIR/../.env.local" ]; then
-    . "$SCRIPT_DIR/../.env.local"
-fi
+. "$SCRIPT_DIR/_load_dotenv_vars.sh"
 
 function python_executable() {
     if [ -z "${PYTHON_EXECUTABLE:-}" ]; then
