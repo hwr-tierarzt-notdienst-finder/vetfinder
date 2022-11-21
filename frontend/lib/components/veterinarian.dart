@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:frontend/api.dart';
 import 'package:frontend/utils/notifiers.dart';
 import 'package:frontend/vet_information.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:easy_localization/easy_localization.dart';
 
@@ -44,42 +45,41 @@ class VetCard extends Card {
               Text(
                   "${location.address.street} ${location.address.number}, ${location.address.zipCode} ${location.address.city}"),
               Text(telephoneNumber),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+              Stack(
+                alignment: FractionalOffset.center,
                 children: [
-                  TextButton.icon(
-                      onPressed: () {
-                        onViewInMap(location.position);
-                      },
-                      icon: const Icon(Icons.map_rounded),
-                      label: Text('veterinarian.show_in_map'.tr())),
-                  TextButton.icon(
-                      onPressed: () {
-                        Navigator.pushNamed(context, '/vet_information',
-                            arguments: VetInformationScreenArguments(id));
-                      },
-                      icon: const Icon(Icons.arrow_forward_ios_rounded),
-                      label: Text('veterinarian.view_vet'.tr())),
-                ],
-              ),
-              Container(
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.black),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                width: MediaQuery.of(context).size.width * 0.17,
-                height: MediaQuery.of(context).size.height * 0.04,
-                margin: const EdgeInsets.only(bottom: 10.0),
-                child: Center(
-                  child: FittedBox(
-                    fit: BoxFit.scaleDown,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      TextButton.icon(
+                        onPressed: () {
+                          onViewInMap(location.position);
+                        },
+                        icon: const Icon(Icons.map_rounded),
+                        label: Text('veterinarian.show_in_map'.tr())
+                      ),
+                      TextButton.icon(
+                        onPressed: () {
+                          Navigator.pushNamed(context, '/vet_information',
+                              arguments: VetInformationScreenArguments(id));
+                        },
+                        icon: const Icon(Icons.arrow_forward_ios_rounded),
+                        label: Text('veterinarian.view_vet'.tr())
+                      ),
+                    ],
+                  ),
+                  Container(
+                    alignment: Alignment.centerRight,
+                    margin: const EdgeInsets.only(right: 5),
                     child: Text(
                       '${((distance / 1000).toStringAsFixed(2))} km',
-                      style: const TextStyle(fontWeight: FontWeight.bold),
+                      style: const TextStyle(
+                        fontStyle: FontStyle.italic,
+                        color: Colors.grey,
+                      ),
                     ),
                   ),
-                  //
-                ),
+                ],
               ),
             ],
           ),
