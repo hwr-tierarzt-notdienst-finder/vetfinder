@@ -1,7 +1,6 @@
 name: deploy-prod
 run-name: Deploying on production server (by ${{ github.actor }})
 on:
-  workflow-dispatch:
   push:
     branches:
       - main
