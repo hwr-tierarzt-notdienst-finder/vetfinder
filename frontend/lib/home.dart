@@ -97,8 +97,8 @@ class _HomeState extends State<Home> {
     showModalBottomSheet(
         isScrollControlled: true,
         context: context,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadiusDirectional.circular(20),
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadiusDirectional.vertical(top: Radius.circular(20)),
         ),
         builder: (_) {
           return EditAddressModal(

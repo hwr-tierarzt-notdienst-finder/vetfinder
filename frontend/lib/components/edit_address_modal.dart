@@ -39,14 +39,24 @@ class _EditAddressModalState extends State<EditAddressModal> {
           mainAxisSize: MainAxisSize.min,
           children: [
             const SizedBox(height: 10),
-            Text(
-              'edit_address_modal.title'.tr(),
-              style: const TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
+            Padding(
+              padding: const EdgeInsets.only(top: 5),
+              child: Text(
+                'edit_address_modal.title'.tr(),
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 15),
+            const Divider(
+              height: 10,
+              thickness: 1,
+              color: Colors.grey,
+              indent: 10,
+              endIndent: 10,
+            ),
             TextButton(
               onPressed: () {
                 fetchCurrentLocation(notifier);
@@ -69,13 +79,6 @@ class _EditAddressModalState extends State<EditAddressModal> {
                 ),
               ),
             ),
-            const Divider(
-              height: 10,
-              thickness: 1,
-              color: Colors.grey,
-              indent: 20,
-              endIndent: 20,
-            ),
             SearchWidget(
               text: notifier.address,
               onSubmitted: (text) {
@@ -95,7 +98,6 @@ class _EditAddressModalState extends State<EditAddressModal> {
                             child: Text(
                               suggestions[index].displayName,
                               style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
                                   color: Colors.black),
                               textAlign: TextAlign.center,
                             ),
@@ -113,8 +115,18 @@ class _EditAddressModalState extends State<EditAddressModal> {
                             },
                           ),
                           const SizedBox(
-                            height: 20,
-                          )
+                            height: 10,
+                          ),
+                          const Divider(
+                            height: 10,
+                            thickness: 1,
+                            color: Colors.grey,
+                            indent: 10,
+                            endIndent: 10,
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
                         ],
                       ),
                     );
