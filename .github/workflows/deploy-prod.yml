@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - finalize-continuous-deployment
 jobs:
   re-deploy:
     runs-on: [self-hosted, linux]
