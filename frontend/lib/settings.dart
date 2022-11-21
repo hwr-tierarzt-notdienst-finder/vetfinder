@@ -108,7 +108,9 @@ class _SettingState extends State<Setting> {
                   Container(
                     padding: EdgeInsets.symmetric(horizontal: 30, vertical: 5),
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? Color.fromRGBO(48, 48, 48, 1)
+                          : Colors.grey[200],
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: DropdownButton<String>(
