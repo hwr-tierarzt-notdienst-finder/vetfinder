@@ -1,0 +1,6 @@
+prod/*
+dev/*
+test/*
+!prod/.gitignore
+!dev/.gitignore
+!test/.gitignore

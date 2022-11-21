@@ -1,0 +1,18 @@
+name: deploy-prod
+run-name: Deploying on production server (by ${{ github.actor }})
+on:
+  workflow-dispatch:
+  push:
+    branches:
+      - main
+jobs:
+  re-deploy:
+    runs-on: [self-hosted, linux]
+    steps:
+      - uses: actions/checkout@v3
+      - name: Remove old backend app container
+        run: ./backend/bin/app-remove-prod-container.sh
+      - name: Remove old mongo db container
+        run: ./backend/bin/mongo-remove-prod-container.sh
+      - name: Restart containers
+        run: ./backend/bin/start-prod.sh
