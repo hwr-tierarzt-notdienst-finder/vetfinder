@@ -13,8 +13,15 @@ if [ -f ../.env.local ]; then
     . ../.env.local
 fi
 
-if [ "$ENV" = 'dev' ]; then
-    uvicorn app:app --port "$(eval echo \$\{FASTAPI_"${ENV^^}"_PORT\})" --reload
+options=()
+if [ "$ENV" = 'prod' ]; then
+    options+=('--host' '0.0.0.0')
 else
-    uvicorn app:app --port "$(eval echo \$\{FASTAPI_"${ENV^^}"_PORT\})"
+    options+=('--host' '127.0.0.1')
 fi
+
+if [ "$ENV" = 'dev' ]; then
+    options+=('--reload')
+fi
+
+uvicorn app:app ${options[*]} --port "$(eval echo \$\{FASTAPI_"${ENV^^}"_PORT\})"
