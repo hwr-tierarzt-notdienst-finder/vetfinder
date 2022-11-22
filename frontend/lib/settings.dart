@@ -50,6 +50,9 @@ class Setting extends StatefulWidget {
 class _SettingState extends State<Setting> {
   List<String> languagesList = List<String>.from(availableLanguages.keys);
   late String _selectedLanguage;
+  double deviceHeight(BuildContext context) =>
+      MediaQuery.of(context).size.height;
+  double deviceWidth(BuildContext context) => MediaQuery.of(context).size.width;
 
   @override
   Widget build(BuildContext context) {
@@ -65,20 +68,29 @@ class _SettingState extends State<Setting> {
             child: Container(
               margin: const EdgeInsets.symmetric(horizontal: 8),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    'settings.darkmode'.tr(),
-                    style: const TextStyle(
-                      fontSize: 20,
+                  const Icon(
+                    Icons.dark_mode,
+                    size: 30,
+                  ),
+                  Container(
+                    padding: const EdgeInsets.only(left: 10),
+                    child: Text(
+                      'settings.darkmode'.tr(),
+                      style: const TextStyle(
+                        fontSize: 20,
+                      ),
                     ),
                   ),
-                  Consumer<ThemeNotifier>(
-                    builder: (context, notifier, child) => Switch(
-                      onChanged: (bool value) {
-                        notifier.toggleTheme();
-                      },
-                      value: SharedPrefs().isDarkMode,
+                  Container(
+                    padding: EdgeInsets.only(left: deviceWidth(context) * 0.3),
+                    child: Consumer<ThemeNotifier>(
+                      builder: (context, notifier, child) => Switch(
+                        onChanged: (bool value) {
+                          notifier.toggleTheme();
+                        },
+                        value: SharedPrefs().isDarkMode,
+                      ),
                     ),
                   ),
                 ],
@@ -97,16 +109,23 @@ class _SettingState extends State<Setting> {
             child: Container(
               margin: const EdgeInsets.symmetric(horizontal: 8),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    'settings.language'.tr(),
-                    style: const TextStyle(
-                      fontSize: 20,
+                  const Icon(
+                    Icons.language_outlined,
+                    size: 30,
+                  ),
+                  Container(
+                    padding: const EdgeInsets.only(left: 10),
+                    child: Text(
+                      'settings.language'.tr(),
+                      style: const TextStyle(
+                        fontSize: 20,
+                      ),
                     ),
                   ),
                   Container(
-                    padding: EdgeInsets.symmetric(horizontal: 30, vertical: 5),
+                    margin: EdgeInsets.only(left: deviceWidth(context) * 0.2),
+                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                     decoration: BoxDecoration(
                       color: Theme.of(context).brightness == Brightness.dark
                           ? Color.fromRGBO(48, 48, 48, 1)
