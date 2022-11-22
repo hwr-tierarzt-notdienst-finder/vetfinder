@@ -47,4 +47,4 @@ else
 fi
 
 echo_information "Running app as docker container"
-echo_and_run "docker run --name tierarzt_notdienst_app_prod -v $BACKEND_DIR/logs:/app/backend/logs --network=host -p ${FASTAPI_PROD_PORT}:${FASTAPI_PROD_PORT}${extra_options} tierarzt_notdienst_app_prod"
+echo_and_run "docker run --name tierarzt_notdienst_app_prod -v $BACKEND_DIR/logs:/app/backend/logs --network=host -p 0.0.0.0:${FASTAPI_PROD_PORT}:${FASTAPI_PROD_PORT}${extra_options} tierarzt_notdienst_app_prod"
