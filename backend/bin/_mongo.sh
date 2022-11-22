@@ -137,6 +137,16 @@ function remove_mongo_container() {
     local env_context
     env_context="$1"
 
+    skip_if_container_does_not_exist=0
+    while test $# != 0
+    do
+        case "$1" in
+        --skip-if-container-does-not-exist)
+            skip_if_container_does_not_exist=1;;
+        esac
+        shift
+    done
+
     local container_name
     container_name="$(get_mongo_container_name "$env_context")"
 
@@ -144,7 +154,12 @@ function remove_mongo_container() {
     container_id=$(docker ps -aqf "name=^$container_name")
 
     if [ -z "$container_id" ]; then
-        throw "Could not find container with name=$container_name"
+        if [ $skip_if_container_does_not_exist = 1 ]; then
+            echo_information "Container does not exist, skipping!"
+            exit 0
+        else
+            throw "Could not find container with name=$container_name"
+        fi
     else
         echo_information "Found mongo db container id=$container_id from name=$container_name"
     fi
