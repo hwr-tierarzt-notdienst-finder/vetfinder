@@ -130,7 +130,7 @@ function create_mongo_container() {
     version="$(get_mongo_env_var_value 'VERSION')"
 
     echo_information "Creating mongo db container with name=$container_name"
-    echo_and_run "docker run --name $container_name -d -e MONGO_INITDB_ROOT_USERNAME=$initdb_root_username -e MONGO_INITDB_ROOT_PASSWORD=$initdb_root_password -p $host_port:27017 -v $db_dir_abs_path:/data/db mongo:$version"
+    echo_and_run "docker run --name $container_name -d -e MONGO_INITDB_ROOT_USERNAME=$initdb_root_username -e MONGO_INITDB_ROOT_PASSWORD=$initdb_root_password -p $host_port:27017 -v $db_dir_abs_path:/data/db mongo:$version" --secret="$initdb_root_username" --secret="$initdb_root_password"
 }
 
 function remove_mongo_container() {
