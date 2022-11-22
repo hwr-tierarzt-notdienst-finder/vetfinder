@@ -18,4 +18,4 @@ jobs:
       - name: Remove old mongo db container
         run: ./backend/bin/mongo-remove-prod-container.sh --skip-if-container-does-not-exist
       - name: Restart containers
-        run: ./backend/bin/start-prod.sh
+        run: ./backend/bin/start-prod.sh --run-detached
