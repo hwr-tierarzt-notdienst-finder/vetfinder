@@ -11,8 +11,8 @@ from typing_extensions import Annotated
 
 from pydantic import Field as PydanticField
 
-from utils import string_
-from types_ import Timezone, Region
+from shared.utils import string_
+from shared.utils.constants import Timezone, Region
 
 
 _T = TypeVar("_T")

@@ -3,7 +3,7 @@ from typing import Callable
 
 from dateutil import tz
 
-from src.types_ import Timezone
+from src.utils.constants import Timezone
 from src.utils.schedulers import Poller, WeeklyScheduler
 
 

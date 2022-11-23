@@ -1,6 +1,4 @@
 import json
-import secrets
-import string
 from typing import NoReturn
 
 import bcrypt
@@ -9,8 +7,7 @@ from constants import VET_COLLECTIONS
 import db
 from models import Secret
 import paths
-from utils.human_readable import human_readable
-from utils import cache
+from shared.utils import cache
 from ._errors import Error as AuthError
 
 

@@ -2,8 +2,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import cast
 
-from constants import TIMEZONES, WEEKDAYS, REGIONS
-from types_ import Timezone, Weekday, Region
+from .constants import Timezone, Weekday, Region, TIMEZONES, WEEKDAYS, REGIONS
 from .human_readable import human_readable
 
 

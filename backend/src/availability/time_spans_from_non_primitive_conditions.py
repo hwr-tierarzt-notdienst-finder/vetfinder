@@ -3,7 +3,7 @@ from typing import Iterable, TypeVar
 
 from dateutil.tz import gettz
 
-from constants import WEEKDAYS
+from shared.utils.constants import WEEKDAYS
 from models import (
     TimeSpan,
     AvailabilityConditionTimeSpanDuringDay,

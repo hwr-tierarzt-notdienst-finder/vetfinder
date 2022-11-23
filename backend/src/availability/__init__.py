@@ -4,13 +4,13 @@ from typing import Iterable, TypeVar, Callable
 
 from dateutil.tz import gettz
 
-from utils import cache, validate
+from shared.utils import cache, validate
+from shared.utils.constants import Timezone
 from models import (
     AvailabilityCondition,
     Vet,
     TimeSpan,
 )
-from types_ import Timezone
 
 from . import time_spans_from_non_primitive_conditions
 

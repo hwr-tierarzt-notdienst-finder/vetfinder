@@ -5,7 +5,6 @@ from pathlib import Path
 from shutil import rmtree
 from typing import TextIO, TypedDict, Literal, Iterable, TypeVar, NoReturn, cast, IO, Any
 
-import types_
 from .human_readable import human_readable
 from . import string_
 from . import path
@@ -33,7 +32,7 @@ _DirContents = Iterable[_DirEntry] | None
 
 
 class _MatchDirBaseEntry(TypedDict):
-    match_name: types_.string.Matcher
+    match_name: string_.Matcher
 
 
 class _MatchDirFileEntry(_MatchDirBaseEntry):
@@ -47,7 +46,7 @@ class _MatchDirDirEntry(_MatchDirBaseEntry):
 
 
 _MatchDirEntry = _MatchDirFileEntry | _MatchDirDirEntry
-_MatchFileContents = types_.string.Matcher | Iterable[types_.string.Matcher]
+_MatchFileContents = string_.Matcher | Iterable[string_.Matcher]
 _MatchDirContents = Iterable[_MatchDirEntry]
 
 

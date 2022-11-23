@@ -3,7 +3,7 @@ import pytest
 from pathlib import Path
 
 from auth import token
-from utils import file_system
+from shared.utils import file_system
 
 
 def test_generate_and_authenticate() -> None:

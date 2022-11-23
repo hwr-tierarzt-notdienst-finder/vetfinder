@@ -6,7 +6,7 @@ from time import sleep
 import geopy
 
 from models import Location, Vet
-from utils import cache
+from shared.utils import cache
 
 _NOMINATIM_GEOLOCATOR_USER_AGENT = "hwr_tierarzt_notdienst"
 _GEOPY_LAST_REQUEST_DATETIME_FILE_NAME = "geopy_last_request_datetime.txt"

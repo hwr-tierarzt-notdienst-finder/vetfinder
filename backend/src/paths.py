@@ -1,7 +1,7 @@
 from pathlib import Path
 
-from utils import cache
-from utils import path
+from shared.utils import cache
+from shared.utils import path
 
 
 # We don't want to make indicators too strict,

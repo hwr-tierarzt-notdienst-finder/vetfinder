@@ -1,3 +1,4 @@
+-c ../shared_python/requirements.txt
 python-dotenv>=0.20<0.30
 pymongo>=4.2.0<5
 fastapi>=0.81.0<0.90
@@ -8,4 +9,3 @@ lxml>=4.9.1<5.0
 html5lib>=1.1<2.0
 geopy>=2.2<2.3
 bcrypt>=4.0.1
-python-dateutil>=2.8.2

@@ -1,8 +1,8 @@
 from logging import Logger
 
 import paths
-from utils import cache
-from utils import log
+from shared.utils import cache
+from shared.utils import log
 
 
 def create_logger(
