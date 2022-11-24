@@ -44,7 +44,7 @@ class _HomeState extends State<Home> {
       label: Text(
         vet.name,
         overflow: TextOverflow.ellipsis,
-        softWrap: false,
+        softWrap: false,  
         maxLines: 2,
       ),
     );
@@ -54,7 +54,7 @@ class _HomeState extends State<Home> {
     markers.clear();
     for (Veterinarian vet in vets) {
       markers.add(Marker(
-          width: 100,
+          width: 200,
           height: 50,
           point: vet.getPosition(),
           builder: (context) => createMarkerWidget(vet)));
@@ -71,7 +71,7 @@ class _HomeState extends State<Home> {
         height: 50,
         point: notifier.position,
         builder: (context) =>
-            const Icon(Icons.location_pin, color: Colors.blue, size: 35.0));
+            const Icon(Icons.man_rounded, color: Colors.orange, size: 45.0));
     markers.add(currentLocationMarker!);
   }
 

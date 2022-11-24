@@ -35,6 +35,9 @@ class VetCard extends Card {
     return Consumer<LocationNotifier>(
       builder: (context, notifier, child) {
         return Card(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(5),
+          ),
           child: Column(
             children: [
               const SizedBox(height: 10),
