@@ -2,7 +2,8 @@
     "home": {
         "current_address": "Aktuelle Adresse",
         "query_hint": "Name, Addresse, PLZ",
-        "no_vet_found": "Kein Tierarzt gefunden."
+        "no_vet_found": "Kein Tierarzt gefunden.",
+        "snackbar_no_fav": "Kein Tierarzt ist als Favorit gespeichert."
     },
     "search_filter_dialog": {
         "title": "Suchfilter",
@@ -23,6 +24,8 @@
     },
     "vet_information": {
         "title": "Tierarzt Information",
+        "mark_as_fav": "Als Favorit speichern",
+        "remove_from_myvet": "Favorit entfernen",
         "call_vet": "Anrufen",
         "open_website": "Webseite öffnen",
         "open_map": "Karte öffnen"

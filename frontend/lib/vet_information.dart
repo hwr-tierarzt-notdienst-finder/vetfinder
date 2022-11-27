@@ -21,10 +21,17 @@ class VetInformationScreenArguments {
   VetInformationScreenArguments(this.id);
 }
 
-class VetInformation extends StatelessWidget {
+class VetInformation extends StatefulWidget {
   const VetInformation({Key? key}) : super(key: key);
+
+  @override
+  State<VetInformation> createState() => _VetInformationState();
+}
+
+class _VetInformationState extends State<VetInformation> {
   double deviceHeight(BuildContext context) =>
       MediaQuery.of(context).size.height;
+
   double deviceWidth(BuildContext context) => MediaQuery.of(context).size.width;
 
   @override
@@ -71,6 +78,39 @@ class VetInformation extends StatelessWidget {
               style: const TextStyle(
                 fontStyle: FontStyle.italic,
                 fontSize: 20,
+              ),
+            ),
+            const SizedBox(height: 20),
+            Container(
+              alignment: Alignment.centerLeft,
+              child: SharedPrefs().vetId != id ?
+              ElevatedButton.icon(
+                onPressed: () {
+                  setState(() {
+                    SharedPrefs().vetId = id;
+                  });
+                },
+                icon: const Icon(Icons.star_border_rounded),
+                label: Text('vet_information.mark_as_fav'.tr()),
+                style: ElevatedButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20.0),
+                  ),
+                ),
+              ) :
+              ElevatedButton.icon(
+                onPressed: () {
+                  setState(() {
+                    SharedPrefs().vetId = "";
+                  });
+                },
+                icon: const Icon(Icons.star_rounded),
+                label: Text('vet_information.unmark_as_fav'.tr()),
+                style: ElevatedButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20.0),
+                  ),
+                ),
               ),
             ),
             const SizedBox(height: 20),

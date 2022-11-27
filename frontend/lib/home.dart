@@ -163,8 +163,31 @@ class _HomeState extends State<Home> {
           title: Text(widget.title),
           actions: [
             IconButton(
+                onPressed: () {
+                  String vetId = SharedPrefs().vetId;
+                  if  (vetId.isEmpty) {
+                    final snackBar = SnackBar(
+                      content: Text('home.snackbar_no_fav'.tr()),
+                      backgroundColor: Colors.black,
+                      action: SnackBarAction(
+                        label: 'settings.snackbar_close'.tr(),
+                        onPressed: () {},
+                      ),
+                    );
+                    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                  } else {
+                    Navigator.pushNamed(
+                      context, '/vet_information',
+                      arguments: VetInformationScreenArguments(vetId)
+                    );
+                  }
+                },
+                icon: const Icon(Icons.pets_rounded)
+            ),
+            IconButton(
                 onPressed: () => Navigator.pushNamed(context, '/setting'),
-                icon: const Icon(Icons.settings)),
+                icon: const Icon(Icons.settings)
+            ),
           ],
         ),
         body: Column(

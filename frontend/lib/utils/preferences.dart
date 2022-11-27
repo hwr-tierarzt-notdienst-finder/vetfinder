@@ -15,6 +15,11 @@ class SharedPrefs {
   }
 
   // App Settings
+  String get vetId => _sharedPrefs.getString(keyVetId) ?? "";
+  set vetId(String value) {
+    _sharedPrefs.setString(keyVetId, value);
+  }
+
   bool get isDarkMode => _sharedPrefs.getBool(keyIsDarkMode) ?? false;
   set isDarkMode(bool value) {
     _sharedPrefs.setBool(keyIsDarkMode, value);

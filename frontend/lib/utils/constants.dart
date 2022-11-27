@@ -10,6 +10,7 @@ const int minSearchRadius = 5;
 
 // Shared Preferences Keys
 // App Settings
+const String keyVetId = "vet_id";
 const String keyIsDarkMode = "is_dark_mode";
 const String keyLanguage = "language";
 // Filter Settings

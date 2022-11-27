@@ -2,7 +2,8 @@
     "home": {
         "current_address": "Current Address",
         "query_hint": "Name, Address, ZIP Code",
-        "no_vet_found": "No clinic found."
+        "no_vet_found": "No clinic found.",
+        "snackbar_no_fav": "No vet is currently marked as favorite."
     },
     "search_filter_dialog": {
         "title": "Filter Settings",
@@ -23,6 +24,8 @@
     },
     "vet_information": {
         "title": "Vet Information",
+        "mark_as_fav": "Mark as Favorite",
+        "unmark_as_fav": "Unmark as Favorite",
         "call_vet": "Call Vet",
         "open_website": "Open Website",
         "open_map": "Open Map"
