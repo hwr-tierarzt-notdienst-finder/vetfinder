@@ -76,109 +76,66 @@ class _VetInformationState extends State<VetInformation> {
           right: deviceWidth(context) * 0.05,
           bottom: deviceHeight(context) * 0.05,
         ),
-        child: Column(
-          children: [
-            const SizedBox(height: 10),
-            Text(
-              vet.name,
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 30,
-              ),
-            ),
-            const SizedBox(height: 10),
-            Text(
-              vet.clinicName,
-              style: const TextStyle(
-                fontStyle: FontStyle.italic,
-                fontSize: 20,
-              ),
-            ),
-            const SizedBox(height: 20),
-            Container(
-              alignment: Alignment.centerLeft,
-              child: SharedPrefs().vetId != id ?
-              ElevatedButton.icon(
-                onPressed: () {
-                  setState(() {
-                    SharedPrefs().vetId = id;
-                  });
-                },
-                icon: const Icon(Icons.star_border_rounded),
-                label: Text('vet_information.mark_as_fav'.tr()),
-                style: ElevatedButton.styleFrom(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20.0),
-                  ),
-                ),
-              ) :
-              ElevatedButton.icon(
-                onPressed: () {
-                  setState(() {
-                    SharedPrefs().vetId = "";
-                  });
-                },
-                icon: const Icon(Icons.star_rounded),
-                label: Text('vet_information.unmark_as_fav'.tr()),
-                style: ElevatedButton.styleFrom(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20.0),
-                  ),
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              const SizedBox(height: 10),
+              Text(
+                vet.name,
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 30,
                 ),
               ),
-            ),
-            const SizedBox(height: 20),
-            Row(
-              children: [
-                // add a container with a border
-                Container(
-                  width: deviceWidth(context) * 0.9,
-                  height: deviceHeight(context) * 0.12,
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).brightness == Brightness.dark
-                        ? Color.fromRGBO(48, 48, 48, 1)
-                        : Colors.grey[200],
-                    border: Border.all(
-                      color: Color.fromRGBO(244, 67, 54, 1),
-                      width: 4,
-                    ),
-                    borderRadius: const BorderRadius.all(
-                      Radius.circular(20),
+              const SizedBox(height: 10),
+              Text(
+                vet.clinicName,
+                style: const TextStyle(
+                  fontStyle: FontStyle.italic,
+                  fontSize: 20,
+                ),
+              ),
+              const SizedBox(height: 20),
+              Container(
+                alignment: Alignment.centerLeft,
+                child: SharedPrefs().vetId != id ?
+                ElevatedButton.icon(
+                  onPressed: () {
+                    setState(() {
+                      SharedPrefs().vetId = id;
+                    });
+                  },
+                  icon: const Icon(Icons.star_border_rounded),
+                  label: Text('vet_information.mark_as_fav'.tr()),
+                  style: ElevatedButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20.0),
                     ),
                   ),
-                  child: Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.only(left: 10),
-                        child: const Icon(
-                          Icons.location_on,
-                          size: 30,
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      Container(
-                        // padding on the left side
-                        padding: const EdgeInsets.only(left: 10),
-                        child: Text(
-                          vet.getAddress(),
-                          style: const TextStyle(
-                            fontSize: 18,
-                          ),
-                        ),
-                      )
-                    ],
+                ) :
+                ElevatedButton.icon(
+                  onPressed: () {
+                    setState(() {
+                      SharedPrefs().vetId = "";
+                    });
+                  },
+                  icon: const Icon(Icons.star_rounded),
+                  label: Text('vet_information.unmark_as_fav'.tr()),
+                  style: ElevatedButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20.0),
+                    ),
                   ),
                 ),
-              ],
-            ),
-            const SizedBox(height: 20),
-            Row(
-              children: [
-                // add a container with a border
-                Container(
-                  width: deviceWidth(context) * 0.9,
-                  height: deviceHeight(context) * 0.12,
-                  decoration: BoxDecoration(
+              ),
+              const SizedBox(height: 20),
+              Row(
+                children: [
+                  // add a container with a border
+                  Container(
+                    width: deviceWidth(context) * 0.9,
+                    height: deviceHeight(context) * 0.12,
+                    decoration: BoxDecoration(
                       color: Theme.of(context).brightness == Brightness.dark
                           ? Color.fromRGBO(48, 48, 48, 1)
                           : Colors.grey[200],
@@ -186,159 +143,204 @@ class _VetInformationState extends State<VetInformation> {
                         color: Color.fromRGBO(244, 67, 54, 1),
                         width: 4,
                       ),
-                      borderRadius:
-                          const BorderRadius.all(Radius.circular(20))),
-                  child: Row(
-                    // mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.only(left: 10),
-                        child: const Icon(
-                          Icons.pets,
-                          size: 30,
-                        ),
+                      borderRadius: const BorderRadius.all(
+                        Radius.circular(20),
                       ),
-                      const SizedBox(height: 10),
-                      Container(
-                        // padding on the left side
-                        padding: const EdgeInsets.only(left: 10),
-                        child: Text(
-                          vet.categories.toString().substring(
-                              1, vet.categories.toString().length - 1),
-                          style: const TextStyle(
-                            fontSize: 18,
+                    ),
+                    child: Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.only(left: 10),
+                          child: const Icon(
+                            Icons.location_on,
+                            size: 30,
                           ),
                         ),
-                      )
-                    ],
+                        const SizedBox(height: 10),
+                        Container(
+                          // padding on the left side
+                          padding: const EdgeInsets.only(left: 10),
+                          child: Text(
+                            vet.getAddress(),
+                            style: const TextStyle(
+                              fontSize: 18,
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
                   ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 20),
-            Row(
-              children: [
-                // add a container with a border
-                Container(
-                  width: deviceWidth(context) * 0.9,
-                  height: deviceHeight(context) * 0.12,
-                  decoration: BoxDecoration(
-                      color: Theme.of(context).brightness == Brightness.dark
-                          ? Color.fromRGBO(48, 48, 48, 1)
-                          : Colors.grey[200],
-                      border: Border.all(
-                        color: Color.fromRGBO(244, 67, 54, 1),
-                        width: 4,
-                      ),
-                      borderRadius:
-                          const BorderRadius.all(Radius.circular(20))),
-                  child: Row(
-                    // mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.only(left: 10),
-                        child: const Icon(
-                          Icons.email,
-                          size: 30,
+                ],
+              ),
+              const SizedBox(height: 20),
+              Row(
+                children: [
+                  // add a container with a border
+                  Container(
+                    width: deviceWidth(context) * 0.9,
+                    height: deviceHeight(context) * 0.12,
+                    decoration: BoxDecoration(
+                        color: Theme.of(context).brightness == Brightness.dark
+                            ? Color.fromRGBO(48, 48, 48, 1)
+                            : Colors.grey[200],
+                        border: Border.all(
+                          color: Color.fromRGBO(244, 67, 54, 1),
+                          width: 4,
                         ),
-                      ),
-                      const SizedBox(height: 10),
-                      Container(
-                        // padding on the left side
-                        padding: const EdgeInsets.only(left: 10),
-                        child: Text(
-                          vet.email,
-                          style: const TextStyle(
-                            fontSize: 18,
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(20))),
+                    child: Row(
+                      // mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.only(left: 10),
+                          child: const Icon(
+                            Icons.pets,
+                            size: 30,
                           ),
                         ),
-                      )
+                        const SizedBox(height: 10),
+                        Container(
+                          // padding on the left side
+                          padding: const EdgeInsets.only(left: 10),
+                          child: Text(
+                            vet.categories.toString().substring(
+                                1, vet.categories.toString().length - 1),
+                            style: const TextStyle(
+                              fontSize: 18,
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 20),
+              Row(
+                children: [
+                  // add a container with a border
+                  Container(
+                    width: deviceWidth(context) * 0.9,
+                    height: deviceHeight(context) * 0.12,
+                    decoration: BoxDecoration(
+                        color: Theme.of(context).brightness == Brightness.dark
+                            ? Color.fromRGBO(48, 48, 48, 1)
+                            : Colors.grey[200],
+                        border: Border.all(
+                          color: Color.fromRGBO(244, 67, 54, 1),
+                          width: 4,
+                        ),
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(20))),
+                    child: Row(
+                      // mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.only(left: 10),
+                          child: const Icon(
+                            Icons.email,
+                            size: 30,
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        Container(
+                          // padding on the left side
+                          padding: const EdgeInsets.only(left: 10),
+                          child: Text(
+                            vet.email,
+                            style: const TextStyle(
+                              fontSize: 18,
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 20),
+              Row(
+                children: [
+                  Expanded(
+                    child: ElevatedButton.icon(
+                      onPressed: () => _showScheduleDialog(context),
+                      icon: const Icon(Icons.schedule_outlined),
+                      label: Text(
+                        'vet_information.open_schedule'.tr(),
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                        ),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.all(10),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  // 1st column
+                  Column(
+                    children: [
+                      ElevatedButton(
+                        onPressed: () {
+                          launch('tel:${vet.telephoneNumber}');
+                        },
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 20,
+                            horizontal: 40,
+                          ),
+                        ),
+                        child: const Icon(Icons.phone_outlined),
+                      ),
                     ],
                   ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 20),
-            Row(
-              children: [
-                Expanded(
-                  child: ElevatedButton.icon(
-                    onPressed: () => _showScheduleDialog(context),
-                    icon: const Icon(Icons.schedule_outlined),
-                    label: Text(
-                      'vet_information.open_schedule'.tr(),
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14,
+                  // 2nd column
+                  Column(
+                    children: [
+                      ElevatedButton(
+                        onPressed: () {
+                          launch(vet.websiteUrl);
+                        },
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 20,
+                            horizontal: 40,
+                          ),
+                        ),
+                        child: const Icon(Icons.public),
                       ),
-                    ),
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.all(10),
-                    ),
+                    ],
                   ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                // 1st column
-                Column(
-                  children: [
-                    ElevatedButton(
-                      onPressed: () {
-                        launch('tel:${vet.telephoneNumber}');
-                      },
-                      style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(
-                          vertical: 20,
-                          horizontal: 40,
+                  Column(
+                    children: [
+                      // add button
+                      ElevatedButton(
+                        onPressed: () {
+                          launch(
+                              'https://www.google.com/maps/search/?api=1&query=${vet.location.position.latitude},${vet.location.position.longitude}');
+                        },
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 20,
+                            horizontal: 40,
+                          ),
                         ),
+                        child: const Icon(Icons.map),
                       ),
-                      child: const Icon(Icons.phone_outlined),
-                    ),
-                  ],
-                ),
-                // 2nd column
-                Column(
-                  children: [
-                    ElevatedButton(
-                      onPressed: () {
-                        launch(vet.websiteUrl);
-                      },
-                      style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(
-                          vertical: 20,
-                          horizontal: 40,
-                        ),
-                      ),
-                      child: const Icon(Icons.public),
-                    ),
-                  ],
-                ),
-                Column(
-                  children: [
-                    // add button
-                    ElevatedButton(
-                      onPressed: () {
-                        launch(
-                            'https://www.google.com/maps/search/?api=1&query=${vet.location.position.latitude},${vet.location.position.longitude}');
-                      },
-                      style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(
-                          vertical: 20,
-                          horizontal: 40,
-                        ),
-                      ),
-                      child: const Icon(Icons.map),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ],
+                    ],
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

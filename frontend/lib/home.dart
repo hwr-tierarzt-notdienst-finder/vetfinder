@@ -116,6 +116,8 @@ class _HomeState extends State<Home> {
         builder: (context, filterNotifier, locationNotifier, child) {
       // Update the list of vets if filter is applied
       vets = getFilteredVeterinarians(locationNotifier.position, query);
+
+      // Create location markers
       createMarkers(locationNotifier);
       addCurrentLocationMarker(locationNotifier);
 
