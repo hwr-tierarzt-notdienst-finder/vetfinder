@@ -1,4 +1,29 @@
 <script lang="ts">
+	type CategoryState = {
+		[index in Category]: boolean;
+	};
+	let selectedCategories: CategoryState = {
+		dog: false,
+		cat: false,
+		horse: false,
+		small_animals: false,
+		other: false
+	};
+
+	type Category = 'dog' | 'cat' | 'horse' | 'small_animals' | 'other';
+	const categories: Category[] = ['dog', 'cat', 'horse', 'small_animals', 'other'];
+
+	type CategoryLabel = {
+		[index in Category]: string;
+	};
+	const categoryLabels: CategoryLabel = {
+		dog: 'Hund',
+		cat: 'Katze',
+		horse: 'Pferd',
+		small_animals: 'Kleintiere',
+		other: 'Sonstige'
+	};
+
 	let selectedFormOfAddress: string = '';
 	const formOfAddresses: string[] = ['Herr', 'Frau'];
 
@@ -234,6 +259,50 @@
 						placeholder="Hier eingeben"
 						class="input input-bordered w-full max-w-xs"
 					/>
+				</div>
+			</div>
+		</div>
+		<div class="divider" />
+		<div class="w-full flex flex-col gap-2">
+			<h1 class="text-2xl font-bold">Behandlungen</h1>
+			<div class="flex gap-4">
+				<div class="form-control flex-col w-full max-w-xs">
+					<label class="label">
+						<span class="label-text">Tierarten</span>
+					</label>
+					<div class="form-control flex-row flex-wrap gap-4">
+						{#each categories as category}
+							<label class="label justify-start gap-2 cursor-pointer">
+								<input
+									type="checkbox"
+									bind:checked={selectedCategories[category]}
+									class="checkbox"
+								/>
+								<span class="label-text">{categoryLabels[category]}</span>
+							</label>
+						{/each}
+					</div>
+					{#if selectedCategories['other']}
+						<div class="mt-2 form-control w-full">
+							<input
+								type="text"
+								placeholder="Hier eingeben"
+								class="input input-bordered w-full max-w-xs"
+							/>
+						</div>
+					{/if}
+				</div>
+				<div class="form-control flex-col w-full max-w-xs">
+					<label class="label">
+						<span class="label-text">Anmerkungen</span>
+					</label>
+					<div class="mt-2 form-control w-full">
+						<input
+							type="text"
+							placeholder="Anmerkungen..."
+							class="input input-bordered w-full max-w-xs"
+						/>
+					</div>
 				</div>
 			</div>
 		</div>
