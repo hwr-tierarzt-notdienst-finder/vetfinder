@@ -44,41 +44,36 @@ class VetCard extends Card {
               Text(
                   "${location.address.street} ${location.address.number}, ${location.address.zipCode} ${location.address.city}"),
               Text(telephoneNumber),
-              Stack(
-                alignment: FractionalOffset.center,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      TextButton.icon(
-                        onPressed: () {
-                          onViewInMap(location.position);
-                        },
-                        icon: const Icon(Icons.map_rounded),
-                        label: Text('veterinarian.show_in_map'.tr())
-                      ),
-                      TextButton.icon(
-                        onPressed: () {
-                          Navigator.pushNamed(context, '/vet_information',
-                              arguments: VetInformationScreenArguments(id));
-                        },
-                        icon: const Icon(Icons.arrow_forward_ios_rounded),
-                        label: Text('veterinarian.view_vet'.tr())
-                      ),
-                    ],
+                  TextButton.icon(
+                    onPressed: () {
+                      onViewInMap(location.position);
+                    },
+                    icon: const Icon(Icons.map_rounded),
+                    label: Text('veterinarian.show_in_map'.tr())
                   ),
-                  Container(
-                    alignment: Alignment.centerRight,
-                    margin: const EdgeInsets.only(right: 5),
-                    child: Text(
-                      '${((distance / 1000).toStringAsFixed(2))} km',
-                      style: const TextStyle(
-                        fontStyle: FontStyle.italic,
-                        color: Colors.grey,
-                      ),
-                    ),
+                  TextButton.icon(
+                    onPressed: () {
+                      Navigator.pushNamed(context, '/vet_information',
+                          arguments: VetInformationScreenArguments(id));
+                    },
+                    icon: const Icon(Icons.arrow_forward_ios_rounded),
+                    label: Text('veterinarian.view_vet'.tr())
                   ),
                 ],
+              ),
+              Container(
+                alignment: Alignment.centerRight,
+                margin: const EdgeInsets.only(right: 5, bottom: 5),
+                child: Text(
+                  '${((distance / 1000).toStringAsFixed(2))} km',
+                  style: const TextStyle(
+                    fontStyle: FontStyle.italic,
+                    color: Colors.grey,
+                  ),
+                ),
               ),
             ],
           ),

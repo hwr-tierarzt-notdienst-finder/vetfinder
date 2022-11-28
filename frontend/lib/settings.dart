@@ -73,24 +73,30 @@ class _SettingState extends State<Setting> {
                     Icons.dark_mode,
                     size: 30,
                   ),
-                  Container(
-                    padding: const EdgeInsets.only(left: 10),
-                    child: Text(
-                      'settings.darkmode'.tr(),
-                      style: const TextStyle(
-                        fontSize: 20,
-                      ),
-                    ),
-                  ),
-                  Container(
-                    padding: EdgeInsets.only(left: deviceWidth(context) * 0.3),
-                    child: Consumer<ThemeNotifier>(
-                      builder: (context, notifier, child) => Switch(
-                        onChanged: (bool value) {
-                          notifier.toggleTheme();
-                        },
-                        value: SharedPrefs().isDarkMode,
-                      ),
+                  Expanded(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.only(left: 10),
+                          child: Text(
+                            'settings.darkmode'.tr(),
+                            style: const TextStyle(
+                              fontSize: 20,
+                            ),
+                          ),
+                        ),
+                        Container(
+                          child: Consumer<ThemeNotifier>(
+                            builder: (context, notifier, child) => Switch(
+                              onChanged: (bool value) {
+                                notifier.toggleTheme();
+                              },
+                              value: SharedPrefs().isDarkMode,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],
@@ -114,55 +120,67 @@ class _SettingState extends State<Setting> {
                     Icons.language_outlined,
                     size: 30,
                   ),
-                  Container(
-                    padding: const EdgeInsets.only(left: 10),
-                    child: Text(
-                      'settings.language'.tr(),
-                      style: const TextStyle(
-                        fontSize: 20,
-                      ),
-                    ),
-                  ),
                   Expanded(
-                    child: Container(
-                      margin: EdgeInsets.only(left: deviceWidth(context) * 0.2),
-                      padding: const EdgeInsets.symmetric(vertical: 5),
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).brightness == Brightness.dark
-                            ? Color.fromRGBO(48, 48, 48, 1)
-                            : Colors.grey[200],
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Center(
-                        child: DropdownButton<String>(
-                          value: _selectedLanguage,
-                          icon: const Icon(Icons.arrow_drop_down),
-                          iconSize: 42,
-                          elevation: 16,
-                          onChanged: (String? value) {
-                            setState(() {
-                              SharedPrefs().language = value!;
-                            });
-                            final snackBar = SnackBar(
-                              content:
-                                  Text('settings.snackbar_language_change'.tr()),
-                              backgroundColor: Colors.black,
-                              action: SnackBarAction(
-                                label: 'settings.snackbar_close'.tr(),
-                                onPressed: () {},
-                              ),
-                            );
-                            ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                          },
-                          items: languagesList
-                              .map<DropdownMenuItem<String>>((String option) {
-                            return DropdownMenuItem<String>(
-                              value: availableLanguages[option],
-                              child: Text(option),
-                            );
-                          }).toList(),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.only(left: 10),
+                          child: Text(
+                            'settings.language'.tr(),
+                            style: const TextStyle(
+                              fontSize: 20,
+                            ),
+                          ),
                         ),
-                      ),
+                        Container(
+                          margin: EdgeInsets.only(left: deviceWidth(context) * 0.2),
+                          padding: const EdgeInsets.symmetric(vertical: 5),
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).brightness == Brightness.dark
+                                ? Color.fromRGBO(48, 48, 48, 1)
+                                : Colors.grey[200],
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Center(
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 10),
+                              child: DropdownButton<String>(
+                                value: _selectedLanguage,
+                                icon: const Icon(Icons.arrow_drop_down),
+                                iconSize: 42,
+                                elevation: 16,
+                                onChanged: (String? value) {
+                                  setState(() {
+                                    if (SharedPrefs().language == value!) {
+                                      // Ignored
+                                    } else {
+                                      SharedPrefs().language = value;
+                                      final snackBar = SnackBar(
+                                        content:
+                                            Text('settings.snackbar_language_change'.tr()),
+                                        backgroundColor: Colors.black,
+                                        action: SnackBarAction(
+                                          label: 'settings.snackbar_close'.tr(),
+                                          onPressed: () {},
+                                        ),
+                                      );
+                                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                                    }
+                                  });
+                                },
+                                items: languagesList
+                                    .map<DropdownMenuItem<String>>((String option) {
+                                  return DropdownMenuItem<String>(
+                                    value: availableLanguages[option],
+                                    child: Text(option),
+                                  );
+                                }).toList(),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],

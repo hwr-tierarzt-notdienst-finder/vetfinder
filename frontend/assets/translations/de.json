@@ -36,7 +36,7 @@
     "vet_information": {
         "title": "Tierarzt Information",
         "mark_as_fav": "Als Favorit speichern",
-        "remove_from_myvet": "Favorit entfernen",
+        "unmark_as_fav": "Favorit entfernen",
         "open_schedule": "Öffnungszeiten",
         "call_vet": "Anrufen",
         "open_website": "Webseite öffnen",
