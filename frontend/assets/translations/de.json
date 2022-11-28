@@ -6,7 +6,14 @@
         "snackbar_no_fav": "Kein Tierarzt ist als Favorit gespeichert."
     },
     "schedule_dialog": {
-        "title": "Opening Hours",
+        "title": "Öffnungszeiten",
+        "monday": "Montag",
+        "tuesday": "Dienstag",
+        "wednesday": "Mittwoch",
+        "thursday": "Donnerstag",
+        "friday": "Freitag",
+        "saturday": "Samstag",
+        "sunday": "Sonntag",
         "close": "Schließen"
     },
     "search_filter_dialog": {

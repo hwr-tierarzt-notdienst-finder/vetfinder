@@ -7,6 +7,13 @@
     },
     "schedule_dialog": {
         "title": "Opening Hours",
+        "monday": "Monday",
+        "tuesday": "Tuesday",
+        "wednesday": "Wednesday",
+        "thursday": "Thursday",
+        "friday": "Friday",
+        "saturday": "Saturday",
+        "sunday": "Sunday",
         "close": "Close"
     },
     "search_filter_dialog": {

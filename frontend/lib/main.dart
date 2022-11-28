@@ -9,14 +9,6 @@ import 'package:frontend/vet_information.dart';
 import 'package:frontend/components/search_filter_dialog.dart';
 import 'package:frontend/utils/preferences.dart';
 
-//
-// leicht abgerundete Ecken
-// relativ viel Platz zwischen Elementen
-// Farben:
-// - primary: #b71c1c
-// - secondary: #fdfdfd
-//
-
 Future<void> main() async {
   // Make sure an instance of WidgetsBinding has been initialized
   WidgetsFlutterBinding.ensureInitialized();

@@ -269,7 +269,7 @@ class _HomeState extends State<Home> {
                                   mapController.move(
                                       locationNotifier.position, 18)
                                 },
-                                child: const Icon(Icons.search),
+                                child: const Icon(Icons.my_location_rounded),
                               ),
                             ],
                           ),
