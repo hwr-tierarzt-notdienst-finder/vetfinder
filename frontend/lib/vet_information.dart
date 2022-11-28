@@ -4,6 +4,8 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:frontend/utils/preferences.dart';
 
+import 'package:frontend/components/schedule_dialog.dart';
+
 bool isDarkMode = SharedPrefs().isDarkMode;
 ThemeData darkThemeVet = ThemeData(
   brightness: Brightness.dark,
@@ -33,6 +35,18 @@ class _VetInformationState extends State<VetInformation> {
       MediaQuery.of(context).size.height;
 
   double deviceWidth(BuildContext context) => MediaQuery.of(context).size.width;
+
+  Future<void> _showScheduleDialog(BuildContext context) {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return ScheduleDialog(
+
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -244,9 +258,30 @@ class _VetInformationState extends State<VetInformation> {
                 ),
               ],
             ),
-            const SizedBox(height: 50),
+            const SizedBox(height: 20),
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed: () => _showScheduleDialog(context),
+                    icon: const Icon(Icons.schedule_outlined),
+                    label: Text(
+                      'vet_information.open_schedule'.tr(),
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14,
+                      ),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.all(10),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 // 1st column
@@ -257,7 +292,10 @@ class _VetInformationState extends State<VetInformation> {
                         launch('tel:${vet.telephoneNumber}');
                       },
                       style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.all(20),
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 20,
+                          horizontal: 40,
+                        ),
                       ),
                       child: const Icon(Icons.phone_outlined),
                     ),
@@ -271,7 +309,10 @@ class _VetInformationState extends State<VetInformation> {
                         launch(vet.websiteUrl);
                       },
                       style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.all(20),
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 20,
+                          horizontal: 40,
+                        ),
                       ),
                       child: const Icon(Icons.public),
                     ),
@@ -286,7 +327,10 @@ class _VetInformationState extends State<VetInformation> {
                             'https://www.google.com/maps/search/?api=1&query=${vet.location.position.latitude},${vet.location.position.longitude}');
                       },
                       style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.all(20),
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 20,
+                          horizontal: 40,
+                        ),
                       ),
                       child: const Icon(Icons.map),
                     ),

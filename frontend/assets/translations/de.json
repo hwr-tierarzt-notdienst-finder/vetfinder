@@ -5,6 +5,10 @@
         "no_vet_found": "Kein Tierarzt gefunden.",
         "snackbar_no_fav": "Kein Tierarzt ist als Favorit gespeichert."
     },
+    "schedule_dialog": {
+        "title": "Opening Hours",
+        "close": "Schließen"
+    },
     "search_filter_dialog": {
         "title": "Suchfilter",
         "search_radius": "Suchradius",
@@ -26,6 +30,7 @@
         "title": "Tierarzt Information",
         "mark_as_fav": "Als Favorit speichern",
         "remove_from_myvet": "Favorit entfernen",
+        "open_schedule": "Öffnungszeiten",
         "call_vet": "Anrufen",
         "open_website": "Webseite öffnen",
         "open_map": "Karte öffnen"

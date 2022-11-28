@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/utils/preferences.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:provider/provider.dart';
 
 class LocationNotifier extends ChangeNotifier {
   late LatLng _position;

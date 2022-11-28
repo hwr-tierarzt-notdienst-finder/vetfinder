@@ -2,13 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:frontend/api.dart';
 import 'package:frontend/utils/notifiers.dart';
 import 'package:frontend/vet_information.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:easy_localization/easy_localization.dart';
-
 import 'package:provider/provider.dart';
-import 'package:frontend/components/search_filter_dialog.dart';
-import 'package:frontend/utils/preferences.dart';
 
 class VetCard extends Card {
   const VetCard({

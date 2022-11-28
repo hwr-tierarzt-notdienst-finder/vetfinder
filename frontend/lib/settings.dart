@@ -123,42 +123,46 @@ class _SettingState extends State<Setting> {
                       ),
                     ),
                   ),
-                  Container(
-                    margin: EdgeInsets.only(left: deviceWidth(context) * 0.2),
-                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).brightness == Brightness.dark
-                          ? Color.fromRGBO(48, 48, 48, 1)
-                          : Colors.grey[200],
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: DropdownButton<String>(
-                      value: _selectedLanguage,
-                      icon: Icon(Icons.arrow_drop_down),
-                      iconSize: 42,
-                      elevation: 16,
-                      onChanged: (String? value) {
-                        setState(() {
-                          SharedPrefs().language = value!;
-                        });
-                        final snackBar = SnackBar(
-                          content:
-                              Text('settings.snackbar_language_change'.tr()),
-                          backgroundColor: Colors.black,
-                          action: SnackBarAction(
-                            label: 'settings.snackbar_close'.tr(),
-                            onPressed: () {},
-                          ),
-                        );
-                        ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                      },
-                      items: languagesList
-                          .map<DropdownMenuItem<String>>((String option) {
-                        return DropdownMenuItem<String>(
-                          value: availableLanguages[option],
-                          child: Text(option),
-                        );
-                      }).toList(),
+                  Expanded(
+                    child: Container(
+                      margin: EdgeInsets.only(left: deviceWidth(context) * 0.2),
+                      padding: const EdgeInsets.symmetric(vertical: 5),
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).brightness == Brightness.dark
+                            ? Color.fromRGBO(48, 48, 48, 1)
+                            : Colors.grey[200],
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Center(
+                        child: DropdownButton<String>(
+                          value: _selectedLanguage,
+                          icon: const Icon(Icons.arrow_drop_down),
+                          iconSize: 42,
+                          elevation: 16,
+                          onChanged: (String? value) {
+                            setState(() {
+                              SharedPrefs().language = value!;
+                            });
+                            final snackBar = SnackBar(
+                              content:
+                                  Text('settings.snackbar_language_change'.tr()),
+                              backgroundColor: Colors.black,
+                              action: SnackBarAction(
+                                label: 'settings.snackbar_close'.tr(),
+                                onPressed: () {},
+                              ),
+                            );
+                            ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                          },
+                          items: languagesList
+                              .map<DropdownMenuItem<String>>((String option) {
+                            return DropdownMenuItem<String>(
+                              value: availableLanguages[option],
+                              child: Text(option),
+                            );
+                          }).toList(),
+                        ),
+                      ),
                     ),
                   ),
                 ],

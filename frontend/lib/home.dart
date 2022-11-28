@@ -3,8 +3,6 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map/plugin_api.dart';
 import 'package:frontend/utils/notifiers.dart';
 import 'package:frontend/utils/preferences.dart';
-import 'package:latlong2/latlong.dart';
-import 'package:string_similarity/string_similarity.dart';
 import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:frontend/vet_information.dart';
@@ -14,8 +12,6 @@ import 'package:frontend/components/search_widget.dart';
 import 'package:frontend/components/search_filter_dialog.dart';
 import 'package:frontend/components/edit_address_modal.dart';
 import 'package:frontend/api.dart';
-
-import 'dart:collection';
 
 class Home extends StatefulWidget {
   const Home({Key? key, required this.title}) : super(key: key);

@@ -5,6 +5,10 @@
         "no_vet_found": "No clinic found.",
         "snackbar_no_fav": "No vet is currently marked as favorite."
     },
+    "schedule_dialog": {
+        "title": "Opening Hours",
+        "close": "Close"
+    },
     "search_filter_dialog": {
         "title": "Filter Settings",
         "search_radius": "Search Radius",
@@ -26,6 +30,7 @@
         "title": "Vet Information",
         "mark_as_fav": "Mark as Favorite",
         "unmark_as_fav": "Unmark as Favorite",
+        "open_schedule": "Opening Hours",
         "call_vet": "Call Vet",
         "open_website": "Open Website",
         "open_map": "Open Map"

@@ -2,14 +2,13 @@ import 'dart:collection';
 import 'dart:convert';
 import 'package:frontend/api.dart' as api;
 import 'package:frontend/utils/notifiers.dart';
-import 'package:http/http.dart' as Http;
+import 'package:http/http.dart' as http;
 import 'package:geolocator/geolocator.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_geocoder/geocoder.dart';
 import 'package:frontend/components/search_widget.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:location/location.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:provider/provider.dart';
 
@@ -206,7 +205,7 @@ class _EditAddressModalState extends State<EditAddressModal> {
       Map<String, String> headers = HashMap();
       headers.putIfAbsent('Accept', () => 'application/json');
 
-      Http.Response response = await Http.get(uri, headers: headers);
+      http.Response response = await http.get(uri, headers: headers);
       // The request succeeded. Process the JSON.
 
       List<dynamic> result = json.decode(response.body);
