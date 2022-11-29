@@ -37,11 +37,18 @@ class ApiBaseModel(BaseModel):
 
 class Person(ApiBaseModel):
     name: str
-    rolls: list[Literal["owner"]]
+    roles: list[Literal["owner"]]
+
+
+class Address(ApiBaseModel):
+    street: str
+    number: str
+    zip_code: int
+    city: str
 
 
 class Location(ApiBaseModel):
-    address: str
+    address: Address
     lat: float | None = None
     lon: float | None = None
 
@@ -121,7 +128,7 @@ AvailabilityConditionOr.update_forward_refs()
 AvailabilityConditionAnd.update_forward_refs()
 
 
-class Treatment(str, Enum):
+class Category(str, Enum):
     DOGS = "dogs"
     CATS = "cats"
     HORSES = "horses"
@@ -141,12 +148,12 @@ class TimeSpan(ApiBaseModel):
 
 
 class Vet(ApiBaseModel):
+    clinic_name: str
     title: str
-    people: list[Person] = PydanticField(default_factory=list)
     location: Location
     contacts: list[Contact] = PydanticField(default_factory=list)
     available: AvailabilityCondition
-    treatments: list[Treatment] = PydanticField(default_factory=list)
+    categories: list[Category] = PydanticField(default_factory=list)
 
 
 class VetWithId(Vet, ModelWithId):
