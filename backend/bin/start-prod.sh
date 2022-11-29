@@ -7,6 +7,16 @@ BACKEND_DIR="$ROOT_DIR/backend"
 . "$SCRIPT_DIR/mongo-start-prod-container.sh"
 . "$SCRIPT_DIR/_load_dotenv_vars.sh"
 
+run_detached=0
+while test $# != 0
+do
+    case "$1" in
+    --run-detached)
+        run_detached=1;;
+    esac
+    shift
+done
+
 temp_dir="$SCRIPT_DIR/../temp_dir_for_copy_to_docker_prod"
 echo_information "Creating temporary directory '$temp_dir' with files that will be copied to the production container"
 mkdir -p "$temp_dir"
@@ -30,5 +40,11 @@ echo_and_run "docker build -f $BACKEND_DIR/app.prod.Dockerfile -t tierarzt_notdi
 echo_information "Removing temporary directory '$temp_dir'"
 echo_and_run "rm -rf $temp_dir"
 
+if [ $run_detached = 1 ]; then
+    extra_options=' --detach'
+else
+    extra_options=''
+fi
+
 echo_information "Running app as docker container"
-echo_and_run "docker run --name tierarzt_notdienst_app_prod -v $BACKEND_DIR/logs:/app/backend/logs --network=host tierarzt_notdienst_app_prod"
+echo_and_run "docker run --name tierarzt_notdienst_app_prod -v $BACKEND_DIR/logs:/app/backend/logs --net=host ${extra_options} tierarzt_notdienst_app_prod"

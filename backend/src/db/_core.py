@@ -9,12 +9,12 @@ from pymongo import MongoClient
 from pymongo.database import Collection, Database, Mapping
 
 from utils import cache
-from models import InDbModel
+from models import ModelWithId
 import config
 
 
 _TBaseModel = TypeVar("_TBaseModel", bound=BaseModel)
-_TInDbModel = TypeVar("_TInDbModel", bound=InDbModel)
+_TInDbModel = TypeVar("_TInDbModel", bound=ModelWithId)
 
 
 class BaseRepository(Generic[_TBaseModel, _TInDbModel]):
@@ -40,8 +40,7 @@ class BaseRepository(Generic[_TBaseModel, _TInDbModel]):
         insert_result = self.collection.insert_one(db_entry_from_model(model))
 
         return self.in_db_cls(
-            id=str(insert_result.inserted_id),
-            **model.dict()
+            **(model.dict() | {"id": str(insert_result.inserted_id)})
         )
 
     def find(
@@ -60,7 +59,7 @@ class BaseRepository(Generic[_TBaseModel, _TInDbModel]):
                 )
 
             return find_models(self.in_db_cls, self.collection, {})
-        elif isinstance(what, InDbModel):
+        elif isinstance(what, ModelWithId):
             return find_models(self.in_db_cls, self.collection, {"_id": what.id})
         elif isinstance(what, dict):
             return find_models(self.in_db_cls, self.collection, what)
@@ -164,7 +163,7 @@ def create_mongo_client() -> MongoClient:
 def get_connection_string() -> str:
     db_config = config.get().db
 
-    return f"mongodb://{db_config.root_username}:{db_config.root_password}@127.0.0.1:{db_config.port}"
+    return f"mongodb://{db_config.root_username}:{db_config.root_password}@0.0.0.0:{db_config.port}"
 
 
 def model_from_db_entry(

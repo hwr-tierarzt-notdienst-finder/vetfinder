@@ -17,6 +17,7 @@ def get() -> Config:
     if _cached_config is None:
         _cached_config = Config(
             db=_get_db_config(env_context),
+            fastapi=_get_fastapi_config(env_context),
             auth=_get_auth_config(env_context),
         )
 
@@ -55,16 +56,17 @@ def _get_db_config(env_context: env.Context) -> DbConfig:
     )
 
 
-def _get_auth_config(env_context: env.Context) -> AuthConfig:
-    return AuthConfig(
-        tokens_file_path=(
-                paths.find_backend()
-                / _get_auth_dotenv_var_value(
-                    "TOKEN_FILE",
-                    context=env_context
-                )
-        )
+def _get_fastapi_config(env_context: env.Context) -> FastAPIConfig:
+    return FastAPIConfig(
+        port=int(_get_fastapi_dotenv_var_value(
+            "PORT",
+            context=env_context
+        ))
     )
+
+
+def _get_auth_config(env_context: env.Context) -> AuthConfig:
+    return AuthConfig()
 
 
 def _get_mongo_dotenv_var_value(
@@ -75,6 +77,17 @@ def _get_mongo_dotenv_var_value(
         name,
         category="MONGO",
         context=context
+    )
+
+
+def _get_fastapi_dotenv_var_value(
+        name: str,
+        context: env.Context | None = None,
+) -> str:
+    return _get_dotenv_var_value(
+        name,
+        category="FASTAPI",
+        context=context,
     )
 
 

@@ -56,7 +56,7 @@ def overwrite_secrets_from_token_hashes_file() -> None:
     db.secrets.delete_all()
     for entry in json_hashes:
         db.secrets.insert(
-            Secret(secret_id=f"{entry['type']}.{entry['id']}", hash_=entry['value'])
+            Secret(secret_id=f"{entry['type']}:{entry['id']}", hash_=entry['value'])
         )
 
 
@@ -95,7 +95,7 @@ def is_authentic(id_: str, token: str) -> bool:
 @cache.return_singleton(populate_cache_on="prepopulate_called")
 def _get_token_ids_to_vets_collection() -> dict[str, str]:
     return {
-        f"vet_collection.{collection}": collection
+        f"vet_collection:{collection}": collection
         for collection in VET_COLLECTIONS
     }
 

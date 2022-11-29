@@ -5,7 +5,7 @@ COPY ./backend/requirements.txt /requirements.txt
 RUN pip install -r requirements.txt
 
 
-FROM setup_python_venv AS setup_secrets
+FROM setup_python_venv AS run
 
 COPY ./shared-bash.sh /app/shared-bash.sh
 COPY ./backend/ /app/backend/
@@ -17,19 +17,7 @@ WORKDIR /app/backend/
 
 VOLUME logs
 
-# Load hashes into database and remove hashes file
-CMD ENV=prod PYTHONPATH=./src python ./src/entrypoints/setup_secrets.py && rm secrets/token_hashes.json
-
-
-FROM setup_secrets AS run
-
-COPY --from=setup_secrets /app/backend/ /app/backend/
-
-WORKDIR /app/backend/
-
-VOLUME logs
-
-EXPOSE 8000
-
 # Start app
-ENTRYPOINT ENV=prod PYTHONPATH=./src ./src/entrypoints/app.sh
+ENTRYPOINT ENV=prod PYTHONPATH=./src python ./src/entrypoints/setup_secrets.py \
+    && rm secrets/token_hashes.json \
+    && ENV=prod PYTHONPATH=./src ./src/entrypoints/app.sh

@@ -1,10 +1,10 @@
 from dataclasses import dataclass
-from pathlib import Path
 
 
 @dataclass(frozen=True)
 class Config:
     db: "DbConfig"
+    fastapi: "FastAPIConfig"
     auth: "AuthConfig"
 
 
@@ -18,5 +18,10 @@ class DbConfig:
 
 
 @dataclass(frozen=True)
+class FastAPIConfig:
+    port: int
+
+
+@dataclass(frozen=True)
 class AuthConfig:
-    tokens_file_path: Path
+    pass

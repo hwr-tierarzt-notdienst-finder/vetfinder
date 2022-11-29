@@ -11,7 +11,7 @@ class CreateCacheRegionEntry(TypedDict):
 
 
 class CacheRegionEntry(CreateCacheRegionEntry):
-    last_update: datetime
+    updated_at: datetime
 
 
 Cache = dict[Region, CacheRegionEntry]
