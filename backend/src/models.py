@@ -153,7 +153,7 @@ class Vet(ApiBaseModel):
     location: Location
     contacts: list[Contact] = PydanticField(default_factory=list)
     available: AvailabilityCondition
-    treatments: list[Treatment] = PydanticField(default_factory=list)
+    categories: list[Category] = PydanticField(default_factory=list)
 
 
 class VetWithId(Vet, ModelWithId):
