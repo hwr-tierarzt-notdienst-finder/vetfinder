@@ -30,6 +30,10 @@ class VetInformation extends StatefulWidget {
   State<VetInformation> createState() => _VetInformationState();
 }
 
+DateTime today = DateTime.now(); // Format: 2022-11-29 15:18:57.142575
+String timeFrom = "${today.hour}:${today.minute}";
+String timeTo = "${today.hour}:${today.minute}";
+
 class _VetInformationState extends State<VetInformation> {
   double deviceHeight(BuildContext context) =>
       MediaQuery.of(context).size.height;
@@ -206,6 +210,54 @@ class _VetInformationState extends State<VetInformation> {
                                 1, vet.categories.toString().length - 1),
                             style: const TextStyle(
                               fontSize: 18,
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 20),
+              Row(
+                children: [
+                  // add a container with a border
+                  Container(
+                    width: deviceWidth(context) * 0.9,
+                    height: deviceHeight(context) * 0.12,
+                    decoration: BoxDecoration(
+                        color: Theme.of(context).brightness == Brightness.dark
+                            ? Color.fromRGBO(48, 48, 48, 1)
+                            : Colors.grey[200],
+                        border: Border.all(
+                          color: Color.fromRGBO(244, 67, 54, 1),
+                          width: 4,
+                        ),
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(20))),
+                    child: Row(
+                      // mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.only(left: 10),
+                          child: const Icon(
+                            Icons.access_time_filled,
+                            size: 30,
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        Container(
+                          // padding on the left side
+                          padding: const EdgeInsets.only(left: 10),
+                          child: Text(
+                            // date
+                            'vet_information.open_schedule_today'.tr() +
+                                ': ' +
+                                timeFrom +
+                                ' - ' +
+                                timeTo,
+                            style: const TextStyle(
+                              fontSize: 16,
                             ),
                           ),
                         )

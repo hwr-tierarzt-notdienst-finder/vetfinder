@@ -41,7 +41,8 @@
     "open_schedule_emergency": "Emergency service opening hours",
     "call_vet": "Call Vet",
     "open_website": "Open Website",
-    "open_map": "Open Map"
+    "open_map": "Open Map",
+    "open_schedule_today": "Today"
   },
   "settings": {
     "title": "Settings",

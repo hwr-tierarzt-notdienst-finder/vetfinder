@@ -41,7 +41,8 @@
     "open_schedule_emergency": "Notdienst Öffnungszeiten",
     "call_vet": "Anrufen",
     "open_website": "Webseite öffnen",
-    "open_map": "Karte öffnen"
+    "open_map": "Karte öffnen",
+    "open_schedule_today": "Heute"
   },
   "settings": {
     "title": "Einstellungen",
