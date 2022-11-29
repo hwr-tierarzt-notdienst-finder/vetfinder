@@ -123,7 +123,7 @@ class BaseRepository(Generic[_TBaseModel, _TInDbModel]):
         self.collection.drop()
 
     def delete_by_id(self, id_: str) -> None:
-        self.collection.delete_one({"_id": ObjectId(id_)})
+        self.collection.delete_many({"_id": id_})
 
     def delete(self, model: _TInDbModel) -> None:
         return self.delete_by_id(model.id)
@@ -179,6 +179,7 @@ def db_entry_from_model(
 ) -> dict[str, Any]:
     dct = model.dict()
     if "id" in dct:
+        dct["_id"] = dct["id"]
         del dct["id"]
 
     return dct
