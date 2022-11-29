@@ -1,12 +1,13 @@
+import logging
 from datetime import datetime
 from typing import TypeVar, ParamSpec, NoReturn
 
-from fastapi import FastAPI, HTTPException, status, Query
+from fastapi import Depends, FastAPI, HTTPException, status, Query
+from fastapi.security import HTTPBasic, HTTPBasicCredentials
 
 import auth
-from models import VetInDb, VetResponse
+from models import Vet, VetInDb, VetResponse, VetWithId, VetWithModificationTokenId
 import db
-from data import collect_vets
 import availability
 
 
@@ -16,13 +17,7 @@ _P = ParamSpec('_P')
 
 app = FastAPI()
 
-
-@app.on_event("startup")
-def startup() -> None:
-    db.vets["hidden"].delete_all()
-
-    for vet in collect_vets():
-        db.vets["hidden"].insert(vet)
+security = HTTPBasic()
 
 
 @app.get(
@@ -194,3 +189,70 @@ def _add_error_strings_get_vets_availability_query_parameters(
             f"availability_from='{availability_from}' datetime "
             f"must be earlier than availability_from='{availability_from}'"
         )
+
+
+@app.get("/form")
+def form_get_vet(
+        credentials: HTTPBasicCredentials = Depends(security),
+) -> VetWithId:
+    modification_token_id = authenticate_form_request(credentials)
+
+    try:
+        return db.vets["hidden"].exactly_one({
+            "modification_token_id": modification_token_id
+        })
+    except ValueError:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Vet has not been created yet. Use POST to create"
+        )
+
+
+@app.post("/form")
+def form_create_vet(
+        vet: Vet,
+        credentials: HTTPBasicCredentials = Depends(security),
+) -> VetWithId:
+    modification_token_id = authenticate_form_request(credentials)
+
+    if len(db.vets["hidden"].find({"modification_token_id": modification_token_id})) != 0:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Vet has already been created. Use PUT to update"
+        )
+
+    vet_in_db = db.vets["hidden"].insert(
+        VetWithModificationTokenId(**vet.dict() | {"modification_token_id": modification_token_id})
+    )
+
+    vet_with_id_kwargs = vet_in_db.dict()
+    del vet_with_id_kwargs["modification_token_id"]
+    return VetWithId(**vet_with_id_kwargs)
+
+
+@app.put("/form")
+def form_update_vet(
+        vet: VetWithId,
+        credentials: HTTPBasicCredentials = Depends(security),
+) -> VetWithId:
+    modification_token_id = authenticate_form_request(credentials)
+
+    vet_in_db = db.vets["hidden"].update(
+        VetInDb(**vet.dict() | {"modification_token_id": modification_token_id})
+    )
+
+    vet_with_id_kwargs = vet_in_db.dict()
+    del vet_with_id_kwargs["modification_token_id"]
+    return VetWithId(**vet_with_id_kwargs)
+
+
+def authenticate_form_request(
+        credentials: HTTPBasicCredentials
+) -> str | NoReturn:
+    token_id = f"vet_email:{credentials.username}"
+    token = credentials.password
+
+    if not auth.token.is_authentic(token_id, token):
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
+
+    return token_id

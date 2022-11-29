@@ -18,7 +18,7 @@ from types_ import Timezone, Region
 _T = TypeVar("_T")
 
 
-class InDbModel(BaseModel):
+class ModelWithId(BaseModel):
     id: str
 
 
@@ -121,8 +121,12 @@ AvailabilityConditionOr.update_forward_refs()
 AvailabilityConditionAnd.update_forward_refs()
 
 
-class Category(str, Enum):
-    ALL = "all"
+class Treatment(str, Enum):
+    DOGS = "dogs"
+    CATS = "cats"
+    HORSES = "horses"
+    SMALL_ANIMALS = "small_animals"
+    MISC = "misc"
 
 
 class TimeSpan(ApiBaseModel):
@@ -142,14 +146,22 @@ class Vet(ApiBaseModel):
     location: Location
     contacts: list[Contact] = PydanticField(default_factory=list)
     available: AvailabilityCondition
-    categories: list[Category] = PydanticField(default_factory=list)
+    treatments: list[Treatment] = PydanticField(default_factory=list)
 
 
-class VetInDb(Vet, InDbModel):
+class VetWithId(Vet, ModelWithId):
     id: str
 
 
-class VetResponse(VetInDb):
+class VetWithModificationTokenId(Vet):
+    modification_token_id: str
+
+
+class VetInDb(VetWithId, VetWithModificationTokenId):
+    pass
+
+
+class VetResponse(VetWithId):
     availability: list[TimeSpan] | None = None
 
 
@@ -163,5 +175,5 @@ class Secret(BaseModel):
     hash_: str
 
 
-class SecretInDb(Secret, InDbModel):
+class SecretInDb(Secret, ModelWithId):
     pass
