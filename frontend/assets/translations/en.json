@@ -1,53 +1,54 @@
 {
-    "home": {
-        "current_address": "Current Address",
-        "query_hint": "Name, Address, ZIP Code",
-        "no_vet_found": "No clinic found.",
-        "snackbar_no_fav": "No vet is currently marked as favorite."
-    },
-    "schedule_dialog": {
-        "title": "Opening Hours",
-        "monday": "Monday",
-        "tuesday": "Tuesday",
-        "wednesday": "Wednesday",
-        "thursday": "Thursday",
-        "friday": "Friday",
-        "saturday": "Saturday",
-        "sunday": "Sunday",
-        "close": "Close"
-    },
-    "search_filter_dialog": {
-        "title": "Filter Settings",
-        "search_radius": "Search Radius",
-        "category": "Animal Type",
-        "reset": "Reset",
-        "cancel": "Cancel",
-        "apply": "Apply"
-    },
-    "edit_address_modal": {
-        "title": "Location",
-        "use_current_location": "Use Current Location",
-        "address_hint": "Address, Number, ZIP Code"
-    },
-    "veterinarian": {
-        "show_in_map": "Show in Map",
-        "view_vet": "View Vet"
-    },
-    "vet_information": {
-        "title": "Vet Information",
-        "mark_as_fav": "Mark as Favorite",
-        "unmark_as_fav": "Unmark as Favorite",
-        "open_schedule": "Opening Hours",
-        "call_vet": "Call Vet",
-        "open_website": "Open Website",
-        "open_map": "Open Map"
-    },
-    "settings": {
-        "title": "Settings",
-        "darkmode": "Darkmode",
-        "language": "Language",
-        "publisher": "Publisher",
-        "snackbar_language_change": "Restart the application to apply the change.",
-        "snackbar_close": "Close"
-    }
+  "home": {
+    "current_address": "Current Address",
+    "query_hint": "Name, Address, ZIP Code",
+    "no_vet_found": "No clinic found.",
+    "snackbar_no_fav": "No vet is currently marked as favorite."
+  },
+  "schedule_dialog": {
+    "title": "Opening Hours",
+    "monday": "Monday",
+    "tuesday": "Tuesday",
+    "wednesday": "Wednesday",
+    "thursday": "Thursday",
+    "friday": "Friday",
+    "saturday": "Saturday",
+    "sunday": "Sunday",
+    "close": "Close"
+  },
+  "search_filter_dialog": {
+    "title": "Filter Settings",
+    "search_radius": "Search Radius",
+    "category": "Animal Type",
+    "reset": "Reset",
+    "cancel": "Cancel",
+    "apply": "Apply"
+  },
+  "edit_address_modal": {
+    "title": "Location",
+    "use_current_location": "Use Current Location",
+    "address_hint": "Address, Number, ZIP Code"
+  },
+  "veterinarian": {
+    "show_in_map": "Show in Map",
+    "view_vet": "View Vet"
+  },
+  "vet_information": {
+    "title": "Vet Information",
+    "mark_as_fav": "Mark as Favorite",
+    "unmark_as_fav": "Unmark as Favorite",
+    "open_schedule": "Opening Hours",
+    "open_schedule_emergency": "Emergency service opening hours",
+    "call_vet": "Call Vet",
+    "open_website": "Open Website",
+    "open_map": "Open Map"
+  },
+  "settings": {
+    "title": "Settings",
+    "darkmode": "Darkmode",
+    "language": "Language",
+    "publisher": "Publisher",
+    "snackbar_language_change": "Restart the application to apply the change.",
+    "snackbar_close": "Close"
+  }
 }

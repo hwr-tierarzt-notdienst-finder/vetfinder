@@ -238,23 +238,48 @@ class _VetInformationState extends State<VetInformation> {
                 ],
               ),
               const SizedBox(height: 10),
-              Row(
+              Column(
                 children: [
-                  Expanded(
-                    child: ElevatedButton.icon(
-                      onPressed: () => _showScheduleDialog(context),
-                      icon: const Icon(Icons.schedule_outlined),
-                      label: Text(
-                        'vet_information.open_schedule'.tr(),
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 14,
+                  Row(
+                    children: [
+                      Expanded(
+                        child: ElevatedButton.icon(
+                          onPressed: () => _showScheduleDialog(context),
+                          icon: const Icon(Icons.emergency_outlined),
+                          label: Text(
+                            'vet_information.open_schedule_emergency'.tr(),
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                            ),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            padding: const EdgeInsets.all(10),
+                          ),
                         ),
                       ),
-                      style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.all(10),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: ElevatedButton.icon(
+                          onPressed: () => _showScheduleDialog(context),
+                          icon: const Icon(Icons.schedule_outlined),
+                          label: Text(
+                            'vet_information.open_schedule'.tr(),
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                            ),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            padding: const EdgeInsets.all(10),
+                          ),
+                        ),
                       ),
-                    ),
+                    ],
                   ),
                 ],
               ),
