@@ -42,15 +42,25 @@ class Person(ApiBaseModel):
 
 class Address(ApiBaseModel):
     street: str
-    number: str
     zip_code: int
     city: str
+    number: str | None = None
+
+    def __hash__(self) -> int:
+        return hash(
+            f"{self.street}:{self.number}:{self.zip_code}:{self.city}"
+        )
 
 
 class Location(ApiBaseModel):
     address: Address
     lat: float | None = None
     lon: float | None = None
+
+    def __hash__(self) -> int:
+        return hash(
+            f"{hash(self.address)}:{self.lat}:{self.lon}"
+        )
 
 
 class Contact(ApiBaseModel):

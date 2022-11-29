@@ -133,9 +133,7 @@ class BaseRepository(Generic[_TBaseModel, _TInDbModel]):
             updated_model: _TInDbModel,
     ) -> _TInDbModel:
         self.delete(updated_model)
-        self.insert(updated_model)
-
-        return updated_model
+        return self.insert(updated_model)
 
 
 class _DictWithId(TypedDict, total=False):

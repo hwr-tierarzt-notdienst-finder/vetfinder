@@ -5,7 +5,7 @@ from time import sleep
 
 import geopy
 
-from models import Location, Vet
+from models import Location, Vet, Address
 from utils import cache
 
 _NOMINATIM_GEOLOCATOR_USER_AGENT = "hwr_tierarzt_notdienst"
@@ -26,23 +26,12 @@ def _normalize_location(vet: Vet) -> Vet:
     lat = denormalized_location.lat
     lon = denormalized_location.lon
 
-    has_address = address is not None
-    has_lat_lon = lat is not None and lon is not None
-
-    if has_address and has_lat_lon:
-        return vet.copy()
-
-    if has_address and not has_lat_lon:
-        geopy_location = _get_geopy_location_from_address(address)
-    elif not has_address and has_lat_lon:
+    if lat is not None and lon is not None:
         geopy_location = _get_geopy_location_from_lat_lon(lat, lon)
     else:
-        raise ValueError(
-            f"Expected vet.location={denormalized_location} "
-            f"to have an address or latitude and longitude"
-        )
+        geopy_location = _get_geopy_location_from_address(address)
 
-    address = geopy_location.address
+    address = _normalize_address_from_geopy_location(address, geopy_location)
     lat = geopy_location.latitude
     lon = geopy_location.longitude
 
@@ -64,14 +53,41 @@ def _get_geopy_location_from_lat_lon(
 ) -> geopy.Location:
     _satisfy_geopy_request_ratelimit()
 
-    return _geopy_geolocator().reverse((lat, lon))
+    return _geopy_geolocator().reverse((lat, lon), addressdetails=True)
 
 
 @lru_cache(maxsize=1000)
-def _get_geopy_location_from_address(address: str) -> geopy.Location:
+def _get_geopy_location_from_address(address: Address) -> geopy.Location:
     _satisfy_geopy_request_ratelimit()
 
-    return _geopy_geolocator().geocode(address)
+    # See https://nominatim.org/release-docs/develop/api/Search/
+    return _geopy_geolocator().geocode(
+        {
+            "street": f"{address.number} {address.street}".strip(),
+            "postalcode": str(address.zip_code),
+            "city": address.city,
+        },
+        addressdetails=True
+    )
+
+
+def _normalize_address_from_geopy_location(
+        unnormalized_address: Address,
+        geopy_location: geopy.Location,
+) -> Address:
+    geopy_raw_address = geopy_location.raw.get("address", {})
+
+    street = str(geopy_raw_address.get("road", unnormalized_address.street))
+    house_number = geopy_raw_address.get("house_number", unnormalized_address.number)
+    zip_code = int(geopy_raw_address.get("postalcode", unnormalized_address.zip_code))
+    city = str(geopy_raw_address.get("city", unnormalized_address.city))
+
+    return Address(
+        street=street,
+        number=house_number,
+        zip_code=zip_code,
+        city=city,
+    )
 
 
 @cache.return_singleton
