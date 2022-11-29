@@ -3,17 +3,17 @@ from __future__ import annotations
 import geopy.distance
 
 from constants import VET_COLLECTIONS
-from models import Vet, VetInDb
+from models import VetInDb, VetWithModificationTokenId
 import normalization
 from ._core import BaseRepository
 
 
-class Repository(BaseRepository[Vet, VetInDb]):
+class Repository(BaseRepository[VetWithModificationTokenId, VetInDb]):
     _IN_DB_CLS = VetInDb
 
     def insert(
             self,
-            vet: Vet
+            vet: VetWithModificationTokenId
     ) -> VetInDb:
         return super().insert(normalization.vet.normalize(vet))
 
