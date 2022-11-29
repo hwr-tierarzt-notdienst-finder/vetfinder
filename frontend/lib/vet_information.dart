@@ -41,9 +41,7 @@ class _VetInformationState extends State<VetInformation> {
       context: context,
       barrierDismissible: false,
       builder: (BuildContext context) {
-        return ScheduleDialog(
-
-        );
+        return ScheduleDialog();
       },
     );
   }
@@ -98,35 +96,35 @@ class _VetInformationState extends State<VetInformation> {
               const SizedBox(height: 20),
               Container(
                 alignment: Alignment.centerLeft,
-                child: SharedPrefs().vetId != id ?
-                ElevatedButton.icon(
-                  onPressed: () {
-                    setState(() {
-                      SharedPrefs().vetId = id;
-                    });
-                  },
-                  icon: const Icon(Icons.star_border_rounded),
-                  label: Text('vet_information.mark_as_fav'.tr()),
-                  style: ElevatedButton.styleFrom(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20.0),
-                    ),
-                  ),
-                ) :
-                ElevatedButton.icon(
-                  onPressed: () {
-                    setState(() {
-                      SharedPrefs().vetId = "";
-                    });
-                  },
-                  icon: const Icon(Icons.star_rounded),
-                  label: Text('vet_information.unmark_as_fav'.tr()),
-                  style: ElevatedButton.styleFrom(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20.0),
-                    ),
-                  ),
-                ),
+                child: SharedPrefs().vetId != id
+                    ? ElevatedButton.icon(
+                        onPressed: () {
+                          setState(() {
+                            SharedPrefs().vetId = id;
+                          });
+                        },
+                        icon: const Icon(Icons.star_border_rounded),
+                        label: Text('vet_information.mark_as_fav'.tr()),
+                        style: ElevatedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20.0),
+                          ),
+                        ),
+                      )
+                    : ElevatedButton.icon(
+                        onPressed: () {
+                          setState(() {
+                            SharedPrefs().vetId = "";
+                          });
+                        },
+                        icon: const Icon(Icons.star_rounded),
+                        label: Text('vet_information.unmark_as_fav'.tr()),
+                        style: ElevatedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20.0),
+                          ),
+                        ),
+                      ),
               ),
               const SizedBox(height: 20),
               Row(
@@ -219,47 +217,27 @@ class _VetInformationState extends State<VetInformation> {
               const SizedBox(height: 20),
               Row(
                 children: [
-                  // add a container with a border
-                  Container(
-                    width: deviceWidth(context) * 0.9,
-                    height: deviceHeight(context) * 0.12,
-                    decoration: BoxDecoration(
-                        color: Theme.of(context).brightness == Brightness.dark
-                            ? Color.fromRGBO(48, 48, 48, 1)
-                            : Colors.grey[200],
-                        border: Border.all(
-                          color: Color.fromRGBO(244, 67, 54, 1),
-                          width: 4,
+                  Expanded(
+                    child: ElevatedButton.icon(
+                      onPressed: () {
+                        launch('tel:${vet.telephoneNumber}');
+                      },
+                      icon: const Icon(Icons.phone_outlined),
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.all(10),
+                      ),
+                      label: Text(
+                        'vet_information.call_vet'.tr(),
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
                         ),
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(20))),
-                    child: Row(
-                      // mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.only(left: 10),
-                          child: const Icon(
-                            Icons.email,
-                            size: 30,
-                          ),
-                        ),
-                        const SizedBox(height: 10),
-                        Container(
-                          // padding on the left side
-                          padding: const EdgeInsets.only(left: 10),
-                          child: Text(
-                            vet.email,
-                            style: const TextStyle(
-                              fontSize: 18,
-                            ),
-                          ),
-                        )
-                      ],
+                      ),
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 10),
               Row(
                 children: [
                   Expanded(
@@ -286,11 +264,12 @@ class _VetInformationState extends State<VetInformation> {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   // 1st column
+                  // add column with button to open mail app
                   Column(
                     children: [
                       ElevatedButton(
                         onPressed: () {
-                          launch('tel:${vet.telephoneNumber}');
+                          launch('mailto:${vet.email}');
                         },
                         style: ElevatedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(
@@ -298,7 +277,7 @@ class _VetInformationState extends State<VetInformation> {
                             horizontal: 40,
                           ),
                         ),
-                        child: const Icon(Icons.phone_outlined),
+                        child: const Icon(Icons.mail_outline),
                       ),
                     ],
                   ),
