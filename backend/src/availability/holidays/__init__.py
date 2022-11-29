@@ -20,7 +20,7 @@ if __name__ == "__main__":
     __package__ = "holidays"
 
 from . import cache_populators
-from .types_ import Cache, CreateCacheRegionEntry
+from .types_ import Cache, CreateCacheRegionEntry, CacheRegionEntry
 from .constants import CACHE_FOR_N_PAST_YEARS, CACHE_FOR_N_FUTURE_YEARS, CACHE_UPDATE_INTERVAL_IN_SECONDS
 
 
@@ -205,16 +205,21 @@ def _get_cache() -> Cache:
 
 
 def _update_cache(region: Region, region_entry: CreateCacheRegionEntry) -> None:
+    cached_region_entry: CacheRegionEntry = {
+        **region_entry,
+        "updated_at": datetime.now().astimezone(gettz("Europe/Berlin")),
+    }
+
     region_entry_json = {
-        "updated_at": datetime.now().astimezone(gettz("Europe/Berlin")).isoformat(),
-        "valid_to": datetime.isoformat(region_entry["valid_to"]),
-        "valid_from": datetime.isoformat(region_entry["valid_from"]),
+        "updated_at": datetime.isoformat(cached_region_entry["updated_at"]),
+        "valid_to": datetime.isoformat(cached_region_entry["valid_to"]),
+        "valid_from": datetime.isoformat(cached_region_entry["valid_from"]),
         "holidays": {
             year: [
                 datetime.isoformat(day)
-                for day in region_entry["holidays"][year]
+                for day in cached_region_entry["holidays"][year]
             ]
-            for year in region_entry["holidays"]
+            for year in cached_region_entry["holidays"]
         }
     }
 
@@ -224,7 +229,7 @@ def _update_cache(region: Region, region_entry: CreateCacheRegionEntry) -> None:
         json.dump(region_entry_json, f, indent=True)
 
     cache = _get_cache()
-    cache[region] = region_entry
+    cache[region] = cached_region_entry
 
 
 @cache.return_singleton(populate_cache_on="prepopulate_called")

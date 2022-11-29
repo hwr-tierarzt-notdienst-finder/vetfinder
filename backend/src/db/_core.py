@@ -163,7 +163,7 @@ def create_mongo_client() -> MongoClient:
 def get_connection_string() -> str:
     db_config = config.get().db
 
-    return f"mongodb://{db_config.root_username}:{db_config.root_password}@127.0.0.1:{db_config.port}"
+    return f"mongodb://{db_config.root_username}:{db_config.root_password}@0.0.0.0:{db_config.port}"
 
 
 def model_from_db_entry(

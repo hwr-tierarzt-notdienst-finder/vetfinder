@@ -69,33 +69,47 @@ function echo_escaped() {
     echo "${prefix}${last_arg}${suffix}"
 }
 
+function replace_secrets() {
+    local string=$1
+    local options="${*:1}"
+
+    for option in $options; do
+        if [[ "$option" =~ ^--secret=.* ]]; then
+            local secret="${option/#--secret=/}"
+            string="${string/$secret/XXX}"
+        fi
+    done
+
+    echo "$string"
+}
+
 function echo_colored() {
     local color=$1
     local str=$2
 
-    echo_escaped "color:$color" "$str"
+    echo_escaped "color:$color" "$( replace_secrets "$str" "${*:3}" )"
 }
 
 function echo_processing() {
-    echo_colored "processing" "$(echo_token "icon:processing") $1"
+    echo_colored "processing" "$(echo_token "icon:processing") $1" "${*:2}"
 }
 
 function echo_success() {
-    echo_colored "success" "$(echo_token "icon:success") $1"
+    echo_colored "success" "$(echo_token "icon:success") $1" "${*:2}"
 }
 
 function echo_failure() {
-    echo_colored "failure" "$(echo_token "icon:failure") $1"
+    echo_colored "failure" "$(echo_token "icon:failure") $1" "${*:2}"
 }
 
 function echo_information() {
-    echo "$(echo_token "icon:information") $1"
+    echo "$(echo_token "icon:information") $1" "${*:2}"
 }
 
 function echo_and_run() {
     local cmd=$1
 
-    echo_processing "Running: $cmd"
+    echo_processing "Running: $cmd" "${*:2}"
     eval "$cmd"
 }
 
