@@ -1,4 +1,5 @@
 import logging
+from collections.abc import Iterable
 from datetime import datetime
 from typing import TypeVar, ParamSpec, NoReturn
 
@@ -9,7 +10,7 @@ import auth
 from models import Vet, VetInDb, VetResponse, VetWithId, VetWithModificationTokenId
 import db
 import availability
-
+from utils.human_readable import human_readable
 
 _T = TypeVar('_T')
 _P = ParamSpec('_P')
@@ -29,19 +30,23 @@ security = HTTPBasic()
 )
 def get_vets(
         token: str,
-        c_lat: float = Query(
+        c_lat: float | None = Query(
+            default=None,
             description="The latitude of the ring center.",
             example=52.52437,
         ),
-        c_lon: float = Query(
+        c_lon: float | None = Query(
+            default=None,
             description="The longitude of the ring center.",
             example=13.41053,
         ),
-        r_inner: float = Query(
+        r_inner: float | None = Query(
+            default=None,
             description="The inner radius of the ring in km.",
             example=0,
         ),
-        r_outer: float = Query(
+        r_outer: float | None = Query(
+            default=None,
             description="The outer radius of the ring in km.",
             example=100,
         ),
@@ -65,7 +70,7 @@ def get_vets(
             ),
             example="2022-09-23T11:04:07.252439+02:00"
         ),
-) -> list[VetInDb]:
+) -> list[VetResponse]:
     _validate_get_vets_query_parameters(
         token,
         c_lat,
@@ -76,21 +81,83 @@ def get_vets(
         availability_to,
     )
 
+    token_id: str
     for token_id in auth.token.get_vets_collection_token_ids():
         if auth.token.is_authentic(token_id, token):
-            collection = auth.token.get_vets_collection_by_token_id(token_id)
-            vets = db.vets[collection].in_ring(
-                c_lat,
-                c_lon,
-                r_inner,
-                r_outer,
-            )
-
             break
     else:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
 
-    if availability_from is not None and availability_to is not None:
+    return _get_vets_after_validation_and_auth(
+        token_id,
+        c_lat,
+        c_lon,
+        r_inner,
+        r_outer,
+        availability_from,
+        availability_to,
+    )
+
+
+def _get_vets_after_validation_and_auth(
+        token_id: str,
+        c_lat: float | None,
+        c_lon: float | None,
+        r_inner: float | None,
+        r_outer: float | None,
+        availability_from: datetime | None,
+        availability_to: datetime | None,
+) -> list[VetResponse]:
+    collection_name = auth.token.get_vets_collection_by_token_id(token_id)
+
+    vets_in_db = _get_vets_filtered_by_query_parameters(
+        collection_name,
+        c_lat,
+        c_lon,
+        r_inner,
+        r_outer
+    )
+
+    return _create_vets_responses(
+        vets_in_db,
+        availability_from,
+        availability_to,
+    )
+
+
+def _get_vets_filtered_by_query_parameters(
+        collection_name: str,
+        c_lat: float | None,
+        c_lon: float | None,
+        r_inner: float | None,
+        r_outer: float | None,
+) -> Iterable[VetInDb]:
+    vets = db.vets[collection_name]
+
+    use_radius_query_pagination = not (
+        c_lat is None
+        or c_lon is None
+        or r_inner is None
+        or r_outer is None
+    )
+
+    if use_radius_query_pagination:
+        return vets.in_ring(c_lat, c_lon, r_inner, r_outer)
+
+    return vets.all()
+
+
+def _create_vets_responses(
+        vets_in_db: Iterable[VetInDb],
+        availability_from: datetime | None,
+        availability_to: datetime | None,
+) -> list[VetResponse]:
+    return_availability_in_response = not (
+        availability_from is None
+        or availability_to is None
+    )
+
+    if return_availability_in_response:
         return [
             VetResponse(
                 availability=list(availability.get_time_spans(
@@ -100,10 +167,10 @@ def get_vets(
                 )),
                 **vet.dict()
             )
-            for vet in vets
+            for vet in vets_in_db
         ]
-    else:
-        return [VetResponse(**vet.dict()) for vet in vets]
+
+    return [VetResponse(**vet.dict()) for vet in vets_in_db]
 
 
 def _validate_get_vets_query_parameters(
@@ -117,13 +184,10 @@ def _validate_get_vets_query_parameters(
 ) -> None:
     error_strings: list[str] = []
 
-    _add_error_strings_get_vets_ring_center_coordinate_query_parameters(
+    _add_error_strings_get_vets_radius_pagination_query_parameters(
         error_strings,
         c_lat,
         c_lon,
-    )
-    _add_error_strings_get_vets_ring_radii_query_parameters(
-        error_strings,
         r_inner,
         r_outer,
     )
@@ -137,6 +201,49 @@ def _validate_get_vets_query_parameters(
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=error_strings,
+        )
+
+
+def _add_error_strings_get_vets_radius_pagination_query_parameters(
+        error_strings: list[str],
+        c_lat: float | None,
+        c_lon: float | None,
+        r_inner: float | None,
+        r_outer: float | None,
+) -> None:
+    parameter_name_to_unset = {
+        "c_lat": c_lat is None,
+        "c_lon": c_lon is None,
+        "r_inner": r_inner is None,
+        "r_outer": r_outer is None,
+    }
+    all_parameters_are_set = not any(parameter_name_to_unset.values())
+    all_parameters_are_unset = all(parameter_name_to_unset.values())
+
+    if all_parameters_are_set:
+        _add_error_strings_get_vets_ring_center_coordinate_query_parameters(
+            error_strings,
+            c_lat,
+            c_lon,
+        )
+        _add_error_strings_get_vets_ring_radii_query_parameters(
+            error_strings,
+            r_inner,
+            r_outer,
+        )
+    elif all_parameters_are_unset:
+        return
+    else:
+        parameter_names = parameter_name_to_unset.keys()
+        unset_parameter_names = [
+            name
+            for name, is_unset in parameter_name_to_unset.items()
+            if is_unset
+        ]
+
+        error_strings.append(
+            f"All query parameters ({human_readable(parameter_names).items_quoted().anded()}) must be set or unset. "
+            f"{human_readable(unset_parameter_names).items_quoted().anded()} are unset"
         )
 
 
