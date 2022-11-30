@@ -112,6 +112,13 @@ class _HomeState extends State<Home> {
         });
   }
 
+  // Fetch data from the API and rebuild widget
+  void _fetchAndRebuild() async {
+    await fetchVeterinarians();
+    // Rebuild vets list
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     return Consumer2<FilterNotifier, LocationNotifier>(
@@ -127,32 +134,45 @@ class _HomeState extends State<Home> {
       Widget vetsListWidget;
       if (vets.isNotEmpty) {
         vetsListWidget = Expanded(
-            child: ListView.builder(
-                itemCount: vets.length,
-                itemBuilder: (context, index) {
-                  return VetCard(
-                    id: vets[index].id,
-                    name: vets[index].name,
-                    telephoneNumber: vets[index].getContact("tel:landline"),
-                    location: vets[index].location,
-                    onViewInMap: (position) {
-                      mapController.move(position, 16);
-                    },
-                    clinicName: vets[index].clinicName,
-                    distance: vets[index]
-                        .getDistanceInMeters(locationNotifier.position),
-                  );
-                }));
+            child: RefreshIndicator(
+              onRefresh: () async => _fetchAndRebuild(),
+              child: ListView.builder(
+                  itemCount: vets.length,
+                  itemBuilder: (context, index) {
+                    return VetCard(
+                      id: vets[index].id,
+                      name: vets[index].name,
+                      telephoneNumber: vets[index].getContact("tel:landline"),
+                      location: vets[index].location,
+                      onViewInMap: (position) {
+                        mapController.move(position, 16);
+                      },
+                      clinicName: vets[index].clinicName,
+                      distance: vets[index]
+                          .getDistanceInMeters(locationNotifier.position),
+                    );
+                  }),
+            ));
       } else {
         vetsListWidget = Expanded(
-          child: Center(
-            child: Text(
-              "home.no_vet_found".tr(),
-              style: const TextStyle(
-                fontSize: 15,
-                fontStyle: FontStyle.italic,
-                color: Colors.grey,
-              ),
+          child: RefreshIndicator(
+            onRefresh: () async => _fetchAndRebuild(),
+            child: CustomScrollView(
+              slivers: <Widget> [
+                SliverFillRemaining(
+                  child: Center(
+                    child: Text(
+                      "home.no_vet_found".tr(),
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        fontSize: 15,
+                        fontStyle: FontStyle.italic,
+                        color: Colors.grey,
+                      ),
+                    ),
+                  ),
+                ),
+              ]
             ),
           ),
         );
