@@ -19,3 +19,5 @@ const String keyCategories = "categories";
 // Location Settings
 const String keyCurrentAddress = "current_address";
 const String keyCurrentPosition = "current_position";
+// Veterinarians Data
+const String keyVets = "vets";

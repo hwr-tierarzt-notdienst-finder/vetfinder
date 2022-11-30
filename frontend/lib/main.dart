@@ -7,6 +7,7 @@ import 'package:frontend/home.dart';
 import 'package:frontend/settings.dart';
 import 'package:frontend/vet_information.dart';
 import 'package:frontend/components/search_filter_dialog.dart';
+import 'package:frontend/api.dart' as api;
 import 'package:frontend/utils/preferences.dart';
 
 Future<void> main() async {
@@ -15,6 +16,7 @@ Future<void> main() async {
   // Initialize shared preferences instance
   await SharedPrefs().init();
   await EasyLocalization.ensureInitialized();
+  await api.fetchVeterinarians();
 
   runApp(EasyLocalization(
       supportedLocales: const [Locale('en'), Locale('de')],

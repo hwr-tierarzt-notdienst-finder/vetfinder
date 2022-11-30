@@ -272,7 +272,7 @@ class _VetInformationState extends State<VetInformation> {
                   Expanded(
                     child: ElevatedButton.icon(
                       onPressed: () {
-                        launch('tel:${vet.telephoneNumber}');
+                        launch('tel:${vet.getContact("tel:landline")}');
                       },
                       icon: const Icon(Icons.phone_outlined),
                       style: ElevatedButton.styleFrom(
@@ -346,7 +346,7 @@ class _VetInformationState extends State<VetInformation> {
                     children: [
                       ElevatedButton(
                         onPressed: () {
-                          launch('mailto:${vet.email}');
+                          launch('mailto:${vet.getContact("email")}');
                         },
                         style: ElevatedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(
@@ -363,7 +363,7 @@ class _VetInformationState extends State<VetInformation> {
                     children: [
                       ElevatedButton(
                         onPressed: () {
-                          launch(vet.websiteUrl);
+                          launch(vet.getContact("website"));
                         },
                         style: ElevatedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(

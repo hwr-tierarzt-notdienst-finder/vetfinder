@@ -29,9 +29,10 @@ class _HomeState extends State<Home> {
   String query = '';
   Marker? currentLocationMarker;
 
+  // Create a veterinarian marker widget
   TextButton createMarkerWidget(Veterinarian vet) {
     return TextButton.icon(
-      // when pressed open the veterinarian detail page
+      // When pressed, open the veterinarian detail page
       onPressed: () {
         Navigator.pushNamed(context, '/vet_information',
             arguments: VetInformationScreenArguments(vet.id));
@@ -46,6 +47,7 @@ class _HomeState extends State<Home> {
     );
   }
 
+  // Add marker widgets of all veterinarians on the map
   void createMarkers(LocationNotifier notifier) {
     markers.clear();
     for (Veterinarian vet in vets) {
@@ -131,7 +133,7 @@ class _HomeState extends State<Home> {
                   return VetCard(
                     id: vets[index].id,
                     name: vets[index].name,
-                    telephoneNumber: vets[index].telephoneNumber,
+                    telephoneNumber: vets[index].getContact("tel:landline"),
                     location: vets[index].location,
                     onViewInMap: (position) {
                       mapController.move(position, 16);

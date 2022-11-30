@@ -57,5 +57,11 @@ class SharedPrefs {
   set currentPosition(LatLng position) {
     _sharedPrefs.setString(keyCurrentPosition, "${position.latitude};${position.longitude}");
   }
+
+  // Veterinarians Data
+  String get vets => _sharedPrefs.getString(keyVets) ?? "";
+  set vets(String value) {
+    _sharedPrefs.setString(keyVets, value);
+  }
 }
 

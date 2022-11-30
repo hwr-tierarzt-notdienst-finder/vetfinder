@@ -1,7 +1,8 @@
-// import 'dart:ffi';
+import 'dart:collection';
+import 'dart:convert';
 import 'package:latlong2/latlong.dart';
 import 'package:string_similarity/string_similarity.dart';
-
+import 'package:http/http.dart' as http;
 import 'package:frontend/utils/preferences.dart';
 
 class AddressSuggestion {
@@ -32,6 +33,12 @@ class Address {
   final String number;
   final int zipCode;
   final String city;
+
+  Address.fromJson(Map<String, dynamic> json)
+      : street = json["street"],
+        number = json["number"],
+        zipCode = json["zipCode"],
+        city = json["city"];
 }
 
 class Location {
@@ -39,16 +46,18 @@ class Location {
 
   final LatLng position;
   final Address address;
+
+  Location.fromJson(Map<String, dynamic> json)
+      : position = LatLng(json["lat"], json["lon"]),
+        address = Address.fromJson(json["address"]);
 }
 
 class Veterinarian {
   Veterinarian({
     required this.id,
     required this.name,
-    required this.email,
     required this.clinicName,
-    required this.telephoneNumber,
-    required this.websiteUrl,
+    required this.contacts,
     required this.location,
     required this.categories,
   }) : super();
@@ -56,11 +65,30 @@ class Veterinarian {
   final String id;
   final String name;
   final String clinicName;
-  final String email;
-  final String telephoneNumber;
-  final String websiteUrl;
+  final List<Map<String, dynamic>> contacts;
   final Location location;
   final List<String> categories;
+
+  Veterinarian.fromJson(Map<String, dynamic> json)
+      : id = json["id"],
+        name = json["title"],
+        clinicName = json["clinicName"],
+        contacts = List<Map<String, dynamic>>.from(json['contacts'] as List),
+        location = Location.fromJson(json["location"]),
+        categories = List<String>.from(json['categories'] as List);
+
+  // Get contact data of a specific type
+  // @param type The type of data (email, tel:landline, tel:mobile, website)
+  String getContact(String type) {
+    for (Map<String, dynamic> item in contacts) {
+      if (item["type"] == type) {
+        return item["value"];
+      }
+    }
+
+    // Contact type not found
+    return "";
+  }
 
   String getAddress() {
     return "${location.address.street} ${location.address.number}";
@@ -79,93 +107,45 @@ class Veterinarian {
   }
 }
 
+// Fetch veterinarians data from the server and save it in the app
+Future<void> fetchVeterinarians() async {
+  var uri = Uri(
+        scheme: "https",
+        host: "vetfinder.dowahdid.de",
+        pathSegments: ["vets"],
+        query: "token=olaej6g528zi39haitfn5n0hxbnzyc1ixysbozrive99103b");
+  Map<String, String> headers = HashMap();
+  headers.putIfAbsent('Accept', () => 'application/json');
+
+  try {
+    http.Response response = await http.get(uri, headers: headers);
+
+    // Successful GET request. Save JSON String.
+    if (response.statusCode == 200) {
+      SharedPrefs().vets = response.body;
+    } else {
+      throw Exception("Failed to load data. Status code: ${response.statusCode}");
+    }
+  } catch (e) {
+    // Failed GET Request. Handle the error.
+    print("Couldn't open $uri");
+    print(e);
+  }
+}
+
+// Parse the saved veterinarian data from JSON String to list
 List<Veterinarian> getVeterinarians() {
   List<Veterinarian> vets = [];
-  vets.add(
-    Veterinarian(
-        id: '0',
-        name: 'Tierklinik Berlin-Biesdorf',
-        clinicName: 'Tierärztliche Klinik für Klein- und Heimtiere',
-        email: 'kontakt@tierklinik-in-biesdorf.de',
-        telephoneNumber: '+49305143760',
-        websiteUrl: 'https://www.tierklinik-in-biesdorf.de/',
-        location: Location(
-            position: LatLng(52.50878687199156, 13.555776987579236),
-            address: const Address(
-                street: "Alt-Biesdorf",
-                number: "22",
-                zipCode: 12683,
-                city: "Berlin")),
-        categories: ["Heimtiere"]),
-  );
-  vets.add(
-    Veterinarian(
-        id: '1',
-        name: 'Dr. Robert Höpfner / Dr. Kay Schmerbach',
-        clinicName: 'Kleintierspezialisten Berlin-Brandenburg',
-        email: 'kontakt@kleintierspezialisten.de',
-        telephoneNumber: '+493043662200',
-        websiteUrl: 'https://www.kleintierspezialisten.de/de',
-        location: Location(
-            position: LatLng(52.580648779854506, 13.294731784658856),
-            address: const Address(
-                street: "Wittestraße",
-                number: "30P",
-                zipCode: 13509,
-                city: "Berlin")),
-        categories: ["Heimtiere"]),
-  );
-  vets.add(
-    Veterinarian(
-        id: '2',
-        name: 'Olof Löwe',
-        clinicName: 'Klinik für Kleintiere',
-        email: 'kontakt@tierklinik-in-berlin.de',
-        telephoneNumber: '+49309322093',
-        websiteUrl: 'https://www.tierklinik-in-berlin.de/',
-        location: Location(
-            position: LatLng(52.55563564107943, 13.553283642580288),
-            address: const Address(
-                street: "Märkische Allee",
-                number: "258",
-                zipCode: 12679,
-                city: "Berlin")),
-        categories: ["Heimtiere"]),
-  );
-  vets.add(
-    Veterinarian(
-        id: '3',
-        name: 'Freie Universität Berlin',
-        clinicName: 'Klinik für Pferde, allgemeine Chirurgie und Radiologie (WE17)',
-        email: 'pferdeklinik@vetmed.fu-berlin.de',
-        telephoneNumber: '+493083862299',
-        websiteUrl: 'https://www.vetmed.fu-berlin.de/einrichtungen/kliniken/we17',
-        location: Location(
-            position: LatLng(52.43006758423042, 13.237440001529311),
-            address: const Address(
-                street: "Oertzenweg",
-                number: "19B",
-                zipCode: 14163,
-                city: "Berlin")),
-        categories: ["Pferde"]),
-  );
-  vets.add(
-    Veterinarian(
-        id: '4',
-        name: 'Freie Universität Berlin',
-        clinicName: 'Klinik für Klauentiere (WE18)',
-        email: 'klauentierklinik@vetmed.fu-berlin.de',
-        telephoneNumber: '+493083862261',
-        websiteUrl: 'https://www.vetmed.fu-berlin.de/einrichtungen/kliniken/we18/index.html',
-        location: Location(
-            position: LatLng(52.427122150532384, 13.234963828118532),
-            address: const Address(
-                street: "Königsweg",
-                number: "65",
-                zipCode: 14163,
-                city: "Berlin")),
-        categories: ["Klauentiere"]),
-  );
+
+  // Process the JSON.
+  if(SharedPrefs().vets.isNotEmpty) {
+    List<dynamic> result = json.decode(SharedPrefs().vets);
+        
+    // Parse data to a list of vets
+    for (Map<String, dynamic> vet in result) {
+      vets.add(Veterinarian.fromJson(vet));
+    }
+  }
 
   return vets;
 }
