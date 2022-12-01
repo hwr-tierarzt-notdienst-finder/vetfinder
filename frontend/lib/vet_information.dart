@@ -66,14 +66,11 @@ class _VetInformationState extends State<VetInformation> {
     );
     return Scaffold(
       resizeToAvoidBottomInset: false,
-
       appBar: AppBar(
         title: Text('vet_information.title'.tr()),
       ),
-      // 2 rows with 8 columns
       body: Container(
         padding: EdgeInsets.only(
-          // top: deviceHeight(context) * 0.05,
           left: deviceWidth(context) * 0.05,
           right: deviceWidth(context) * 0.05,
           bottom: deviceHeight(context) * 0.05,
@@ -133,7 +130,6 @@ class _VetInformationState extends State<VetInformation> {
               const SizedBox(height: 20),
               Row(
                 children: [
-                  // add a container with a border
                   Container(
                     width: deviceWidth(context) * 0.9,
                     height: deviceHeight(context) * 0.12,
@@ -160,7 +156,6 @@ class _VetInformationState extends State<VetInformation> {
                         ),
                         const SizedBox(height: 10),
                         Container(
-                          // padding on the left side
                           padding: const EdgeInsets.only(left: 10),
                           child: Text(
                             vet.getAddress(),
@@ -177,7 +172,6 @@ class _VetInformationState extends State<VetInformation> {
               const SizedBox(height: 20),
               Row(
                 children: [
-                  // add a container with a border
                   Container(
                     width: deviceWidth(context) * 0.9,
                     height: deviceHeight(context) * 0.12,
@@ -192,7 +186,6 @@ class _VetInformationState extends State<VetInformation> {
                         borderRadius:
                             const BorderRadius.all(Radius.circular(20))),
                     child: Row(
-                      // mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Container(
                           padding: const EdgeInsets.only(left: 10),
@@ -203,7 +196,6 @@ class _VetInformationState extends State<VetInformation> {
                         ),
                         const SizedBox(height: 10),
                         Container(
-                          // padding on the left side
                           padding: const EdgeInsets.only(left: 10),
                           child: Text(
                             vet.categories.toString().substring(
@@ -221,7 +213,6 @@ class _VetInformationState extends State<VetInformation> {
               const SizedBox(height: 20),
               Row(
                 children: [
-                  // add a container with a border
                   Container(
                     width: deviceWidth(context) * 0.9,
                     height: deviceHeight(context) * 0.12,
@@ -236,7 +227,6 @@ class _VetInformationState extends State<VetInformation> {
                         borderRadius:
                             const BorderRadius.all(Radius.circular(20))),
                     child: Row(
-                      // mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Container(
                           padding: const EdgeInsets.only(left: 10),
@@ -247,10 +237,8 @@ class _VetInformationState extends State<VetInformation> {
                         ),
                         const SizedBox(height: 10),
                         Container(
-                          // padding on the left side
                           padding: const EdgeInsets.only(left: 10),
                           child: Text(
-                            // date
                             'vet_information.open_schedule_today'.tr() +
                                 ': ' +
                                 timeFrom +
@@ -341,7 +329,6 @@ class _VetInformationState extends State<VetInformation> {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   // 1st column
-                  // add column with button to open mail app
                   Column(
                     children: [
                       ElevatedButton(
@@ -377,7 +364,6 @@ class _VetInformationState extends State<VetInformation> {
                   ),
                   Column(
                     children: [
-                      // add button
                       ElevatedButton(
                         onPressed: () {
                           launch(
