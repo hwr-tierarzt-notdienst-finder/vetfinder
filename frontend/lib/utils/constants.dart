@@ -21,3 +21,4 @@ const String keyCurrentAddress = "current_address";
 const String keyCurrentPosition = "current_position";
 // Veterinarians Data
 const String keyVets = "vets";
+const String keyLastUpdated = "last_updated";

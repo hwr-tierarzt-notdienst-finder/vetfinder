@@ -38,7 +38,7 @@
     "mark_as_fav": "Mark as Favorite",
     "unmark_as_fav": "Unmark as Favorite",
     "open_schedule": "Opening Hours",
-    "open_schedule_emergency": "Emergency service opening hours",
+    "open_schedule_emergency": "Emergency Service Opening Hours",
     "call_vet": "Call Vet",
     "open_website": "Open Website",
     "open_map": "Open Map",
@@ -49,6 +49,7 @@
     "darkmode": "Darkmode",
     "language": "Language",
     "publisher": "Publisher",
+    "last_updated": "Last vet update",
     "snackbar_language_change": "Restart the application to apply the change.",
     "snackbar_close": "Close"
   }

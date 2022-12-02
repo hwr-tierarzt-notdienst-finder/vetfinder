@@ -122,7 +122,11 @@ Future<void> fetchVeterinarians() async {
 
     // Successful GET request. Save JSON String.
     if (response.statusCode == 200) {
+      DateTime timeNow = DateTime.now();
+      String formattedTime = "${timeNow.day}-${timeNow.month}-${timeNow.year} ${timeNow.hour}:${timeNow.minute}";
+
       SharedPrefs().vets = response.body;
+      SharedPrefs().lastUpdated = formattedTime;
     } else {
       throw Exception("Failed to load data. Status code: ${response.statusCode}");
     }

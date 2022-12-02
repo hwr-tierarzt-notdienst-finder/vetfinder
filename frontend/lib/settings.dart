@@ -217,6 +217,17 @@ class _SettingState extends State<Setting> {
             indent: 20,
             endIndent: 20,
           ),
+          Container(
+            margin: const EdgeInsets.symmetric(vertical: 20),
+            child: Center(
+              child: Text(
+                "${'settings.last_updated'.tr()}: ${SharedPrefs().lastUpdated}",
+                style: const TextStyle(
+                  color: Colors.grey,
+                ),
+              ),
+            ),
+          )
         ],
       ),
     );

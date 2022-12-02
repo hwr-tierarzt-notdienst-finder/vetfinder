@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:frontend/utils/notifiers.dart';
 import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -13,6 +14,10 @@ import 'package:frontend/utils/preferences.dart';
 Future<void> main() async {
   // Make sure an instance of WidgetsBinding has been initialized
   WidgetsFlutterBinding.ensureInitialized();
+  // Allow portrait only
+  await SystemChrome.setPreferredOrientations(
+    [DeviceOrientation.portraitUp],
+  );
   // Initialize shared preferences instance
   await SharedPrefs().init();
   await EasyLocalization.ensureInitialized();

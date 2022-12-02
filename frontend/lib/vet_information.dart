@@ -72,8 +72,7 @@ class _VetInformationState extends State<VetInformation> {
       body: Container(
         padding: EdgeInsets.only(
           left: deviceWidth(context) * 0.05,
-          right: deviceWidth(context) * 0.05,
-          bottom: deviceHeight(context) * 0.05,
+          right: deviceWidth(context) * 0.05
         ),
         child: SingleChildScrollView(
           child: Column(

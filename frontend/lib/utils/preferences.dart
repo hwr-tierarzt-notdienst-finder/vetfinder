@@ -63,5 +63,9 @@ class SharedPrefs {
   set vets(String value) {
     _sharedPrefs.setString(keyVets, value);
   }
+  String get lastUpdated => _sharedPrefs.getString(keyLastUpdated) ?? "???";
+  set lastUpdated(String value) {
+    _sharedPrefs.setString(keyLastUpdated, value);
+  }
 }
 
