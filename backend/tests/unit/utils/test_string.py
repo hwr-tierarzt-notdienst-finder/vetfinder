@@ -1,4 +1,4 @@
-from src.utils import string_
+from utils import string_
 
 
 def test_as_camel_case() -> None:

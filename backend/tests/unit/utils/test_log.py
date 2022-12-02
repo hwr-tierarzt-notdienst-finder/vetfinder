@@ -1,8 +1,8 @@
 from pathlib import Path
 from typing import Iterable
 
-from src.utils import log
-from src.utils import file_system
+from utils import log
+from utils import file_system
 
 
 def test_log() -> None:

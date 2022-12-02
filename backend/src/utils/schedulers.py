@@ -8,8 +8,8 @@ from typing import Literal, Callable, Iterable, TypeVar, Type
 from dateutil import tz
 from dateutil.relativedelta import relativedelta
 
-from ..constants import WEEKDAYS
-from ..types_ import Weekday, Timezone
+from constants import WEEKDAYS
+from types_ import Weekday, Timezone
 from . import validate
 
 _T = TypeVar("_T")

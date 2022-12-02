@@ -1,0 +1,38 @@
+{
+  "header": [
+    {
+      "type": "subject",
+      "text": "{ human_readable_project_name } - Tierarzt eintragen"
+    }
+  ],
+  "body": [
+    {
+      "type": "text",
+      "text": [
+        "Herzlich willkommen bei { human_readable_project_name }!",
+        "",
+        "Klicken Sie auf dem Button um weiter auf die Formularseite ",
+        "zur Tierarzteintragung zu gelangen."
+      ]
+    },
+    {
+      "type": "primary_cta_link_button",
+      "text": "Tierarzt Eintragen",
+      "url": "{ registration_url }"
+    },
+    {
+      "type": "text",
+      "text": [
+        "Ihre eingetragenen Informationen werden erst von unsere Personal",
+        "verifiziert, bevor sie in dem App öffentlich verfügbar gemacht werden.",
+        "Sie erhalten ein weiters E-Mail, sobald die Verifizierung erfolgt ist.",
+        "",
+        "Bitte teilen den Link zur Formularseite mit niemandem!",
+        "",
+        "",
+        "Vielen Dank, \\",
+        "das { human_readable_project_name } Team"
+      ]
+    }
+  ]
+}
