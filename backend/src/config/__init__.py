@@ -21,7 +21,7 @@ def get() -> Config:
             ),
             db=_get_db_config(env_context),
             fastapi=_get_fastapi_config(env_context),
-            auth=_get_auth_config(env_context),
+            access_control=_get_access_control_config(env_context),
             email=_get_email_config(env_context),
         )
 
@@ -69,8 +69,13 @@ def _get_fastapi_config(env_context: env.Context) -> FastAPIConfig:
     )
 
 
-def _get_auth_config(env_context: env.Context) -> AuthConfig:
-    return AuthConfig()
+def _get_access_control_config(env_context: env.Context) -> AccessControlConfig:
+    return AccessControlConfig(
+        jwt_secret=_get_access_control_dotenv_var_value(
+            "JWT_SECRET",
+            context=env_context,
+        )
+    )
 
 
 def _get_email_config(env_context: env.Context) -> EmailConfig:
@@ -125,14 +130,14 @@ def _get_fastapi_dotenv_var_value(
     )
 
 
-def _get_auth_dotenv_var_value(
+def _get_access_control_dotenv_var_value(
         name: str,
         *,
         context: env.Context | None = None,
 ) -> str:
     return _get_dotenv_var_value(
         name,
-        category="AUTH",
+        category="ACCESS_CONTROL",
         context=context
     )
 

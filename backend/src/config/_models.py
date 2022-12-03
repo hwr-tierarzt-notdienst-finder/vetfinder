@@ -6,7 +6,7 @@ class Config:
     human_readable_project_name: str
     db: "DbConfig"
     fastapi: "FastAPIConfig"
-    auth: "AuthConfig"
+    access_control: "AccessControlConfig"
     email: "EmailConfig"
 
 
@@ -25,8 +25,8 @@ class FastAPIConfig:
 
 
 @dataclass(frozen=True)
-class AuthConfig:
-    pass
+class AccessControlConfig:
+    jwt_secret: str
 
 
 @dataclass(frozen=True)

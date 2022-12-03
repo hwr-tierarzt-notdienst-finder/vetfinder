@@ -262,6 +262,7 @@ def _render_html_primary_cta_link_button(
         }
     }
 
+
 def _normalize_template(template_: TemplateDict | str) -> TemplateDict:
     if type(template_) is str:
         return _read_template_dict_from_json_file(template_)

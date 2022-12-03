@@ -16,7 +16,6 @@ import config
 from . import _core as core
 
 
-
 def send_vet_registration(
         to: str,
         registration_url: str,
