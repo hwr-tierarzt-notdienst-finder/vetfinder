@@ -24,4 +24,4 @@ if [ "$ENV" = 'dev' ]; then
     options+=('--reload')
 fi
 
-uvicorn app:app ${options[*]} --port "$(eval echo \$\{FASTAPI_"${ENV^^}"_PORT\})"
+uvicorn api:api ${options[*]} --port "$(eval echo \$\{FASTAPI_"${ENV^^}"_PORT\})"

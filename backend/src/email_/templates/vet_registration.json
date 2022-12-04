@@ -18,7 +18,7 @@
     {
       "type": "primary_cta_link_button",
       "text": "Tierarzt Eintragen",
-      "url": "{ registration_url }"
+      "url": "{ form_url }"
     },
     {
       "type": "text",

@@ -1,0 +1,32 @@
+{
+  "header": [
+    {
+      "type": "subject",
+      "text": "{ human_readable_project_name } - Verwaltung vet.id={ vet_id }"
+    }
+  ],
+  "body": [
+    {
+      "type": "text",
+      "text": [
+        "Es wurde eine neue Tierarzt mit die folgenden Felder registriert: \\",
+        "{ vet_fields }"
+      ]
+    },
+    {
+      "type": "primary_cta_link_button",
+      "text": "Verifizieren",
+      "url": "{ grant_verification_url }"
+    },
+    {
+      "type": "primary_cta_link_button",
+      "text": "Verifizierung Entziehen",
+      "url": "{ revoke_verification_url }"
+    },
+    {
+      "type": "primary_cta_link_button",
+      "text": "Löschen!",
+      "url": "{ delete_url }"
+    }
+  ]
+}

@@ -1,7 +1,6 @@
 .env.local
 .env.secret
-tokens.prod.secret.txt
-tokens.prod.secret.txt.back
+vet_visibility_tokens.txt
 
 # Python
 # ======

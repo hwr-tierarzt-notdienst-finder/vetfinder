@@ -21,6 +21,7 @@ if __name__ == "__main__":
 
 import config
 from utils import template
+from ._errors import FailedToSend
 from . import _models as models
 
 
@@ -79,9 +80,14 @@ def _send_mail_from_models(
         subtype="html",
     )
 
-    with smtplib.SMTP(config_.smtp_server_hostname, config_.smtp_server_port) as server:
-        server.login(config_.smtp_server_username, config_.smtp_server_password)
-        server.send_message(message)
+    try:
+        with smtplib.SMTP(config_.smtp_server_hostname, config_.smtp_server_port) as server:
+            server.login(config_.smtp_server_username, config_.smtp_server_password)
+            server.send_message(message)
+    except smtplib.SMTPException as err:
+        raise FailedToSend(
+            f"Failed to send email to '{to}'"
+        ) from err
 
 
 def _render_subject(header_segments: Iterable[models.HeaderSegment]) -> str:
@@ -151,6 +157,7 @@ def _render_html_content(body_segments: Iterable[models.BodySegment]) -> str:
         "</html>"
     ])
 
+
 def _render_css(css: dict[str, dict[str, str]]) -> str:
     return "\n\n".join(
         _render_css_selector(selector_name, properties)
@@ -169,6 +176,7 @@ def _render_css_selector(name: str, properties: dict[str, str]) -> str:
             "}"
         ]
     )
+
 
 def _render_html_body(
         body_segments: Iterable[models.BodySegment]

@@ -16,13 +16,19 @@ def get() -> Config:
 
     if _cached_config is None:
         _cached_config = Config(
+            domain=_get_dotenv_var_value(
+                "DOMAIN",
+                context=env_context,
+            ),
             human_readable_project_name=_get_dotenv_var_value(
                 "HUMAN_READABLE_PROJECT_NAME"
             ),
             db=_get_db_config(env_context),
             fastapi=_get_fastapi_config(env_context),
-            access_control=_get_access_control_config(env_context),
+            auth=_get_auth_config(env_context),
             email=_get_email_config(env_context),
+            form=_get_form_config(env_context),
+            content_management=_get_content_management_config(env_context),
         )
 
     return _cached_config
@@ -56,7 +62,7 @@ def _get_db_config(env_context: env.Context) -> DbConfig:
         connection_ping_timeout=float(_get_mongo_dotenv_var_value(
             "CONNECTION_PING_TIMEOUT",
             context=env_context,
-        )),
+        ))
     )
 
 
@@ -69,8 +75,8 @@ def _get_fastapi_config(env_context: env.Context) -> FastAPIConfig:
     )
 
 
-def _get_access_control_config(env_context: env.Context) -> AccessControlConfig:
-    return AccessControlConfig(
+def _get_auth_config(env_context: env.Context) -> AuthConfig:
+    return AuthConfig(
         jwt_secret=_get_access_control_dotenv_var_value(
             "JWT_SECRET",
             context=env_context,
@@ -103,6 +109,24 @@ def _get_email_config(env_context: env.Context) -> EmailConfig:
         plaintext_line_length=int(_get_email_dotenv_var_value(
             "PLAINTEXT_LINE_LEN",
         ))
+    )
+
+
+def _get_form_config(env_context: env.Context) -> FormConfig:
+    return FormConfig(
+        vet_registration_url_template=_get_form_dotenv_var_value(
+            "VET_REGISTRATION_URL_TEMPLATE",
+            context=env_context,
+        )
+    )
+
+
+def _get_content_management_config(env_context: env.Context) -> ContentManagementConfig:
+    return ContentManagementConfig(
+        email_addresses=_get_content_management_dotenv_var_value(
+            "EMAIL_ADDRESSES",
+            context=env_context,
+        ).split(",")
     )
 
 
@@ -150,6 +174,30 @@ def _get_email_dotenv_var_value(
     return _get_dotenv_var_value(
         name,
         category="EMAIL",
+        context=context
+    )
+
+
+def _get_form_dotenv_var_value(
+        name: str,
+        *,
+        context: env.Context | None = None,
+) -> str:
+    return _get_dotenv_var_value(
+        name,
+        category="FORM",
+        context=context
+    )
+
+
+def _get_content_management_dotenv_var_value(
+        name: str,
+        *,
+        context: env.Context | None = None,
+) -> str:
+    return _get_dotenv_var_value(
+        name,
+        category="CONTENT_MANAGEMENT",
         context=context
     )
 

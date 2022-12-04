@@ -5,7 +5,7 @@ from time import sleep
 
 import geopy
 
-from models import Location, Vet, Address
+from models import Location, Vet, Address, VetCreateOrOverwrite
 from utils import cache
 
 _NOMINATIM_GEOLOCATOR_USER_AGENT = "hwr_tierarzt_notdienst"
@@ -13,13 +13,13 @@ _GEOPY_LAST_REQUEST_DATETIME_FILE_NAME = "geopy_last_request_datetime.txt"
 _GEOPY_REQUEST_RATELIMIT_IN_SECONDS = 2
 
 
-def normalize(vet: Vet) -> Vet:
+def normalize(vet: VetCreateOrOverwrite) -> VetCreateOrOverwrite:
     vet = _normalize_location(vet)
 
     return vet
 
 
-def _normalize_location(vet: Vet) -> Vet:
+def _normalize_location(vet: VetCreateOrOverwrite) -> VetCreateOrOverwrite:
     denormalized_location = vet.location
 
     address = denormalized_location.address

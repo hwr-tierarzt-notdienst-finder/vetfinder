@@ -17,7 +17,5 @@ WORKDIR /app/backend/
 
 VOLUME logs
 
-# Start app
-ENTRYPOINT ENV=prod PYTHONPATH=./src python ./src/entrypoints/setup_secrets.py \
-    && rm secrets/token_hashes.json \
-    && ENV=prod PYTHONPATH=./src ./src/entrypoints/app.sh
+# Start API
+ENTRYPOINT ENV=prod PYTHONPATH=./src ./src/entrypoints/api.sh
