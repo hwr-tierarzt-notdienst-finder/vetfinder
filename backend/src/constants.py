@@ -1,26 +1,25 @@
-from types_ import Weekday, Timezone, Region
+from typing import cast
 
-WEEKDAYS: list[Weekday] = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
-TIMEZONES: set[Timezone] = {"Europe/Berlin"}
-REGIONS: set[Region] = {
-     "Bundesland:Berlin",
-     "Bundesland:Baden-Württemberg",
-     "Bundesland:Bayern",
-     "Bundesland:Brandenburg",
-     "Bundesland:Bremen",
-     "Bundesland:Hamburg",
-     "Bundesland:Hessen",
-     "Bundesland:Mecklenburg-Vorpommern",
-     "Bundesland:Niedersachsen",
-     "Bundesland:Nordrhein-Westfalen",
-     "Bundesland:Rheinland-Pfalz",
-     "Bundesland:Saarland",
-     "Bundesland:Sachsen",
-     "Bundesland:Sachsen-Anhalt",
-     "Bundesland:Schleswig-Holstein",
-     "Bundesland:Thüringen",
-}
-VET_COLLECTIONS: set[str] = {
-     "hidden",
-     "public",
-}
+from types_ import Weekday, Timezone, Region, VetVisibility, VetVerificationStatus
+from utils import typing_
+
+WEEKDAYS = cast(
+    list[Weekday],
+    list(typing_.extract_strings_from_type(Weekday))
+)
+TIMEZONES = cast(
+    set[Timezone],
+    set(typing_.extract_strings_from_type(Timezone))
+)
+REGIONS = cast(
+    set[Region],
+    set(typing_.extract_strings_from_type(Region))
+)
+VET_VISIBILITIES = cast(
+    set[VetVisibility],
+    set(typing_.extract_strings_from_type(VetVisibility))
+)
+VET_VERIFICATION_STATUSES = cast(
+    set[VetVerificationStatus],
+    set(typing_.extract_strings_from_type(VetVerificationStatus))
+)

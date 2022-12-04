@@ -5,7 +5,7 @@ from logging import Logger
 from types import ModuleType
 from typing import NoReturn, cast, Any
 
-from ..models import Vet, VetInDb
+from models import Vet, VetInDb
 from .pipeline import Pipeline
 from .human_readable import human_readable
 from . import import_

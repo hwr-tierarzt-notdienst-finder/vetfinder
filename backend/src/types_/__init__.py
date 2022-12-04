@@ -22,3 +22,11 @@ Region: TypeAlias = Literal[
     "Bundesland:Schleswig-Holstein",
     "Bundesland:Thüringen",
 ]
+VetVisibility: TypeAlias = Literal[
+    "test",
+    "public",
+]
+VetVerificationStatus: TypeAlias = Literal[
+    "unverified",
+    "verified",
+]

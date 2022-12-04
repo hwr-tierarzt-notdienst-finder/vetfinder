@@ -157,7 +157,11 @@ class TimeSpan(ApiBaseModel):
         return hash(self.start) + hash(self.end)
 
 
-class Vet(ApiBaseModel):
+class RegistrationEmailInfo(ApiBaseModel):
+    email_address: str
+
+
+class VetCreateOrOverwrite(ApiBaseModel):
     clinic_name: str
     title: str
     location: Location
@@ -166,31 +170,9 @@ class Vet(ApiBaseModel):
     categories: list[Category] = PydanticField(default_factory=list)
 
 
-class VetWithId(Vet, ModelWithId):
+class Vet(VetCreateOrOverwrite):
     id: str
 
 
-class VetWithModificationTokenId(Vet):
-    modification_token_id: str
-
-
-class VetInDb(VetWithId, VetWithModificationTokenId):
-    pass
-
-
-class VetResponse(VetWithId):
+class VetResponse(Vet):
     availability: list[TimeSpan] | None = None
-
-
-# Internal Models
-# ============================================================================
-
-class Secret(BaseModel):
-    secret_id: str
-    # We obviously don't store plaintext
-    # -> must be cryptographically strong for short text (no md5!!!!!!!! or sha!) and salted
-    hash_: str
-
-
-class SecretInDb(Secret, ModelWithId):
-    pass
