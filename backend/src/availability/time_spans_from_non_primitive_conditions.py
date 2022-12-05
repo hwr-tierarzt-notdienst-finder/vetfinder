@@ -9,12 +9,29 @@ from models import (
     AvailabilityConditionTimeSpanDuringDay,
     AvailabilityConditionWeekdaysSpan,
     AvailabilityConditionHolidays,
+    AvailabilityConditionTimeSpan,
 )
 
 from .holidays import get_by_region as get_holidays_by_region
 
 
 _T = TypeVar("_T")
+
+
+def time_span(
+        lower_bound: datetime,
+        upper_bound: datetime,
+        time_span: AvailabilityConditionTimeSpan
+) -> Iterable[TimeSpan]:
+    bounded_start = min(time_span.start, lower_bound)
+    bounded_end = max(time_span.end, upper_bound)
+
+    return [
+        TimeSpan(
+            start=bounded_start,
+            end=bounded_end,
+        )
+    ]
 
 
 def time_span_during_day(
