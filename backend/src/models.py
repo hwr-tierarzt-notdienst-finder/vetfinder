@@ -85,22 +85,43 @@ class Contact(ApiBaseModel):
 
 
 class AvailabilityConditionNot(ApiBaseModel):
-    type: Literal["not"]
-    child: "AvailabilityCondition"
+    type: Literal["not"] = "not"
+    child: AvailabilityCondition
+
+    def __hash__(self) -> int:
+        return hash(
+            f"type='{self.type}';"
+            f"child='{hash(self.child)}'"
+        )
 
 
 class AvailabilityConditionAnd(ApiBaseModel):
-    type: Literal["and"]
-    children: list["AvailabilityCondition"]
+    type: Literal["and"] = "and"
+    children: list[AvailabilityCondition]
+
+    def __hash__(self) -> int:
+        return hash(
+            f"type='{self.type}';"
+            f"children='{','.join(str(hash(child)) for child in self.children)}'"
+        )
 
 
 class AvailabilityConditionOr(ApiBaseModel):
-    type: Literal["or"]
-    children: list["AvailabilityCondition"]
+    type: Literal["or"] = "or"
+    children: list[AvailabilityCondition]
+
+    def __hash__(self) -> int:
+        return hash(
+            f"type='{self.type}';"
+            f"children='{','.join(str(hash(child)) for child in self.children)}'"
+        )
 
 
 class AvailabilityConditionAll(ApiBaseModel):
     type: Literal["all"]
+
+    def __hash__(self) -> int:
+        return hash(self.type)
 
 
 class TimezoneAware(ApiBaseModel):
@@ -112,24 +133,59 @@ class TimeDuringDay(ApiBaseModel):
     minute: int
 
 
+class AvailabilityConditionTimeSpan(ApiBaseModel):
+    type: Literal["time_span"] = "time_span"
+    start: datetime
+    end: datetime
+
+    def __hash__(self) -> int:
+        return hash(
+            f"type='{self.type}';"
+            f"start='{self.start}';"
+            f"end='{self.end}'"
+        )
+
+
 class AvailabilityConditionTimeSpanDuringDay(TimezoneAware):
-    type: Literal["time_span_during_day"]
+    type: Literal["time_span_during_day"] = "time_span_during_day"
     start_time: TimeDuringDay
     end_time: TimeDuringDay
+
+    def __hash__(self) -> int:
+        return hash(
+            f"type='{self.type}';"
+            f"start_time='{self.start_time}';"
+            f"end_time='{self.end_time}';"
+            f"timezone='{self.timezone}'"
+        )
 
 
 Weekday: TypeAlias = Literal["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
 
 
 class AvailabilityConditionWeekdaysSpan(TimezoneAware):
-    type: Literal["weekdays"]
+    type: Literal["weekdays"] = "weekdays"
     start_day: Weekday
     end_day: Weekday
 
+    def __hash__(self) -> int:
+        return hash(
+            f"type='{self.type}';"
+            f"start_day='{self.start_day}';"
+            f"end_day='{self.end_day}';"
+            f"timezone='{self.timezone}'"
+        )
+
 
 class AvailabilityConditionHolidays(ApiBaseModel):
-    type: Literal["holidays"]
+    type: Literal["holidays"] = "holidays"
     region: Region
+
+    def __hash__(self) -> int:
+        return hash(
+            f"type='{self.type}';"
+            f"region='{self.region}'"
+        )
 
 
 AvailabilityCondition = Annotated[
@@ -168,6 +224,22 @@ class TimeSpan(ApiBaseModel):
         return hash(self.start) + hash(self.end)
 
 
+class Time24HourClock(ApiBaseModel):
+    hour: int
+    minute: int = 0
+    second: int = 0
+    digital_clock_string: str
+
+
+class TimeSpan24HourClock(ApiBaseModel):
+    start_time: Time24HourClock
+    end_time: Time24HourClock
+    digital_clock_string: str
+
+
+TimesDuringWeek24HourClock = dict[Weekday, list[TimeSpan24HourClock]]
+
+
 class RegistrationEmailInfo(ApiBaseModel):
     email_address: str
 
@@ -189,3 +261,5 @@ class Vet(VetCreateOrOverwrite):
 class VetResponse(Vet):
     availability: list[TimeSpan] | None = None
     emergency_availability: list[TimeSpan] | None = None
+    availability_during_week: TimesDuringWeek24HourClock | None = None
+    emergency_availability_during_week: TimesDuringWeek24HourClock | None = None

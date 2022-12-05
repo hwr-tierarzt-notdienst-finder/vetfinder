@@ -168,6 +168,14 @@ def _create_vets_responses(
                     upper_bound=availability_to,
                     availability_condition=vet.emergency_availability_condition,
                 )),
+                availability_during_week=availability.get_times_during_current_week_24_hour_clock(
+                    vet.availability_condition,
+                    availability_from.tzinfo,
+                ),
+                emergency_availability_during_week=availability.get_times_during_current_week_24_hour_clock(
+                    vet.emergency_availability_condition,
+                    availability_from.tzinfo,
+                ),
                 **vet.dict()
             )
             for vet in vets_in_db

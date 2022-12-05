@@ -1,16 +1,19 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, tzinfo
 from functools import wraps
 from typing import Iterable, TypeVar, Callable
 
 from dateutil.tz import gettz
 
+from constants import WEEKDAYS
 from utils import cache, validate
 from models import (
     AvailabilityCondition,
-    Vet,
     TimeSpan,
+    TimesDuringWeek24HourClock,
+    TimeSpan24HourClock,
+    Time24HourClock,
 )
-from types_ import Timezone
+from types_ import Timezone, Weekday
 
 from . import time_spans_from_non_primitive_conditions
 
@@ -26,6 +29,7 @@ _CONDITIONS = {
     "and",
     "or",
     "all",
+    "time_span",
     "time_span_during_day",
     "weekdays",
     "holidays",
@@ -36,6 +40,95 @@ _PRIMITIVE_CONDITIONS = {
     "or",
     "all",
 }
+
+
+def get_times_during_current_week_24_hour_clock(
+        availability_condition: AvailabilityCondition,
+        timezone: Timezone | tzinfo,
+) -> TimesDuringWeek24HourClock:
+    return {
+        weekday: list(_get_times_spans_during_weekday_in_current_week_24_hour_clock(
+            weekday,
+            availability_condition,
+            timezone,
+        )) for weekday in WEEKDAYS
+    }
+
+
+def _get_times_spans_during_weekday_in_current_week_24_hour_clock(
+        weekday: Weekday,
+        availability_condition: AvailabilityCondition,
+        timezone: Timezone | tzinfo,
+) -> Iterable[TimeSpan24HourClock]:
+    now = datetime.now()
+
+    weekday_index = WEEKDAYS.index(weekday)
+
+    days_offset = weekday_index - now.weekday()
+
+    if not isinstance(timezone, tzinfo):
+        timezone = gettz(timezone)
+
+    weekday_start = (now - timedelta(days=days_offset)).replace(
+        hour=0,
+        minute=0,
+        second=0,
+        microsecond=0,
+        tzinfo=timezone,
+    )
+    weekday_end = (now - timedelta(days=days_offset - 1)).replace(
+        hour=0,
+        minute=0,
+        second=0,
+        microsecond=0,
+        tzinfo=timezone,
+    )
+
+    time_spans = _get_time_spans_from_condition(
+        weekday_start,
+        weekday_end,
+        availability_condition
+    )
+
+    for time_span in time_spans:
+        yield _get_time_span_24_hour_clock_from_datetimes(
+            time_span.start,
+            time_span.end,
+        )
+
+
+def _get_time_span_24_hour_clock_from_datetimes(
+        start: datetime,
+        end: datetime
+) -> TimeSpan24HourClock:
+    start_time_24_hour_clock = _get_time_24_hour_clock_from_datetime(start)
+    end_time_24_hour_clock = _get_time_24_hour_clock_from_datetime(end)
+
+    return TimeSpan24HourClock(
+        start_time=start_time_24_hour_clock,
+        end_time=end_time_24_hour_clock,
+        digital_clock_string=(
+            f"{start_time_24_hour_clock.digital_clock_string}-{end_time_24_hour_clock.digital_clock_string}"
+        )
+    )
+
+
+def _get_time_24_hour_clock_from_datetime(dt: datetime) -> Time24HourClock:
+    hour = dt.hour
+    minute = dt.minute
+    second = dt.second
+
+    if second == 0:
+        digital_clock_string = f"{hour:0>2}:{minute:0>2}"
+    else:
+        digital_clock_string = f"{hour:0>2}:{minute:0>2}:{second:0>2}"
+
+    return Time24HourClock(
+        hour=hour,
+        minute=minute,
+        second=second,
+        digital_clock_string=digital_clock_string,
+    )
 
 
 def get_time_spans(
