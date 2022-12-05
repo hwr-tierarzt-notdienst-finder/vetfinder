@@ -31,7 +31,6 @@ if [ -f "$BACKEND_DIR/.env.secret" ]; then
 fi
 cp "$BACKEND_DIR/.gitignore" "$temp_dir/backend/.gitignore"
 cp "$BACKEND_DIR/requirements.txt" "$temp_dir/backend/requirements.txt"
-cp -rL "$BACKEND_DIR/secrets" "$temp_dir/backend/secrets"
 cp -r "$BACKEND_DIR/src" "$temp_dir/backend/src"
 
 echo_information "Building docker image for app"
