@@ -166,7 +166,8 @@ class VetCreateOrOverwrite(ApiBaseModel):
     title: str
     location: Location
     contacts: list[Contact] = PydanticField(default_factory=list)
-    available: AvailabilityCondition
+    availability_condition: AvailabilityCondition
+    emergency_availability_condition: AvailabilityCondition
     categories: list[Category] = PydanticField(default_factory=list)
 
 
@@ -176,3 +177,4 @@ class Vet(VetCreateOrOverwrite):
 
 class VetResponse(Vet):
     availability: list[TimeSpan] | None = None
+    emergency_availability: list[TimeSpan] | None = None

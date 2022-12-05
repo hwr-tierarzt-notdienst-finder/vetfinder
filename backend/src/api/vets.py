@@ -161,7 +161,12 @@ def _create_vets_responses(
                 availability=list(availability.get_time_spans(
                     lower_bound=availability_from,
                     upper_bound=availability_to,
-                    vet=vet,
+                    availability_condition=vet.availability_condition,
+                )),
+                emergency_availability=list(availability.get_time_spans(
+                    lower_bound=availability_from,
+                    upper_bound=availability_to,
+                    availability_condition=vet.emergency_availability_condition,
                 )),
                 **vet.dict()
             )

@@ -41,7 +41,7 @@ _PRIMITIVE_CONDITIONS = {
 def get_time_spans(
         lower_bound: datetime,
         upper_bound: datetime,
-        vet: Vet,
+        availability_condition: AvailabilityCondition,
 ) -> Iterable[TimeSpan]:
     """
     Returns a list of time spans generated from the `vet.available` decision tree.
@@ -57,7 +57,7 @@ def get_time_spans(
     return _get_time_spans_from_condition(
         lower_bound,
         upper_bound,
-        vet.available,
+        availability_condition,
     )
 
 
