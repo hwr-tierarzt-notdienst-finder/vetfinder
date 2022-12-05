@@ -80,8 +80,9 @@ class Veterinarian {
     required this.contacts,
     required this.location,
     required this.categories,
-    required this.availability,
-    required this.emergencyAvailability
+    required this.availabilityDuringWeek,
+    required this.emergencyAvailability,
+    required this.emergencyAvailabilityDuringWeek
   }) : super();
 
   final String id;
@@ -90,8 +91,9 @@ class Veterinarian {
   final List<Map<String, dynamic>> contacts;
   final Location location;
   final List<String> categories;
-  final Map<String, dynamic> availability;
-  final Map<String, dynamic>? emergencyAvailability;
+  final Map<String, dynamic> availabilityDuringWeek;
+  final List<dynamic>? emergencyAvailability;
+  final Map<String, dynamic>? emergencyAvailabilityDuringWeek;
 
   Veterinarian.fromJson(Map<String, dynamic> json)
       : id = json["id"],
@@ -100,8 +102,9 @@ class Veterinarian {
         contacts = List<Map<String, dynamic>>.from(json['contacts'] as List),
         location = Location.fromJson(json["location"]),
         categories = List<String>.from(json["categories"] as List),
-        availability = json["availabilityDuringWeek"],
-        emergencyAvailability = json["emergencyAvailabilityDuringWeek"];
+        availabilityDuringWeek = json["availabilityDuringWeek"],
+        emergencyAvailability = json["emergencyAvailability"],
+        emergencyAvailabilityDuringWeek = json["emergencyAvailabilityDuringWeek"];
 
   // Get contact data of a specific type
   // @param type The type of data (email, tel:landline, tel:mobile, website)
