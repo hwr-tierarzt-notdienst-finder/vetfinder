@@ -35,9 +35,20 @@ class ApiBaseModel(BaseModel):
 # Vet
 # ----------------------------------------------------------------------------
 
-class Person(ApiBaseModel):
-    name: str
-    roles: list[Literal["owner"]]
+class NameInformation(ApiBaseModel):
+    form_of_address: Literal["mr", "ms", "divers"] | None = None
+    title: Literal[
+        "dr_med",
+        "dr_med_dent",
+        "dr_med_vent",
+        "dr_phil",
+        "dr_paed",
+        "dr_rer_nat",
+        "dr_rer_pol",
+        "dr_ing",
+    ] | None = None
+    first_name: str
+    last_name: str
 
 
 class Address(ApiBaseModel):
@@ -163,7 +174,7 @@ class RegistrationEmailInfo(ApiBaseModel):
 
 class VetCreateOrOverwrite(ApiBaseModel):
     clinic_name: str
-    title: str
+    name_information: NameInformation
     location: Location
     contacts: list[Contact] = PydanticField(default_factory=list)
     availability_condition: AvailabilityCondition
