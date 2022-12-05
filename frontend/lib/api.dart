@@ -1,5 +1,5 @@
-import 'dart:collection';
 import 'dart:convert';
+import 'package:flutter/services.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:string_similarity/string_similarity.dart';
 import 'package:http/http.dart' as http;
@@ -52,30 +52,56 @@ class Location {
         address = Address.fromJson(json["address"]);
 }
 
+class Person {
+  const Person({
+    required this.formOfAddress,
+    required this.title,
+    required this.firstName,
+    required this.lastName
+  }) : super();
+
+  final String? formOfAddress;
+  final String? title;
+  final String firstName;
+  final String lastName;
+
+  Person.fromJson(Map<String, dynamic> json)
+      : formOfAddress = json["formOfAddress"]?? "",
+        title = json["title"]?? "",
+        firstName = json["firstName"],
+        lastName = json["lastName"];
+}
+
 class Veterinarian {
   Veterinarian({
     required this.id,
-    required this.name,
+    required this.person,
     required this.clinicName,
     required this.contacts,
     required this.location,
     required this.categories,
+    required this.availability,
+    required this.emergencyAvailability
   }) : super();
 
   final String id;
-  final String name;
+  final Person person;
   final String clinicName;
   final List<Map<String, dynamic>> contacts;
   final Location location;
   final List<String> categories;
+  final Map<String, dynamic> availability;
+  final Map<String, dynamic>? emergencyAvailability;
 
   Veterinarian.fromJson(Map<String, dynamic> json)
       : id = json["id"],
-        name = json["title"],
+        person = Person.fromJson(json["nameInformation"]),
         clinicName = json["clinicName"],
         contacts = List<Map<String, dynamic>>.from(json['contacts'] as List),
         location = Location.fromJson(json["location"]),
-        categories = List<String>.from(json['categories'] as List);
+        categories = List<String>.from(json["categories"] as List),
+        availability = json["availabilityDuringWeek"],
+        emergencyAvailability = json["emergencyAvailabilityDuringWeek"];
 
   // Get contact data of a specific type
   // @param type The type of data (email, tel:landline, tel:mobile, website)
@@ -88,6 +114,20 @@ class Veterinarian {
 
     // Contact type not found
     return "";
+  }
+
+  String getName() {
+    String name = "${person.formOfAddress} ${person.title} ${person.firstName} ${person.lastName}";
+
+    if (person.formOfAddress!.isEmpty && person.title!.isEmpty) {
+      name = "${person.firstName} ${person.lastName}";
+    } else if (person.formOfAddress!.isEmpty) {
+      name = "${person.title} ${person.firstName} ${person.lastName}";
+    } else if (person.title!.isEmpty) {
+      name = "${person.formOfAddress} ${person.firstName} ${person.lastName}";
+    }
+
+    return name;
   }
 
   String getAddress() {
@@ -105,17 +145,33 @@ class Veterinarian {
       getPosition(),
     );
   }
+
+  bool getEmergencyAvailabilityStatus() {
+    if (emergencyAvailability != null) {
+      // Logik, um die jetzige Zeit mit der Notdienst-Öffnungszeit zu vergleichen
+      // wenn die jetzige Zeit innerhalb der Öffnungszeit ist, return true, else false.
+    }
+
+    return false;
+  }
 }
 
 // Fetch veterinarians data from the server and save it in the app
 Future<void> fetchVeterinarians() async {
+  String availabilityFrom = DateTime.utc(2022, 09, 20, 20, 18, 04).toIso8601String();
+  String availabilityTo = DateTime.utc(2022, 12, 20, 20, 18, 04).toIso8601String();
   var uri = Uri(
         scheme: "https",
         host: "vetfinder.dowahdid.de",
         pathSegments: ["vets"],
-        query: "token=olaej6g528zi39haitfn5n0hxbnzyc1ixysbozrive99103b");
-  Map<String, String> headers = HashMap();
-  headers.putIfAbsent('Accept', () => 'application/json');
+        query: "availability_from=$availabilityFrom&availability_to=$availabilityTo");
+
+  String secretToken = await rootBundle.loadString('assets/secret_token.txt');
+  Map<String, String> headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+    "Authorization": "Bearer $secretToken",
+  };
 
   try {
     http.Response response = await http.get(uri, headers: headers);
@@ -212,8 +268,8 @@ List<Veterinarian> getFilteredVeterinarians(
     );
     } else {
       returnedVets.sort((a, b) {
-        String vetInfo1 = '${a.name} ${a.getAddress()}';
-        String vetInfo2 = '${b.name} ${b.getAddress()}';
+        String vetInfo1 = '${a.getName} ${a.getAddress()}';
+        String vetInfo2 = '${b.getName} ${b.getAddress()}';
 
         double similarityScore1 = query.similarityTo(vetInfo1);
         double similarityScore2 = query.similarityTo(vetInfo2);

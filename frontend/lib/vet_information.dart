@@ -79,7 +79,7 @@ class _VetInformationState extends State<VetInformation> {
             children: [
               const SizedBox(height: 10),
               Text(
-                vet.name,
+                vet.getName(),
                 style: const TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 30,
@@ -380,6 +380,7 @@ class _VetInformationState extends State<VetInformation> {
                   ),
                 ],
               ),
+              const SizedBox(height: 20),
             ],
           ),
         ),

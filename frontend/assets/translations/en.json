@@ -27,11 +27,13 @@
   "edit_address_modal": {
     "title": "Location",
     "use_current_location": "Use Current Location",
-    "address_hint": "Address, Number, ZIP Code"
+    "address_hint": "Address, Number, ZIP Code",
+    "snackbar_timeout": "Failed to get current location."
   },
   "veterinarian": {
     "show_in_map": "Show in Map",
-    "view_vet": "View Vet"
+    "view_vet": "View Vet",
+    "emergency": "Emergency Service"
   },
   "vet_information": {
     "title": "Vet Information",
@@ -49,7 +51,7 @@
     "darkmode": "Darkmode",
     "language": "Language",
     "publisher": "Publisher",
-    "last_updated": "Last vet update",
+    "last_updated": "Last data update",
     "snackbar_language_change": "Restart the application to apply the change.",
     "snackbar_close": "Close"
   }

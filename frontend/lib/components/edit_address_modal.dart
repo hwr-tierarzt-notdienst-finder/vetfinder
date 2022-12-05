@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:collection';
 import 'dart:convert';
 import 'package:frontend/api.dart' as api;
@@ -57,8 +58,8 @@ class _EditAddressModalState extends State<EditAddressModal> {
               endIndent: 10,
             ),
             TextButton(
-              onPressed: () {
-                fetchCurrentLocation(notifier);
+              onPressed: () async {
+                await fetchCurrentLocation(notifier);
               },
               child: Padding(
                 padding: const EdgeInsets.all(20.0),
@@ -171,19 +172,38 @@ class _EditAddressModalState extends State<EditAddressModal> {
 
     // When we reach here, permissions are granted and we can
     // continue accessing the position of the device.
-    Position currentPosition =
-        await Geolocator.getCurrentPosition(forceAndroidLocationManager: true);
-    notifier.setPosition(
-        LatLng(currentPosition.latitude, currentPosition.longitude));
-    print(notifier.position);
+    try {
+      Position currentPosition =
+        await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.high,
+          forceAndroidLocationManager: true,
+          timeLimit: const Duration(seconds: 5)
+        );
 
-    getAddress(currentPosition.latitude, currentPosition.longitude)
-        .then((values) {
-      notifier.setAddress(values.first.addressLine ?? "");
-      print(notifier.address);
-      Navigator.pop(context); // close the modal
-      widget.onPositionChanged(notifier.position, notifier.address);
-    });
+      notifier.setPosition(
+          LatLng(currentPosition.latitude, currentPosition.longitude));
+      print(notifier.position);
+
+      getAddress(currentPosition.latitude, currentPosition.longitude)
+          .then((values) {
+        notifier.setAddress(values.first.addressLine ?? "");
+        print(notifier.address);
+        Navigator.pop(context);
+        widget.onPositionChanged(notifier.position, notifier.address);
+      });
+    } on TimeoutException {
+      // Timeout after 5 seconds. Close modal and display error message.
+      Navigator.pop(context);
+      final snackBar = SnackBar(
+        content: Text('edit_address_modal.snackbar_timeout'.tr()),
+        backgroundColor: Colors.black,
+        action: SnackBarAction(
+          label: 'settings.snackbar_close'.tr(),
+          onPressed: () {},
+        ),
+      );
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    }
   }
 
   Future<List<Address>> getAddress(double lat, double lang) async {

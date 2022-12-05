@@ -39,7 +39,7 @@ class _HomeState extends State<Home> {
       },
       icon: const Icon(Icons.location_on, color: Colors.red, size: 35.0),
       label: Text(
-        vet.name,
+        vet.getName(),
         overflow: TextOverflow.ellipsis,
         softWrap: false,  
         maxLines: 2,
@@ -141,7 +141,7 @@ class _HomeState extends State<Home> {
                   itemBuilder: (context, index) {
                     return VetCard(
                       id: vets[index].id,
-                      name: vets[index].name,
+                      name: vets[index].getName(),
                       telephoneNumber: vets[index].getContact("tel:landline"),
                       location: vets[index].location,
                       onViewInMap: (position) {
@@ -150,6 +150,7 @@ class _HomeState extends State<Home> {
                       clinicName: vets[index].clinicName,
                       distance: vets[index]
                           .getDistanceInMeters(locationNotifier.position),
+                      emergencyAvailability: vets[index].getEmergencyAvailabilityStatus(),
                     );
                   }),
             ));

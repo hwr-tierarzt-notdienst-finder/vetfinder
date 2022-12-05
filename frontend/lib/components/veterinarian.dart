@@ -16,6 +16,7 @@ class VetCard extends Card {
     required this.clinicName,
     required this.onViewInMap,
     required this.distance,
+    required this.emergencyAvailability,
   }) : super(key: key);
 
   final String id;
@@ -25,9 +26,22 @@ class VetCard extends Card {
   final String clinicName;
   final Function(LatLng) onViewInMap;
   final double distance;
+  final bool emergencyAvailability;
 
   @override
   Widget build(BuildContext context) {
+    Text emergencyIcon = const Text("");
+    // Determine if a clinic has emergency service available
+    if (emergencyAvailability) {
+      emergencyIcon = 
+        Text(
+          'veterinarian.emergency'.tr(),
+          style: const TextStyle(
+            color: Colors.red
+          )
+        );
+    }
+
     return Consumer<LocationNotifier>(
       builder: (context, notifier, child) {
         return Card(
@@ -43,7 +57,6 @@ class VetCard extends Card {
               const SizedBox(height: 5),
               Text(
                   "${location.address.street} ${location.address.number}, ${location.address.zipCode} ${location.address.city}"),
-              Text(telephoneNumber),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -64,16 +77,26 @@ class VetCard extends Card {
                   ),
                 ],
               ),
-              Container(
-                alignment: Alignment.centerRight,
-                margin: const EdgeInsets.only(right: 5, bottom: 5),
-                child: Text(
-                  '${((distance / 1000).toStringAsFixed(2))} km',
-                  style: const TextStyle(
-                    fontStyle: FontStyle.italic,
-                    color: Colors.grey,
+              Stack(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      emergencyIcon
+                    ],
                   ),
-                ),
+                  Container(
+                    alignment: Alignment.centerRight,
+                    margin: const EdgeInsets.only(right: 5, bottom: 5),
+                    child: Text(
+                      '${((distance / 1000).toStringAsFixed(2))} km',
+                      style: const TextStyle(
+                        fontStyle: FontStyle.italic,
+                        color: Colors.grey,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
