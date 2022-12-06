@@ -83,31 +83,31 @@
 	let treatmentNote: string = '';
 
 	const openingHoursFrom: OpeningHours = {
-		monday: undefined,
-		tuesday: undefined,
-		wednesday: undefined,
-		thursday: undefined,
-		friday: undefined,
-		saturday: undefined,
-		sunday: undefined
+		Mon: undefined,
+		Tue: undefined,
+		Wed: undefined,
+		Thu: undefined,
+		Fri: undefined,
+		Sat: undefined,
+		Sun: undefined
 	};
 	const openingHoursTo: OpeningHours = {
-		monday: undefined,
-		tuesday: undefined,
-		wednesday: undefined,
-		thursday: undefined,
-		friday: undefined,
-		saturday: undefined,
-		sunday: undefined
+		Mon: undefined,
+		Tue: undefined,
+		Wed: undefined,
+		Thu: undefined,
+		Fri: undefined,
+		Sat: undefined,
+		Sun: undefined
 	};
 	const dayClosed: DaySelectionInformation = {
-		monday: true,
-		tuesday: true,
-		wednesday: true,
-		thursday: true,
-		friday: true,
-		saturday: true,
-		sunday: true
+		Mon: true,
+		Tue: true,
+		Wed: true,
+		Thu: true,
+		Fri: true,
+		Sat: true,
+		Sun: true
 	};
 
 	function getOpeningHoursOfDay(day: Day): OpeningHoursInformation | undefined {
@@ -123,13 +123,13 @@
 
 	function getOpeningHoursOverview(): OpeningHoursOverview {
 		let overview: OpeningHoursOverview = {
-			monday: undefined,
-			tuesday: undefined,
-			wednesday: undefined,
-			thursday: undefined,
-			friday: undefined,
-			saturday: undefined,
-			sunday: undefined
+			Mon: undefined,
+			Tue: undefined,
+			Wed: undefined,
+			Thu: undefined,
+			Fri: undefined,
+			Sat: undefined,
+			Sun: undefined
 		};
 
 		for (const day of Days) {

@@ -78,25 +78,25 @@ export type TreatmentState = {
     [index: string]: boolean;
 };
 
-export type Day = 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday';
+export type Day = 'Mon' | 'Tue' | 'Wed' | 'Thu' | 'Fri' | 'Sat' | 'Sun';
 export const Days: Day[] = [
-    'monday',
-    'tuesday',
-    'wednesday',
-    'thursday',
-    'friday',
-    'saturday',
-    'sunday'
+    'Mon',
+    'Tue',
+    'Wed',
+    'Thu',
+    'Fri',
+    'Sat',
+    'Sun'
 ];
 
 export const DayLabels: LabelObject<Day> = {
-    monday: 'Montag',
-    tuesday: 'Dienstag',
-    wednesday: 'Mittwoch',
-    thursday: 'Donnerstag',
-    friday: 'Freitag',
-    saturday: 'Samstag',
-    sunday: 'Sonntag'
+    Mon: 'Montag',
+    Tue: 'Dienstag',
+    Wed: 'Mittwoch',
+    Thu: 'Donnerstag',
+    Fri: 'Freitag',
+    Sat: 'Samstag',
+    Sun: 'Sonntag'
 };
 
 export type OpeningHoursInformation = {
@@ -197,13 +197,13 @@ export function createDefaultEmergencyTimeTemplate(): EmergencyTimeTemplate {
         fromTime: formatTime(fromTime),
         toTime: formatTime(toTime),
         days: {
-            monday: false,
-            tuesday: false,
-            wednesday: false,
-            thursday: false,
-            friday: false,
-            saturday: false,
-            sunday: false
+            Mon: false,
+            Tue: false,
+            Wed: false,
+            Thu: false,
+            Fri: false,
+            Sat: false,
+            Sun: false
         }
     };
 
