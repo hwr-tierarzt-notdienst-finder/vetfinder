@@ -6,8 +6,9 @@ from time import sleep
 import geopy
 
 import availability
-from models import Location, Vet, Address, VetCreateOrOverwrite
+from models import Location, Address, VetCreateOrOverwrite
 from utils import cache
+from ._errors import NormalizationError
 
 _NOMINATIM_GEOLOCATOR_USER_AGENT = "hwr_tierarzt_notdienst"
 _GEOPY_LAST_REQUEST_DATETIME_FILE_NAME = "geopy_last_request_datetime.txt"
@@ -25,16 +26,28 @@ def _normalize_availability(vet: VetCreateOrOverwrite) -> VetCreateOrOverwrite:
     vet = vet.copy()
 
     if vet.opening_hours is not None:
-        vet.availability_condition = availability.convert_opening_hours_to_condition(
-            vet.opening_hours,
-            vet.timezone,
-        )
+        try:
+            vet.availability_condition = availability.convert_opening_hours_to_condition(
+                vet.opening_hours,
+                vet.timezone,
+            )
+        except Exception as err:
+            raise NormalizationError(
+                f"Could not create availability_condition from opening_hours {vet.opening_hours}",
+                "opening_hours"
+            ) from err
 
     if vet.emergency_times is not None:
-        vet.emergency_availability_condition = availability.convert_emergency_times_to_condition(
-            vet.emergency_times,
-            vet.timezone,
-        )
+        try:
+            vet.emergency_availability_condition = availability.convert_emergency_times_to_condition(
+                vet.emergency_times,
+                vet.timezone,
+            )
+        except Exception as err:
+            raise NormalizationError(
+                f"Could not create emergency_availability_condition from emergency_times {vet.emergency_times}",
+                "emergency_times"
+            ) from err
 
     return vet
 
@@ -47,9 +60,21 @@ def _normalize_location(vet: VetCreateOrOverwrite) -> VetCreateOrOverwrite:
     lon = denormalized_location.lon
 
     if lat is not None and lon is not None:
-        geopy_location = _get_geopy_location_from_lat_lon(lat, lon)
+        try:
+            geopy_location = _get_geopy_location_from_lat_lon(lat, lon)
+        except Exception as err:
+            raise NormalizationError(
+                f"Could not normalize location={vet.location}",
+                ["location.lat", "location.lon"]
+            ) from err
     else:
-        geopy_location = _get_geopy_location_from_address(address)
+        try:
+            geopy_location = _get_geopy_location_from_address(address)
+        except Exception as err:
+            raise NormalizationError(
+                f"Could not normalize location={vet.location}",
+                ["location.address"]
+            ) from err
 
     address = _normalize_address_from_geopy_location(address, geopy_location)
     lat = geopy_location.latitude
@@ -80,34 +105,46 @@ def _get_geopy_location_from_lat_lon(
 def _get_geopy_location_from_address(address: Address) -> geopy.Location:
     _satisfy_geopy_request_ratelimit()
 
-    # See https://nominatim.org/release-docs/develop/api/Search/
-    return _geopy_geolocator().geocode(
-        {
-            "street": f"{address.number} {address.street}".strip(),
-            "postalcode": str(address.zip_code),
-            "city": address.city,
-        },
-        addressdetails=True
-    )
+    try:
+        # See https://nominatim.org/release-docs/develop/api/Search/
+        return _geopy_geolocator().geocode(
+            {
+                "street": f"{address.number} {address.street}".strip(),
+                "postalcode": str(address.zip_code),
+                "city": address.city,
+            },
+            addressdetails=True
+        )
+    except AttributeError as err:
+        raise NormalizationError(
+            f"Could not normalize {address=}",
+            "location.address"
+        ) from err
 
 
 def _normalize_address_from_geopy_location(
         unnormalized_address: Address,
         geopy_location: geopy.Location,
 ) -> Address:
-    geopy_raw_address = geopy_location.raw.get("address", {})
+    try:
+        geopy_raw_address = geopy_location.raw.get("address", {})
 
-    street = str(geopy_raw_address.get("road", unnormalized_address.street))
-    house_number = geopy_raw_address.get("house_number", unnormalized_address.number)
-    zip_code = int(geopy_raw_address.get("postalcode", unnormalized_address.zip_code))
-    city = str(geopy_raw_address.get("city", unnormalized_address.city))
+        street = str(geopy_raw_address.get("road", unnormalized_address.street))
+        house_number = geopy_raw_address.get("house_number", unnormalized_address.number)
+        zip_code = int(geopy_raw_address.get("postalcode", unnormalized_address.zip_code))
+        city = str(geopy_raw_address.get("city", unnormalized_address.city))
 
-    return Address(
-        street=street,
-        number=house_number,
-        zip_code=zip_code,
-        city=city,
-    )
+        return Address(
+            street=street,
+            number=house_number,
+            zip_code=zip_code,
+            city=city,
+        )
+    except Exception as err:
+        raise NormalizationError(
+            f"Could not normalize address={unnormalized_address}",
+            "location.address"
+        ) from err
 
 
 @cache.return_singleton
