@@ -41,6 +41,14 @@ def send_registration_email(
     )
 
 
+def get_vet_by_form_user(
+        jwt: str,
+) -> Vet:
+    access_info = _allow_access(jwt, "form_user")
+
+    return db.get_vet_by_id(access_info.visibility, access_info.id)
+
+
 def create_or_update_vet_by_form_user(
         jwt: str,
         vet: VetCreateOrOverwrite,

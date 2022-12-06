@@ -32,6 +32,15 @@ def send_registration_email(
     return "Sent email"
 
 
+@router.get("/vet")
+def get_vet(
+        credentials: HTTPAuthorizationCredentials = Depends(security),
+) -> Vet:
+    access_token = credentials.credentials
+
+    return vet_management.get_vet_by_form_user(access_token)
+
+
 @router.put("/create-or-overwrite-vet")
 def create_or_overwrite_vet(
         vet: VetCreateOrOverwrite,
