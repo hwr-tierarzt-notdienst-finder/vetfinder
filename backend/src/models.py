@@ -251,7 +251,7 @@ class VetCreateOrOverwrite(ApiBaseModel):
     contacts: list[Contact] = PydanticField(default_factory=list)
     availability_condition: AvailabilityCondition
     emergency_availability_condition: AvailabilityCondition
-    categories: list[Treatments] = PydanticField(default_factory=list)
+    treatments: list[Treatments] = PydanticField(default_factory=list)
 
 
 class Vet(VetCreateOrOverwrite):
