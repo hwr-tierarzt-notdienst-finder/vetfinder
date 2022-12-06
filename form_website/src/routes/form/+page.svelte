@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { fetchPostFormData } from '../../api';
+	import { createOrOverwriteVet, getTreatments, getVetWithToken } from '../../api';
 	import {
 		type DaySelectionInformation,
 		type EmergencyTime,
@@ -17,7 +17,6 @@
 		createEmergencyTimeFromTemplate,
 		type FormDataRequest,
 		type TreatmentState,
-		Treatments,
 		TreatmentLabels,
 		treatmentStateToArray,
 		type EmergencyTimeRequest,
@@ -30,16 +29,37 @@
 
 	import { page } from '$app/stores';
 	import Input from '../../components/Input.svelte';
+	import { goto } from '$app/navigation';
 
+	let loading: boolean = true;
 	let vetToken: string | null = null;
 
-	onMount(() => {
-		vetToken = $page.url.searchParams.get('vetToken');
-	});
+	let availableTreatments: string[] = [];
 
 	let clinicName: string = '';
 	let email: string = '';
 	let telephone: string = '';
+
+	onMount(() => {
+		email = $page.url.searchParams.get('email') || '';
+		vetToken = $page.url.searchParams.get('access-token');
+
+		(async () => {
+			if (vetToken) {
+				const vet = await getVetWithToken(vetToken);
+
+				if (vet == null) {
+					goto('/');
+				} else {
+					console.log(vet);
+					// TODO: mapping
+				}
+			}
+
+			availableTreatments = await getTreatments();
+			loading = false;
+		})();
+	});
 
 	let selectedFormOfAddress: FormOfAddress = 'not_specified';
 	let selectedTitle: Title = 'not_specified';
@@ -167,10 +187,13 @@
 				note: treatmentNote
 			},
 			openingHours: getOpeningHoursOverview(),
-			emergencyTimes: emergencyTimeRequests
+			emergencyTimes: emergencyTimeRequests,
+			timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
 		};
 
-		fetchPostFormData(request);
+		console.log(request);
+
+		createOrOverwriteVet(request);
 	}
 </script>
 
@@ -178,20 +201,23 @@
 <!-- svelte-ignore a11y-label-has-associated-control -->
 <!-- svelte-ignore a11y-missing-attribute -->
 <!-- svelte-ignore a11y-click-events-have-key-events -->
+
 <div class="mt-10 flex min-w-full justify-center">
 	<div class="flex flex-col gap-10 justify-center items-center">
-		<div class="p-4 rounded-xl flex flex-col gap-2 justify-center items-center bg-base-200">
-			{#if vetToken}
-				<h1 class="text-2xl font-bold">Willkommen zurück!</h1>
-				<p class="text-xl">Hier kannst du deine Daten abändern.</p>
-			{:else}
-				<h1 class="text-2xl font-bold">Hallo!</h1>
-				<p class="text-xl">Vielen Dank, dass Sie sich in unserem System eintragen wollen.</p>
-				<p class="text-xl">Der Schutz Ihrer Daten ist uns sehr wichtig.</p>
-				<p class="text-xl">Wir gehen verantwortungsvoll mit Ihren Daten um.</p>
-				<p class="text-xl">Unter anderem werden Ihre Daten verschlüsselt an uns gesendet.</p>
-			{/if}
-		</div>
+		{#if !loading}
+			<div class="p-4 rounded-xl flex flex-col gap-2 justify-center items-center bg-base-200">
+				{#if vetToken}
+					<h1 class="text-2xl font-bold">Willkommen zurück!</h1>
+					<p class="text-xl">Hier kannst du deine Daten abändern.</p>
+				{:else}
+					<h1 class="text-2xl font-bold">Hallo!</h1>
+					<p class="text-xl">Vielen Dank, dass Sie sich in unserem System eintragen wollen.</p>
+					<p class="text-xl">Der Schutz Ihrer Daten ist uns sehr wichtig.</p>
+					<p class="text-xl">Wir gehen verantwortungsvoll mit Ihren Daten um.</p>
+					<p class="text-xl">Unter anderem werden Ihre Daten verschlüsselt an uns gesendet.</p>
+				{/if}
+			</div>
+		{/if}
 		<!-- Contact -->
 		<div class="section">
 			<h1 class="text-2xl font-bold">Kontaktdaten</h1>
@@ -289,7 +315,7 @@
 						<span class="label-text">Tierarten</span>
 					</label>
 					<div class="form-control flex-row flex-wrap gap-4">
-						{#each Treatments as treatment}
+						{#each availableTreatments as treatment}
 							<label class="label justify-start gap-2 cursor-pointer">
 								<input
 									type="checkbox"
@@ -475,7 +501,9 @@
 				</table>
 			</div>
 		</div>
-		<button class="btn btn-primary btn-lg" on:click={sendFormData}>Eintragen</button>
+		<button class="btn btn-primary btn-lg" on:click={sendFormData}
+			>{vetToken ? 'Aktualisieren' : 'Eintragen'}</button
+		>
 	</div>
 </div>
 

@@ -43,10 +43,11 @@
 					</div>
 				</div>
 				<h1 class="mt-10 text-xl text-center">
-					Du bist Tierarzt? Dann <button class="btn btn-primary btn-sm" on:click={redirectForm}
-						>klicke hier</button
+					Du bist Tierarzt? Dann <label for="email-registration" class="btn btn-primary btn-sm"
+						>klicke hier</label
 					>
 				</h1>
+
 				<div class="mt-16 flex flex-col gap-5 justify-center items-center">
 					<div class="mockup-phone">
 						<div class="camera" />

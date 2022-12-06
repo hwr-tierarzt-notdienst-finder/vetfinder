@@ -10,7 +10,8 @@ export type FormDataRequest = {
     address: Address,
     treatments: TreatmentInformation,
     openingHours: OpeningHoursOverview,
-    emergencyTimes?: EmergencyTimeRequest[]
+    emergencyTimes?: EmergencyTimeRequest[],
+    timezone: string
 }
 
 export type Contact = {
@@ -65,19 +66,16 @@ export function convertEmergencyTimeToRequest(emergencyTime: EmergencyTime): Eme
     }
 }
 
-export type Treatment = 'dog' | 'cat' | 'horse' | 'small_animals' | 'other';
-export const Treatments: Treatment[] = ['dog', 'cat', 'horse', 'small_animals', 'other'];
-
-export const TreatmentLabels: LabelObject<Treatment> = {
-    dog: 'Hund',
-    cat: 'Katze',
-    horse: 'Pferd',
+export const TreatmentLabels: LabelObject<string> = {
+    dogs: 'Hund',
+    cats: 'Katze',
+    horses: 'Pferd',
     small_animals: 'Kleintiere',
-    other: 'Sonstige'
+    misc: 'Sonstige'
 };
 
 export type TreatmentState = {
-    [index in Treatment]: boolean;
+    [index: string]: boolean;
 };
 
 export type Day = 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday';
@@ -175,15 +173,15 @@ export function createDefaultEmergencyTimeTemplate(): EmergencyTimeTemplate {
 
     const offsetNextMonday = 8 - now.getDay();
     let fromDate = new Date(now.getTime() + 3600000 * 24 * offsetNextMonday);
-    
+
     const offsetNextFriday = offsetNextMonday + 4;
     let toDate = new Date(now.getTime() + 3600000 * 24 * offsetNextFriday);
-    
+
     let fromTime = new Date(now);
     fromTime.setMinutes(0);
     fromTime.setSeconds(0);
     fromTime.setMilliseconds(0);
-    
+
     fromTime = new Date(fromTime.getTime() + 3600000 * 1); // add one hour
 
     let toTime = new Date(now);
@@ -248,13 +246,12 @@ function daySelectionMapToArray(selection: DaySelectionInformation): Day[] {
 
 }
 
-export function treatmentStateToArray(state: TreatmentState): Treatment[] {
+export function treatmentStateToArray(state: TreatmentState): string[] {
 
-    let treatments: Treatment[] = []
+    let treatments: string[] = []
 
-    for (const key of Object.keys(state)) {
+    for (const treatment of Object.keys(state)) {
 
-        const treatment: Treatment = key as Treatment;
         if (state[treatment]) {
             treatments.push(treatment);
         }
@@ -273,7 +270,7 @@ function timeToDate(time: string): Date {
 
     const date = new Date(0);
     date.setHours(Number(hours)),
-    date.setMinutes(Number(minutes));
+        date.setMinutes(Number(minutes));
 
     return date;
 
