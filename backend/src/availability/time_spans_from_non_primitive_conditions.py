@@ -1,3 +1,4 @@
+import logging
 from datetime import datetime, timedelta
 from typing import Iterable, TypeVar
 
@@ -23,8 +24,10 @@ def time_span(
         upper_bound: datetime,
         time_span: AvailabilityConditionTimeSpan
 ) -> Iterable[TimeSpan]:
-    bounded_start = min(time_span.start, lower_bound)
-    bounded_end = max(time_span.end, upper_bound)
+    tz_obj = gettz(time_span.timezone)
+
+    bounded_start = min(time_span.start.astimezone(tz_obj), lower_bound.astimezone(tz_obj))
+    bounded_end = max(time_span.end.astimezone(tz_obj), upper_bound.astimezone(tz_obj))
 
     return [
         TimeSpan(
@@ -50,11 +53,11 @@ def time_span_during_day(
             start=current_day.replace(
                 hour=time_span_during_day_condition.start_time.hour,
                 minute=time_span_during_day_condition.start_time.minute,
-            ),
+            ).astimezone(tz_obj),
             end=current_day.replace(
                 hour=time_span_during_day_condition.end_time.hour,
                 minute=time_span_during_day_condition.end_time.minute,
-            )
+            ).astimezone(tz_obj)
         )
 
         current_day += timedelta(days=1)
@@ -85,8 +88,8 @@ def weekdays(
             )
 
             yield TimeSpan(
-                start=start,
-                end=end
+                start=start.astimezone(tz_obj),
+                end=end.astimezone(tz_obj),
             )
 
             # Jump to end of weekend

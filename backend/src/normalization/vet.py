@@ -5,6 +5,7 @@ from time import sleep
 
 import geopy
 
+import availability
 from models import Location, Vet, Address, VetCreateOrOverwrite
 from utils import cache
 
@@ -14,7 +15,26 @@ _GEOPY_REQUEST_RATELIMIT_IN_SECONDS = 2
 
 
 def normalize(vet: VetCreateOrOverwrite) -> VetCreateOrOverwrite:
+    vet = _normalize_availability(vet)
     vet = _normalize_location(vet)
+
+    return vet
+
+
+def _normalize_availability(vet: VetCreateOrOverwrite) -> VetCreateOrOverwrite:
+    vet = vet.copy()
+
+    if vet.opening_hours is not None:
+        vet.availability_condition = availability.convert_opening_hours_to_condition(
+            vet.opening_hours,
+            vet.timezone,
+        )
+
+    if vet.emergency_times is not None:
+        vet.emergency_availability_condition = availability.convert_emergency_times_to_condition(
+            vet.emergency_times,
+            vet.timezone,
+        )
 
     return vet
 
