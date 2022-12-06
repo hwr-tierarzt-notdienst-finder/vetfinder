@@ -205,7 +205,7 @@ AvailabilityConditionOr.update_forward_refs()
 AvailabilityConditionAnd.update_forward_refs()
 
 
-class Category(str, Enum):
+class Treatments(str, Enum):
     DOGS = "dogs"
     CATS = "cats"
     HORSES = "horses"
@@ -251,7 +251,7 @@ class VetCreateOrOverwrite(ApiBaseModel):
     contacts: list[Contact] = PydanticField(default_factory=list)
     availability_condition: AvailabilityCondition
     emergency_availability_condition: AvailabilityCondition
-    categories: list[Category] = PydanticField(default_factory=list)
+    categories: list[Treatments] = PydanticField(default_factory=list)
 
 
 class Vet(VetCreateOrOverwrite):

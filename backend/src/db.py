@@ -50,6 +50,19 @@ def get_all_verified_vets_in_ring(
     ]
 
 
+def get_vet_by_id(
+        visibility: VetVisibility,
+        id_: str,
+) -> Vet:
+    for verification_status in VET_VERIFICATION_STATUSES:
+        collection = _get_vet_collection(visibility, verification_status)
+
+        if documents := list(collection.find({"_id": id_})):
+            return _convert_vet_mongo_document_to_model(documents[0])
+
+    raise VetDoesNotExist(f"id={id_}")
+
+
 def create_or_overwrite_vet(
         visibility: VetVisibility,
         verification_status: VetVerificationStatus,
