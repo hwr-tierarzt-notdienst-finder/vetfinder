@@ -71,9 +71,8 @@ class _VetInformationState extends State<VetInformation> {
       ),
       body: Container(
         padding: EdgeInsets.only(
-          left: deviceWidth(context) * 0.05,
-          right: deviceWidth(context) * 0.05
-        ),
+            left: deviceWidth(context) * 0.05,
+            right: deviceWidth(context) * 0.05),
         child: SingleChildScrollView(
           child: Column(
             children: [
@@ -238,11 +237,9 @@ class _VetInformationState extends State<VetInformation> {
                         Container(
                           padding: const EdgeInsets.only(left: 10),
                           child: Text(
-                            'vet_information.open_schedule_today'.tr() +
-                                ': ' +
-                                timeFrom +
-                                ' - ' +
-                                timeTo,
+                            'vet_information.open_schedule_emergency'.tr() +
+                                ": " +
+                                vet.getEmergencyAvailabilityTime(),
                             style: const TextStyle(
                               fontSize: 16,
                             ),

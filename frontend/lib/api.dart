@@ -166,6 +166,19 @@ class Veterinarian {
 
     return false;
   }
+
+  String getEmergencyAvailabilityTime() {
+    if (emergencyAvailability != null) {
+      for (var item in emergencyAvailability!) {
+        String start_date = item["start"];
+        String end_date = item["end"];
+
+        return "${start_date.substring(11, 16)} - ${end_date.substring(11, 16)}";
+      }
+    }
+
+    return "";
+  }
 }
 
 // Fetch veterinarians data from the server and save it in the app
