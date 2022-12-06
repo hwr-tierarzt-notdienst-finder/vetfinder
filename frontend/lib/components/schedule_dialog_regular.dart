@@ -50,31 +50,38 @@ class ScheduleDialogRegular extends StatelessWidget {
               rows: [
                 DataRow(cells: [
                   DataCell(Text("schedule_dialog.monday".tr())),
-                  DataCell(Text(currentVet.getAvailabilityDuringWeekTime("Mon"))),
+                  DataCell(
+                      Text(currentVet.getAvailabilityDuringWeekTime("Mon"))),
                 ]),
                 DataRow(cells: [
                   DataCell(Text("schedule_dialog.tuesday".tr())),
-                  DataCell(Text(currentVet.getAvailabilityDuringWeekTime("Tue"))),
+                  DataCell(
+                      Text(currentVet.getAvailabilityDuringWeekTime("Tue"))),
                 ]),
                 DataRow(cells: [
                   DataCell(Text("schedule_dialog.wednesday".tr())),
-                  DataCell(Text("")),
+                  DataCell(
+                      Text(currentVet.getAvailabilityDuringWeekTime("Wed"))),
                 ]),
                 DataRow(cells: [
                   DataCell(Text("schedule_dialog.thursday".tr())),
-                  DataCell(Text("")),
+                  DataCell(
+                      Text(currentVet.getAvailabilityDuringWeekTime("Thu"))),
                 ]),
                 DataRow(cells: [
                   DataCell(Text("schedule_dialog.friday".tr())),
-                  DataCell(Text("")),
+                  DataCell(
+                      Text(currentVet.getAvailabilityDuringWeekTime("Fri"))),
                 ]),
                 DataRow(cells: [
                   DataCell(Text("schedule_dialog.saturday".tr())),
-                  DataCell(Text("")),
+                  DataCell(
+                      Text(currentVet.getAvailabilityDuringWeekTime("Sat"))),
                 ]),
                 DataRow(cells: [
                   DataCell(Text("schedule_dialog.sunday".tr())),
-                  DataCell(Text("")),
+                  DataCell(
+                      Text(currentVet.getAvailabilityDuringWeekTime("Sun"))),
                 ]),
               ],
             ),

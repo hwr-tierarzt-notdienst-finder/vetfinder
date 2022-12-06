@@ -1,11 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 
-class ScheduleDialogEmergency extends StatelessWidget {
-  const ScheduleDialogEmergency({super.key});
+import 'package:frontend/api.dart';
 
+class ScheduleDialogEmergency extends StatelessWidget {
+  const ScheduleDialogEmergency({
+    Key? key,
+    required this.id,
+  }) : super(key: key);
+
+  final String id;
   @override
   Widget build(BuildContext context) {
+    Veterinarian currentVet = getVeterinarianById(id);
+
     return AlertDialog(
       title: Text('schedule_dialog.title'.tr()),
       contentPadding: EdgeInsets.zero,
@@ -41,31 +49,38 @@ class ScheduleDialogEmergency extends StatelessWidget {
               rows: [
                 DataRow(cells: [
                   DataCell(Text("schedule_dialog.monday".tr())),
-                  DataCell(Text("")),
+                  DataCell(
+                      Text(currentVet.getEmergencyAvailabilityWeekTime("Mon"))),
                 ]),
                 DataRow(cells: [
                   DataCell(Text("schedule_dialog.tuesday".tr())),
-                  DataCell(Text("")),
+                  DataCell(
+                      Text(currentVet.getEmergencyAvailabilityWeekTime("Tue"))),
                 ]),
                 DataRow(cells: [
                   DataCell(Text("schedule_dialog.wednesday".tr())),
-                  DataCell(Text("")),
+                  DataCell(
+                      Text(currentVet.getEmergencyAvailabilityWeekTime("Wed"))),
                 ]),
                 DataRow(cells: [
                   DataCell(Text("schedule_dialog.thursday".tr())),
-                  DataCell(Text("")),
+                  DataCell(
+                      Text(currentVet.getEmergencyAvailabilityWeekTime("Thu"))),
                 ]),
                 DataRow(cells: [
                   DataCell(Text("schedule_dialog.friday".tr())),
-                  DataCell(Text("")),
+                  DataCell(
+                      Text(currentVet.getEmergencyAvailabilityWeekTime("Fri"))),
                 ]),
                 DataRow(cells: [
                   DataCell(Text("schedule_dialog.saturday".tr())),
-                  DataCell(Text("")),
+                  DataCell(
+                      Text(currentVet.getEmergencyAvailabilityWeekTime("Sat"))),
                 ]),
                 DataRow(cells: [
                   DataCell(Text("schedule_dialog.sunday".tr())),
-                  DataCell(Text("")),
+                  DataCell(
+                      Text(currentVet.getEmergencyAvailabilityWeekTime("Sun"))),
                 ]),
               ],
             ),

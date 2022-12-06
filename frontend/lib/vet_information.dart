@@ -41,17 +41,19 @@ class _VetInformationState extends State<VetInformation> {
 
   double deviceWidth(BuildContext context) => MediaQuery.of(context).size.width;
 
-  Future<void> _showScheduleDialogEmergency(BuildContext context) {
+  Future<void> _showScheduleDialogEmergency(
+      BuildContext context, String currentId) {
     return showDialog<void>(
       context: context,
       barrierDismissible: false,
       builder: (BuildContext context) {
-        return ScheduleDialogEmergency();
+        return ScheduleDialogEmergency(id: currentId);
       },
     );
   }
 
-  Future<void> _showScheduleDialogRegular(BuildContext context, String currentId) {
+  Future<void> _showScheduleDialogRegular(
+      BuildContext context, String currentId) {
     return showDialog<void>(
       context: context,
       barrierDismissible: false,
@@ -292,7 +294,7 @@ class _VetInformationState extends State<VetInformation> {
                       Expanded(
                         child: ElevatedButton.icon(
                           onPressed: () =>
-                              _showScheduleDialogEmergency(context),
+                              _showScheduleDialogEmergency(context, id),
                           icon: const Icon(Icons.emergency_outlined),
                           label: Text(
                             'vet_information.open_schedule_emergency_week'.tr(),
@@ -313,7 +315,8 @@ class _VetInformationState extends State<VetInformation> {
                     children: [
                       Expanded(
                         child: ElevatedButton.icon(
-                          onPressed: () => _showScheduleDialogRegular(context, id),
+                          onPressed: () =>
+                              _showScheduleDialogRegular(context, id),
                           icon: const Icon(Icons.schedule_outlined),
                           label: Text(
                             'vet_information.open_schedule'.tr(),
