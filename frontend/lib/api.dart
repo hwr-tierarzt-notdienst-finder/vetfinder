@@ -54,12 +54,12 @@ class Location {
 }
 
 class Person {
-  const Person({
-    required this.formOfAddress,
-    required this.title,
-    required this.firstName,
-    required this.lastName
-  }) : super();
+  const Person(
+      {required this.formOfAddress,
+      required this.title,
+      required this.firstName,
+      required this.lastName})
+      : super();
 
   final String? formOfAddress;
   final String? title;
@@ -67,24 +67,24 @@ class Person {
   final String lastName;
 
   Person.fromJson(Map<String, dynamic> json)
-      : formOfAddress = json["formOfAddress"]?? "",
-        title = json["title"]?? "",
+      : formOfAddress = json["formOfAddress"] ?? "",
+        title = json["title"] ?? "",
         firstName = json["firstName"],
         lastName = json["lastName"];
 }
 
 class Veterinarian {
-  Veterinarian({
-    required this.id,
-    required this.person,
-    required this.clinicName,
-    required this.contacts,
-    required this.location,
-    required this.treatments,
-    required this.availabilityDuringWeek,
-    required this.emergencyAvailability,
-    required this.emergencyAvailabilityDuringWeek
-  }) : super();
+  Veterinarian(
+      {required this.id,
+      required this.person,
+      required this.clinicName,
+      required this.contacts,
+      required this.location,
+      required this.treatments,
+      required this.availabilityDuringWeek,
+      required this.emergencyAvailability,
+      required this.emergencyAvailabilityDuringWeek})
+      : super();
 
   final String id;
   final Person person;
@@ -105,7 +105,8 @@ class Veterinarian {
         treatments = List<String>.from(json["treatments"] as List),
         availabilityDuringWeek = json["availabilityDuringWeek"],
         emergencyAvailability = json["emergencyAvailability"],
-        emergencyAvailabilityDuringWeek = json["emergencyAvailabilityDuringWeek"];
+        emergencyAvailabilityDuringWeek =
+            json["emergencyAvailabilityDuringWeek"];
 
   // Get contact data of a specific type
   // @param type The type of data (email, tel:landline, tel:mobile, website)
@@ -147,6 +148,20 @@ class Veterinarian {
     if (emergencyAvailability != null) {
       // Logik, um die jetzige Zeit mit der Notdienst-Öffnungszeit zu vergleichen
       // wenn die jetzige Zeit innerhalb der Öffnungszeit ist, return true, else false.
+
+      for (var item in emergencyAvailability!) {
+        DateTime date_today = DateTime.now();
+
+        String start_date = item["start"];
+        String end_date = item["end"];
+
+        if (date_today.isAfter(DateTime.parse(start_date)) &&
+            date_today.isBefore(DateTime.parse(end_date))) {
+          return true;
+        } else {
+          return false;
+        }
+      }
     }
 
     return false;
@@ -155,13 +170,16 @@ class Veterinarian {
 
 // Fetch veterinarians data from the server and save it in the app
 Future<void> fetchVeterinarians() async {
-  String availabilityFrom = DateTime.utc(2022, 09, 20, 20, 18, 04).toIso8601String();
-  String availabilityTo = DateTime.utc(2022, 12, 20, 20, 18, 04).toIso8601String();
+  String availabilityFrom =
+      DateTime.utc(2022, 09, 20, 20, 18, 04).toIso8601String();
+  String availabilityTo =
+      DateTime.utc(2022, 12, 20, 20, 18, 04).toIso8601String();
   var uri = Uri(
-        scheme: "https",
-        host: "vetfinder.dowahdid.de",
-        pathSegments: ["vets"],
-        query: "availability_from=$availabilityFrom&availability_to=$availabilityTo");
+      scheme: "https",
+      host: "vetfinder.dowahdid.de",
+      pathSegments: ["vets"],
+      query:
+          "availability_from=$availabilityFrom&availability_to=$availabilityTo");
 
   String secretToken = await rootBundle.loadString('assets/secret_token.txt');
   Map<String, String> headers = {
@@ -176,12 +194,14 @@ Future<void> fetchVeterinarians() async {
     // Successful GET request. Save JSON String.
     if (response.statusCode == 200) {
       DateTime timeNow = DateTime.now();
-      String formattedTime = "${timeNow.day}-${timeNow.month}-${timeNow.year} ${timeNow.hour}:${timeNow.minute}";
+      String formattedTime =
+          "${timeNow.day}-${timeNow.month}-${timeNow.year} ${timeNow.hour}:${timeNow.minute}";
 
       SharedPrefs().vets = response.body;
       SharedPrefs().lastUpdated = formattedTime;
     } else {
-      throw Exception("Failed to load data. Status code: ${response.statusCode}");
+      throw Exception(
+          "Failed to load data. Status code: ${response.statusCode}");
     }
   } catch (e) {
     // Failed GET Request. Handle the error.
@@ -195,9 +215,9 @@ List<Veterinarian> getVeterinarians() {
   List<Veterinarian> vets = [];
 
   // Process the JSON.
-  if(SharedPrefs().vets.isNotEmpty) {
+  if (SharedPrefs().vets.isNotEmpty) {
     List<dynamic> result = json.decode(SharedPrefs().vets);
-        
+
     // Parse data to a list of vets
     for (Map<String, dynamic> vet in result) {
       vets.add(Veterinarian.fromJson(vet));
@@ -261,8 +281,7 @@ List<Veterinarian> getFilteredVeterinarians(
         } else {
           return -1;
         }
-      }
-    );
+      });
     } else {
       returnedVets.sort((a, b) {
         String vetInfo1 = '${a.getName} ${a.getAddress()}';
@@ -280,7 +299,6 @@ List<Veterinarian> getFilteredVeterinarians(
         }
       });
     }
-  
   }
 
   return returnedVets;
