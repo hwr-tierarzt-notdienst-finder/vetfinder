@@ -181,103 +181,17 @@ class Veterinarian {
   }
 
   // ===== emergencyAvailabilityWeekTime =====
-
-  String getEmergencyAvailabilityWeekTimeMon() {
+  String getEmergencyAvailabilityWeekTime(String day) {
     if (emergencyAvailabilityDuringWeek != null) {
-      return emergencyAvailabilityDuringWeek!["Mon"][0]["digitalClockString"];
-    }
-    return "";
-  }
-
-  String getEmergencyAvailabilityWeekTimeTue() {
-    if (emergencyAvailabilityDuringWeek != null) {
-      return emergencyAvailabilityDuringWeek!["Tue"][0]["digitalClockString"];
-    }
-    return "";
-  }
-
-  String getEmergencyAvailabilityWeekTimeWed() {
-    if (emergencyAvailabilityDuringWeek != null) {
-      return emergencyAvailabilityDuringWeek!["Wed"][0]["digitalClockString"];
-    }
-    return "";
-  }
-
-  String getEmergencyAvailabilityWeekTimeThu() {
-    if (emergencyAvailabilityDuringWeek != null) {
-      return emergencyAvailabilityDuringWeek!["Thu"][0]["digitalClockString"];
-    }
-    return "";
-  }
-
-  String getEmergencyAvailabilityWeekTimeFri() {
-    if (emergencyAvailabilityDuringWeek != null) {
-      return emergencyAvailabilityDuringWeek!["Fri"][0]["digitalClockString"];
-    }
-    return "";
-  }
-
-  String getEmergencyAvailabilityWeekTimeSat() {
-    if (emergencyAvailabilityDuringWeek != null) {
-      return emergencyAvailabilityDuringWeek!["Sat"][0]["digitalClockString"];
-    }
-    return "";
-  }
-
-  String getEmergencyAvailabilityWeekTimeSun() {
-    if (emergencyAvailabilityDuringWeek != null) {
-      return emergencyAvailabilityDuringWeek!["Sun"][0]["digitalClockString"];
+      return emergencyAvailabilityDuringWeek![day][0]["digitalClockString"];
     }
     return "";
   }
 
   // ===== availabilityDuringWeek =====
-
-  String getAvailabilityDuringWeekMon() {
+  String getAvailabilityDuringWeekTime(String day) {
     if (availabilityDuringWeek != null) {
-      return availabilityDuringWeek["Mon"][0]["digitalClockString"];
-    }
-    return "";
-  }
-
-  String getAvailabilityDuringWeekTue() {
-    if (availabilityDuringWeek != null) {
-      return availabilityDuringWeek["Tue"][0]["digitalClockString"];
-    }
-    return "";
-  }
-
-  String getAvailabilityDuringWeekWed() {
-    if (availabilityDuringWeek != null) {
-      return availabilityDuringWeek["Wed"][0]["digitalClockString"];
-    }
-    return "";
-  }
-
-  String getAvailabilityDuringWeekThu() {
-    if (availabilityDuringWeek != null) {
-      return availabilityDuringWeek["Thu"][0]["digitalClockString"];
-    }
-    return "";
-  }
-
-  String getAvailabilityDuringWeekFri() {
-    if (availabilityDuringWeek != null) {
-      return availabilityDuringWeek["Fri"][0]["digitalClockString"];
-    }
-    return "";
-  }
-
-  String getAvailabilityDuringWeekSat() {
-    if (availabilityDuringWeek != null) {
-      return availabilityDuringWeek["Sat"][0]["digitalClockString"];
-    }
-    return "";
-  }
-
-  String getAvailabilityDuringWeekSun() {
-    if (availabilityDuringWeek != null) {
-      return availabilityDuringWeek["Sun"][0]["digitalClockString"];
+      return availabilityDuringWeek[day][0]["digitalClockString"];
     }
     return "";
   }
