@@ -180,79 +180,21 @@ class Veterinarian {
     return "";
   }
 
-  // ===== emergencyAvailabilityDuringWeek =====
+  // ===== emergencyAvailabilityWeekTime =====
+  List<String> weekDays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
-  String getEmergencyAvailabilityTimeMon() {
+  String getEmergencyAvailabilityWeekTime() {
     if (emergencyAvailabilityDuringWeek != null) {
-      return emergencyAvailabilityDuringWeek!["Mon"][0]["digitalClockString"];
-    }
-    return "";
-  }
-
-  String getEmergencyAvailabilityTimeTue() {
-    if (emergencyAvailabilityDuringWeek != null) {
-      return emergencyAvailabilityDuringWeek!["Tue"][0]["digitalClockString"];
-    }
-    return "";
-  }
-
-  String getEmergencyAvailabilityTimeWed() {
-    if (emergencyAvailabilityDuringWeek != null) {
-      return emergencyAvailabilityDuringWeek!["Wed"][0]["digitalClockString"];
-    }
-    return "";
-  }
-
-  String getEmergencyAvailabilityTimeThu() {
-    if (emergencyAvailabilityDuringWeek != null) {
-      return emergencyAvailabilityDuringWeek!["Thu"][0]["digitalClockString"];
-    }
-    return "";
-  }
-
-  String getEmergencyAvailabilityTimeFri() {
-    if (emergencyAvailabilityDuringWeek != null) {
-      return emergencyAvailabilityDuringWeek!["Fri"][0]["digitalClockString"];
+      for (var weekDay in weekDays) {
+        return emergencyAvailabilityDuringWeek![weekDay][0]
+            ["digitalClockString"];
+      }
     }
     return "";
   }
 
   // ===== availabilityDuringWeek =====
 
-  String getAvailabilityDuringWeekTimeMon() {
-    if (emergencyAvailabilityDuringWeek != null) {
-      return emergencyAvailabilityDuringWeek!["Mon"][0]["digitalClockString"];
-    }
-    return "";
-  }
-
-  String getAvailabilityDuringWeekTimeTue() {
-    if (emergencyAvailabilityDuringWeek != null) {
-      return emergencyAvailabilityDuringWeek!["Tue"][0]["digitalClockString"];
-    }
-    return "";
-  }
-
-  String getAvailabilityDuringWeekTimeWed() {
-    if (emergencyAvailabilityDuringWeek != null) {
-      return emergencyAvailabilityDuringWeek!["Wed"][0]["digitalClockString"];
-    }
-    return "";
-  }
-
-  String getAvailabilityDuringWeekTimeThu() {
-    if (emergencyAvailabilityDuringWeek != null) {
-      return emergencyAvailabilityDuringWeek!["Thu"][0]["digitalClockString"];
-    }
-    return "";
-  }
-
-  String getAvailabilityDuringWeekTimeFri() {
-    if (emergencyAvailabilityDuringWeek != null) {
-      return emergencyAvailabilityDuringWeek!["Fri"][0]["digitalClockString"];
-    }
-    return "";
-  }
 }
 
 // Fetch veterinarians data from the server and save it in the app
