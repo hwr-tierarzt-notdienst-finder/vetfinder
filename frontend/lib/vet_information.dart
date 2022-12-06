@@ -51,12 +51,12 @@ class _VetInformationState extends State<VetInformation> {
     );
   }
 
-  Future<void> _showScheduleDialogRegular(BuildContext context) {
+  Future<void> _showScheduleDialogRegular(BuildContext context, String currentId) {
     return showDialog<void>(
       context: context,
       barrierDismissible: false,
       builder: (BuildContext context) {
-        return ScheduleDialogRegular();
+        return ScheduleDialogRegular(id: currentId);
       },
     );
   }
@@ -313,7 +313,7 @@ class _VetInformationState extends State<VetInformation> {
                     children: [
                       Expanded(
                         child: ElevatedButton.icon(
-                          onPressed: () => _showScheduleDialogRegular(context),
+                          onPressed: () => _showScheduleDialogRegular(context, id),
                           icon: const Icon(Icons.schedule_outlined),
                           label: Text(
                             'vet_information.open_schedule'.tr(),

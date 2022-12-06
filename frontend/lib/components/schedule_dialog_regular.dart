@@ -1,11 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 
+import 'package:frontend/api.dart';
+
 class ScheduleDialogRegular extends StatelessWidget {
-  const ScheduleDialogRegular({super.key});
+  const ScheduleDialogRegular({
+    Key? key,
+    required this.id,
+  }) : super(key: key);
+
+  final String id;
 
   @override
   Widget build(BuildContext context) {
+    Veterinarian currentVet = getVeterinarianById(id);
+
     return AlertDialog(
       title: Text('schedule_dialog.title'.tr()),
       contentPadding: EdgeInsets.zero,
@@ -41,11 +50,11 @@ class ScheduleDialogRegular extends StatelessWidget {
               rows: [
                 DataRow(cells: [
                   DataCell(Text("schedule_dialog.monday".tr())),
-                  DataCell(Text("")),
+                  DataCell(Text(currentVet.getAvailabilityDuringWeekTime("Mon"))),
                 ]),
                 DataRow(cells: [
                   DataCell(Text("schedule_dialog.tuesday".tr())),
-                  DataCell(Text("")),
+                  DataCell(Text(currentVet.getAvailabilityDuringWeekTime("Tue"))),
                 ]),
                 DataRow(cells: [
                   DataCell(Text("schedule_dialog.wednesday".tr())),
