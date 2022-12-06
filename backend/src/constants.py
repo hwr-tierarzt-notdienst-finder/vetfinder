@@ -7,10 +7,6 @@ WEEKDAYS = cast(
     list[Weekday],
     list(typing_.extract_strings_from_type(Weekday))
 )
-TIMEZONES = cast(
-    set[Timezone],
-    set(typing_.extract_strings_from_type(Timezone))
-)
 REGIONS = cast(
     set[Region],
     set(typing_.extract_strings_from_type(Region))

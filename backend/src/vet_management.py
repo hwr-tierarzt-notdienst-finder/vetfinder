@@ -141,10 +141,19 @@ def _allow_access(
     except auth.JWTVerificationError as err:
         raise AccessDenied from err
 
-    if jwt_payload["role"] != expected_role:
-        raise AccessDenied
+    if (role := jwt_payload.get("role", None)) != expected_role:
+        raise AccessDenied(
+            f"Could not allow access as role '{expected_role}'. "
+            f"Expected role '{expected_role}', to '{role}'"
+        )
 
-    return _AccessInfo(
-        id=jwt_payload["sub"],
-        visibility=cast(VetVisibility, jwt_payload["visibility"]),
-    )
+    try:
+        return _AccessInfo(
+            id=jwt_payload["sub"],
+            visibility=cast(VetVisibility, jwt_payload["visibility"]),
+        )
+    except KeyError as err:
+        raise AccessDenied(
+            f"Could not allow access as role '{expected_role}'. "
+            f"Incomplete JWT payload"
+        ) from err

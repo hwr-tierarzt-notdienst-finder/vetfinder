@@ -1,8 +1,10 @@
-from datetime import datetime
+from datetime import datetime, tzinfo
 from pathlib import Path
 from typing import cast
 
-from constants import TIMEZONES, WEEKDAYS, REGIONS
+import dateutil.tz
+
+from constants import WEEKDAYS, REGIONS
 from types_ import Timezone, Weekday, Region
 from .human_readable import human_readable
 
@@ -32,13 +34,15 @@ def minute(x: int) -> int:
 
 
 def timezone(s: str) -> Timezone:
-    if s in TIMEZONES:
-        return cast(Timezone, s)
+    try:
+        if not isinstance(dateutil.tz.gettz(s), tzinfo):
+            raise TypeError
 
-    raise ValueError(
-        f"Invalid timezone '{timezone}'. "
-        f"Timezone must be {human_readable(TIMEZONES).ored()}"
-    )
+        return cast(Timezone, s)
+    except Exception as err:
+        raise ValueError(
+            f"Invalid timezone '{timezone}'"
+        ) from err
 
 
 def region(s: str) -> Region:
