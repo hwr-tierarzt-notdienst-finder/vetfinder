@@ -22,10 +22,10 @@ def get_visibility_from_jwt(jwt: str) -> VetVisibility:
 
 
 def _write_visibility_jwts_to_file() -> None:
-    content = "\n".join([
+    content = "\n".join(sorted(
         f"{visibility}:{generate_visibility_jwt(visibility)}"
         for visibility in VET_VISIBILITIES
-    ])
+    ))
 
     with open(paths.find_backend() / "vet_visibility_tokens.txt", "w") as f:
         f.write(content)

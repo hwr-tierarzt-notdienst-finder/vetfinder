@@ -1,6 +1,7 @@
+import logging
 from collections.abc import Iterable
 from datetime import datetime
-from typing import TypeVar, ParamSpec, NoReturn
+from typing import TypeVar, ParamSpec, NoReturn, cast
 
 from fastapi import APIRouter, Depends, HTTPException, status, Query
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
@@ -9,7 +10,7 @@ import vet_visibility
 from models import VetResponse, Vet
 import db
 import availability
-from types_ import VetVisibility
+from types_ import VetVisibility, Timezone
 from utils.human_readable import human_readable
 
 _T = TypeVar('_T')
@@ -167,15 +168,15 @@ def _create_vets_responses(
                     lower_bound=availability_from,
                     upper_bound=availability_to,
                     availability_condition=vet.emergency_availability_condition,
-                )),
+                )) if vet.emergency_availability_condition else None,
                 availability_during_week=availability.get_times_during_current_week_24_hour_clock(
                     vet.availability_condition,
-                    availability_from.tzinfo,
+                    vet.timezone,
                 ),
                 emergency_availability_during_week=availability.get_times_during_current_week_24_hour_clock(
                     vet.emergency_availability_condition,
-                    availability_from.tzinfo,
-                ),
+                    vet.timezone,
+                ) if vet.emergency_availability_condition else None,
                 **vet.dict()
             )
             for vet in vets_in_db

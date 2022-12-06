@@ -1,7 +1,9 @@
+import logging
 from datetime import datetime, timedelta, tzinfo
 from functools import wraps
 from typing import Iterable, TypeVar, Callable
 
+import dateutil.parser
 from dateutil.tz import gettz
 
 from constants import WEEKDAYS
@@ -12,6 +14,11 @@ from models import (
     TimesDuringWeek24HourClock,
     TimeSpan24HourClock,
     Time24HourClock,
+    OpeningHours,
+    AvailabilityConditionWeekdaysSpan,
+    AvailabilityConditionAnd,
+    AvailabilityConditionTimeSpanDuringDay, TimeDuringDay, EmergencyTimesOverview, AvailabilityConditionOr,
+    AvailabilityConditionTimeSpan, EmergencyTimes,
 )
 from types_ import Timezone, Weekday
 
@@ -44,7 +51,7 @@ _PRIMITIVE_CONDITIONS = {
 
 def get_times_during_current_week_24_hour_clock(
         availability_condition: AvailabilityCondition,
-        timezone: Timezone | tzinfo,
+        timezone: Timezone,
 ) -> TimesDuringWeek24HourClock:
     return {
         weekday: list(_get_times_spans_during_weekday_in_current_week_24_hour_clock(
@@ -55,10 +62,111 @@ def get_times_during_current_week_24_hour_clock(
     }
 
 
+def convert_opening_hours_to_condition(
+        opening_hours: OpeningHours,
+        timezone: Timezone,
+) -> AvailabilityCondition:
+    return AvailabilityConditionOr(
+        children=[
+            AvailabilityConditionAnd(
+                children=[
+                    AvailabilityConditionWeekdaysSpan(
+                        start_day=weekday,
+                        end_day=weekday,
+                        timezone=timezone,
+                    ),
+                    AvailabilityConditionTimeSpanDuringDay(
+                        start_time=_convert_digital_clock_time_to_time_during_day(info.from_),
+                        end_time=_convert_digital_clock_time_to_time_during_day(info.to),
+                        timezone=timezone,
+                    )
+                ]
+            )
+            for weekday, info in opening_hours.items()
+        ]
+    )
+
+
+def convert_emergency_times_to_condition(
+        emergency_times: EmergencyTimes,
+        timezone: Timezone,
+) -> AvailabilityCondition:
+    return AvailabilityConditionOr(
+        children=[
+            AvailabilityConditionAnd(
+                children=[
+                    AvailabilityConditionTimeSpan(
+                        start=_convert_date_string_to_datetime(entry.start_date),
+                        end=_convert_date_string_to_datetime(entry.end_date),
+                        timezone=timezone,
+                    ),
+                    AvailabilityConditionTimeSpanDuringDay(
+                        start_time=_convert_digital_clock_time_to_time_during_day(entry.from_time),
+                        end_time=_convert_digital_clock_time_to_time_during_day(entry.to_time),
+                        timezone=timezone,
+                    ),
+                    AvailabilityConditionOr(
+                        children=[
+                            AvailabilityConditionWeekdaysSpan(
+                                start_day=weekday,
+                                end_day=weekday,
+                                timezone=timezone,
+                            )
+                            for weekday in entry.days
+                        ]
+                    )
+                ]
+            )
+            for entry in emergency_times
+        ],
+    )
+
+
+def _convert_digital_clock_time_to_time_during_day(time_str: str) -> TimeDuringDay:
+    hour_str, minute_str = time_str.split(":")
+    hour_str = hour_str.strip()
+    minute_str = minute_str.strip()
+
+    hour = int(hour_str)
+    minute = int(minute_str)
+
+    return TimeDuringDay(
+        hour=hour,
+        minute=minute,
+    )
+
+
+def _convert_date_string_to_datetime(date_string: str) -> datetime:
+    return dateutil.parser.parse(date_string)
+
+
+def get_time_spans(
+        lower_bound: datetime,
+        upper_bound: datetime,
+        availability_condition: AvailabilityCondition,
+) -> Iterable[TimeSpan]:
+    """
+    Returns a list of time spans generated from the `vet.available` decision tree.
+
+    The time spans fit in the half-open interval [lower_bound,upper_bound).
+    """
+    validate.datetime_is_timezone_aware(lower_bound)
+    validate.datetime_is_timezone_aware(upper_bound)
+
+    lower_bound = _datetime_in_reference_tz(lower_bound)
+    upper_bound = _datetime_in_reference_tz(upper_bound)
+
+    return _get_time_spans_from_condition(
+        lower_bound,
+        upper_bound,
+        availability_condition,
+    )
+
+
 def _get_times_spans_during_weekday_in_current_week_24_hour_clock(
         weekday: Weekday,
         availability_condition: AvailabilityCondition,
-        timezone: Timezone | tzinfo,
+        timezone: Timezone,
 ) -> Iterable[TimeSpan24HourClock]:
     now = datetime.now()
 
@@ -66,27 +174,22 @@ def _get_times_spans_during_weekday_in_current_week_24_hour_clock(
 
     days_offset = weekday_index - now.weekday()
 
-    if not isinstance(timezone, tzinfo):
-        timezone = gettz(timezone)
-
     weekday_start = (now - timedelta(days=days_offset)).replace(
         hour=0,
         minute=0,
         second=0,
         microsecond=0,
-        tzinfo=timezone,
     )
     weekday_end = (now - timedelta(days=days_offset - 1)).replace(
         hour=0,
         minute=0,
         second=0,
         microsecond=0,
-        tzinfo=timezone,
     )
 
     time_spans = _get_time_spans_from_condition(
-        weekday_start,
-        weekday_end,
+        weekday_start.astimezone(gettz(timezone)),
+        weekday_end.astimezone(gettz(timezone)),
         availability_condition
     )
 
@@ -128,29 +231,6 @@ def _get_time_24_hour_clock_from_datetime(dt: datetime) -> Time24HourClock:
         minute=minute,
         second=second,
         digital_clock_string=digital_clock_string,
-    )
-
-
-def get_time_spans(
-        lower_bound: datetime,
-        upper_bound: datetime,
-        availability_condition: AvailabilityCondition,
-) -> Iterable[TimeSpan]:
-    """
-    Returns a list of time spans generated from the `vet.available` decision tree.
-
-    The time spans fit in the half-open interval [lower_bound,upper_bound).
-    """
-    validate.datetime_is_timezone_aware(lower_bound)
-    validate.datetime_is_timezone_aware(upper_bound)
-
-    lower_bound = _datetime_in_reference_tz(lower_bound)
-    upper_bound = _datetime_in_reference_tz(upper_bound)
-
-    return _get_time_spans_from_condition(
-        lower_bound,
-        upper_bound,
-        availability_condition,
     )
 
 

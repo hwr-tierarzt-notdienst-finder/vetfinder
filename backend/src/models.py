@@ -32,6 +32,10 @@ class ApiBaseModel(BaseModel):
         alias_generator = string_.as_camel_case
 
 
+class RegistrationEmailInfo(ApiBaseModel):
+    email_address: str
+
+
 # Vet
 # ----------------------------------------------------------------------------
 
@@ -133,7 +137,7 @@ class TimeDuringDay(ApiBaseModel):
     minute: int
 
 
-class AvailabilityConditionTimeSpan(ApiBaseModel):
+class AvailabilityConditionTimeSpan(TimezoneAware):
     type: Literal["time_span"] = "time_span"
     start: datetime
     end: datetime
@@ -193,6 +197,7 @@ AvailabilityCondition = Annotated[
     | AvailabilityConditionAnd
     | AvailabilityConditionOr
     | AvailabilityConditionAll
+    | AvailabilityConditionTimeSpan
     | AvailabilityConditionTimeSpanDuringDay
     | AvailabilityConditionWeekdaysSpan
     | AvailabilityConditionHolidays,
@@ -240,8 +245,23 @@ class TimeSpan24HourClock(ApiBaseModel):
 TimesDuringWeek24HourClock = dict[Weekday, list[TimeSpan24HourClock]]
 
 
-class RegistrationEmailInfo(ApiBaseModel):
-    email_address: str
+class OpeningHoursInformation(ApiBaseModel):
+    from_: str
+    to: str
+
+
+OpeningHours = dict[Weekday, OpeningHoursInformation]
+
+
+class EmergencyTimesOverview(ApiBaseModel):
+    start_date: str
+    end_date: str
+    from_time: str
+    to_time: str
+    days: list[Weekday]
+
+
+EmergencyTimes = list[EmergencyTimesOverview]
 
 
 class VetCreateOrOverwrite(ApiBaseModel):
@@ -249,9 +269,12 @@ class VetCreateOrOverwrite(ApiBaseModel):
     name_information: NameInformation
     location: Location
     contacts: list[Contact] = PydanticField(default_factory=list)
-    availability_condition: AvailabilityCondition
-    emergency_availability_condition: AvailabilityCondition
+    opening_hours: OpeningHours
+    emergency_times: EmergencyTimes | None = None
+    availability_condition: AvailabilityCondition | None = None
+    emergency_availability_condition: AvailabilityCondition | None = None
     treatments: list[Treatments] = PydanticField(default_factory=list)
+    timezone: Timezone = "Europe/Berlin"
 
 
 class Vet(VetCreateOrOverwrite):
