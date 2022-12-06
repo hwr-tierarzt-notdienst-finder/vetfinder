@@ -197,8 +197,8 @@ class _VetInformationState extends State<VetInformation> {
                         Container(
                           padding: const EdgeInsets.only(left: 10),
                           child: Text(
-                            vet.categories.toString().substring(
-                                1, vet.categories.toString().length - 1),
+                            vet.treatments.toString().substring(
+                                1, vet.treatments.toString().length - 1),
                             style: const TextStyle(
                               fontSize: 18,
                             ),

@@ -79,7 +79,7 @@ class Veterinarian {
     required this.clinicName,
     required this.contacts,
     required this.location,
-    required this.categories,
+    required this.treatments,
     required this.availabilityDuringWeek,
     required this.emergencyAvailability,
     required this.emergencyAvailabilityDuringWeek
@@ -90,7 +90,7 @@ class Veterinarian {
   final String clinicName;
   final List<Map<String, dynamic>> contacts;
   final Location location;
-  final List<String> categories;
+  final List<String> treatments;
   final Map<String, dynamic> availabilityDuringWeek;
   final List<dynamic>? emergencyAvailability;
   final Map<String, dynamic>? emergencyAvailabilityDuringWeek;
@@ -101,7 +101,7 @@ class Veterinarian {
         clinicName = json["clinicName"],
         contacts = List<Map<String, dynamic>>.from(json['contacts'] as List),
         location = Location.fromJson(json["location"]),
-        categories = List<String>.from(json["categories"] as List),
+        treatments = List<String>.from(json["treatments"] as List),
         availabilityDuringWeek = json["availabilityDuringWeek"],
         emergencyAvailability = json["emergencyAvailability"],
         emergencyAvailabilityDuringWeek = json["emergencyAvailabilityDuringWeek"];
@@ -213,18 +213,18 @@ List<Veterinarian> getVeterinarians() {
   return vets;
 }
 
-List<String> getAvailableCategories() {
+List<String> getAvailableTreatments() {
   List<Veterinarian> allVets = getVeterinarians();
-  List<String> availableCategories = [];
+  List<String> availableTreatments = [];
   for (Veterinarian vet in allVets) {
-    List<String> categories = vet.categories;
-    for (String category in categories) {
-      if (!(availableCategories.contains(category))) {
-        availableCategories.add(category);
+    List<String> treatments = vet.treatments;
+    for (String treatment in treatments) {
+      if (!(availableTreatments.contains(treatment))) {
+        availableTreatments.add(treatment);
       }
     }
   }
-  return availableCategories;
+  return availableTreatments;
 }
 
 List<Veterinarian> getFilteredVeterinarians(
@@ -232,13 +232,13 @@ List<Veterinarian> getFilteredVeterinarians(
   List<Veterinarian> vets = getVeterinarians();
   List<Veterinarian> filteredVets = [];
 
-  // Filter vets list based on categories and search radius
+  // Filter vets list based on treatments and search radius
   for (Veterinarian vet in vets) {
     if ((vet.getDistanceInMeters(currentPosition) / 1000) <
         SharedPrefs().searchRadius) {
-      if (SharedPrefs().categories.isNotEmpty) {
-        for (String category in SharedPrefs().categories) {
-          if (vet.categories.contains(category)) {
+      if (SharedPrefs().treatments.isNotEmpty) {
+        for (String treatment in SharedPrefs().treatments) {
+          if (vet.treatments.contains(treatment)) {
             filteredVets.add(vet);
             break;
           }

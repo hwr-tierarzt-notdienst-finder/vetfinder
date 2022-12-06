@@ -19,7 +19,7 @@
   "search_filter_dialog": {
     "title": "Suchfilter",
     "search_radius": "Suchradius",
-    "category": "Tierart",
+    "treatment": "Tierart",
     "reset": "Zurücksetzen",
     "cancel": "Abbrechen",
     "apply": "Anwenden"

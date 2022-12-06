@@ -85,7 +85,7 @@ class _HomeState extends State<Home> {
       barrierDismissible: false,
       builder: (BuildContext context) {
         return SearchFilterDialog(
-          availableCategories: getAvailableCategories(),
+          availableTreatments: getAvailableTreatments(),
         );
       },
     );

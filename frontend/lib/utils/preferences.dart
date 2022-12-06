@@ -36,9 +36,9 @@ class SharedPrefs {
     _sharedPrefs.setInt(keySearchRadius, value);
   }
 
-  List<String> get categories => _sharedPrefs.getStringList(keyCategories) ?? [];
-  set categories(List<String> value) {
-    _sharedPrefs.setStringList(keyCategories, value);
+  List<String> get treatments => _sharedPrefs.getStringList(keyTreatments) ?? [];
+  set treatments(List<String> value) {
+    _sharedPrefs.setStringList(keyTreatments, value);
   }
 
   // Location Settings

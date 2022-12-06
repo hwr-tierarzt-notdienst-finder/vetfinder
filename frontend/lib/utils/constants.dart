@@ -15,7 +15,7 @@ const String keyIsDarkMode = "is_dark_mode";
 const String keyLanguage = "language";
 // Filter Settings
 const String keySearchRadius = "search_radius";
-const String keyCategories = "categories";
+const String keyTreatments= "treatments";
 // Location Settings
 const String keyCurrentAddress = "current_address";
 const String keyCurrentPosition = "current_position";

@@ -19,7 +19,7 @@
   "search_filter_dialog": {
     "title": "Filter Settings",
     "search_radius": "Search Radius",
-    "category": "Animal Type",
+    "treatment": "Animal Type",
     "reset": "Reset",
     "cancel": "Cancel",
     "apply": "Apply"

@@ -8,11 +8,11 @@ import 'package:frontend/utils/constants.dart';
 
 class FilterNotifier extends ChangeNotifier {
   late int _searchRadius;
-  late List<String> _categories;
+  late List<String> _treatments;
   late bool _filterUpdated;
 
   int get searchRadius => _searchRadius;
-  List<String> get categories => _categories;
+  List<String> get treatments => _treatments;
 
   bool get filterUpdated => _filterUpdated;
   set filterUpdated(bool value) {
@@ -25,18 +25,18 @@ class FilterNotifier extends ChangeNotifier {
 
   updateFilter() async {
     _searchRadius = SharedPrefs().searchRadius;
-    _categories = SharedPrefs().categories;
+    _treatments = SharedPrefs().treatments;
     _filterUpdated = true;
     notifyListeners();
   }
 }
 
 class SearchFilterDialog extends StatefulWidget {
-  final List<String> availableCategories;
+  final List<String> availableTreatments;
 
   const SearchFilterDialog({
     Key? key,
-    required this.availableCategories
+    required this.availableTreatments
   }) : super(key: key);
 
   @override
@@ -48,17 +48,17 @@ class _SearchFilterDialogState extends State<SearchFilterDialog> {
   final radiusFieldController = TextEditingController();
 
   int currentRadius = SharedPrefs().searchRadius; // Current Radius (km)
-  List<String> currentCategories = SharedPrefs().categories; // Chosen animal categories
+  List<String> currentTreatments = SharedPrefs().treatments; // Chosen animal treatments
   bool isUpdated = false;
 
   void _setFilterSetting() {
     SharedPrefs().searchRadius = currentRadius;
-    SharedPrefs().categories = currentCategories;
+    SharedPrefs().treatments = currentTreatments;
   }
 
   void _getFilterSetting() {
     currentRadius = SharedPrefs().searchRadius;
-    currentCategories = SharedPrefs().categories;
+    currentTreatments = SharedPrefs().treatments;
   }
 
   @override
@@ -85,7 +85,7 @@ class _SearchFilterDialogState extends State<SearchFilterDialog> {
             onPressed: () {
               setState(() {
                 currentRadius = minSearchRadius;
-                currentCategories = [];
+                currentTreatments = [];
               });
             },
           ),
@@ -194,7 +194,7 @@ class _SearchFilterDialogState extends State<SearchFilterDialog> {
                   Row(
                     children: [
                       Text(
-                        '${'search_filter_dialog.category'.tr()}:',
+                        '${'search_filter_dialog.treatment'.tr()}:',
                         style: const TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.bold,
@@ -206,12 +206,12 @@ class _SearchFilterDialogState extends State<SearchFilterDialog> {
                   Wrap(
                     spacing: 10,
                     children:
-                      List<Widget>.generate(widget.availableCategories.length, (index) {
-                      final category = widget.availableCategories[index];
-                      final isSelected = currentCategories.contains(category);
+                      List<Widget>.generate(widget.availableTreatments.length, (index) {
+                      final treatment = widget.availableTreatments[index];
+                      final isSelected = currentTreatments.contains(treatment);
 
                       return FilterChip(
-                        label: Text(category),
+                        label: Text(treatment),
                         labelStyle: TextStyle(
                           color: isSelected
                               ? Colors.white
@@ -225,9 +225,9 @@ class _SearchFilterDialogState extends State<SearchFilterDialog> {
                         onSelected: (bool selected) {
                           setState(() {
                             if (selected) {
-                              currentCategories.add(category);
+                              currentTreatments.add(treatment);
                             } else {
-                              currentCategories.remove(category);
+                              currentTreatments.remove(treatment);
                             }
                           });
                         },
