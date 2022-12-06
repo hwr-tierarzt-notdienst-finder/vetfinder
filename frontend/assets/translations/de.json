@@ -54,5 +54,17 @@
     "last_updated": "Daten zuletzt aktualisiert",
     "snackbar_language_change": "Starten Sie die App neu, um die Änderung anzuwenden.",
     "snackbar_close": "Schließen"
+  },
+  "person": {
+    "mr": "Herr ",
+    "ms": "Frau ",
+    "dr_med": "Dr. med. ",
+    "dr_med_dent": "Dr.med. dent. ",
+    "dr_med_vent": "Dr. med. vet. ",
+    "dr_phil": "Dr. phil. ",
+    "dr_paed": "Dr. paed. ",
+    "dr_rer_nat": "Dr. rer. nat. ",
+    "dr_rer_pol": "Dr. rer. pol. ",
+    "dr_ing": "Dr. ing. "
   }
 }

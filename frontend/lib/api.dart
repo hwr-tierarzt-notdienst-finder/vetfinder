@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:string_similarity/string_similarity.dart';
 import 'package:http/http.dart' as http;
+import 'package:easy_localization/easy_localization.dart';
 import 'package:frontend/utils/preferences.dart';
 
 class AddressSuggestion {
@@ -120,16 +121,9 @@ class Veterinarian {
   }
 
   String getName() {
-    String name = "${person.formOfAddress} ${person.title} ${person.firstName} ${person.lastName}";
+    String title = 'person.${person.title}'.tr();
 
-    if (person.formOfAddress!.isEmpty && person.title!.isEmpty) {
-      name = "${person.firstName} ${person.lastName}";
-    } else if (person.formOfAddress!.isEmpty) {
-      name = "${person.title} ${person.firstName} ${person.lastName}";
-    } else if (person.title!.isEmpty) {
-      name = "${person.formOfAddress} ${person.firstName} ${person.lastName}";
-    }
-
+    String name = "${title}${person.firstName} ${person.lastName}";
     return name;
   }
 
