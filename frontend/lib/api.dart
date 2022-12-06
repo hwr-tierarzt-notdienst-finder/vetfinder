@@ -124,7 +124,7 @@ class Veterinarian {
   String getName() {
     String title = 'person.${person.title}'.tr();
 
-    String name = "${title}${person.firstName} ${person.lastName}";
+    String name = "$title${person.firstName} ${person.lastName}";
     return name;
   }
 
@@ -144,19 +144,17 @@ class Veterinarian {
     );
   }
 
+  // Check if the emergency service is currently open
   bool getEmergencyAvailabilityStatus() {
     if (emergencyAvailability != null) {
-      // Logik, um die jetzige Zeit mit der Notdienst-Öffnungszeit zu vergleichen
-      // wenn die jetzige Zeit innerhalb der Öffnungszeit ist, return true, else false.
-
       for (var item in emergencyAvailability!) {
-        DateTime date_today = DateTime.now();
+        DateTime dateToday = DateTime.now();
 
-        String start_date = item["start"];
-        String end_date = item["end"];
+        String startDate = item["start"];
+        String endDate = item["end"];
 
-        if (date_today.isAfter(DateTime.parse(start_date)) &&
-            date_today.isBefore(DateTime.parse(end_date))) {
+        if (dateToday.isAfter(DateTime.parse(startDate)) &&
+            dateToday.isBefore(DateTime.parse(endDate))) {
           return true;
         } else {
           return false;
@@ -167,33 +165,33 @@ class Veterinarian {
     return false;
   }
 
-  String getEmergencyAvailabilityTime() {
+  // Get today's emergency service opening time
+  String getEmergencyAvailabilityToday() {
     if (emergencyAvailability != null) {
       for (var item in emergencyAvailability!) {
-        String start_date = item["start"];
-        String end_date = item["end"];
+        String startDate = item["start"];
+        String endDate = item["end"];
 
-        return "${start_date.substring(11, 16)} - ${end_date.substring(11, 16)}";
+        return "${startDate.substring(11, 16)} - ${endDate.substring(11, 16)}";
       }
     }
 
     return "";
   }
 
-  // ===== emergencyAvailabilityWeekTime =====
-  String getEmergencyAvailabilityWeekTime(String day) {
+  // Get emergency service opening time of a specific day
+  // @param day The day of the week (Mon, Tue, Wed, Thu, Fri, Sat, Sun)
+  String getEmergencyAvailabilityDuringWeek(String day) {
     if (emergencyAvailabilityDuringWeek != null) {
       return emergencyAvailabilityDuringWeek![day][0]["digitalClockString"];
     }
     return "";
   }
 
-  // ===== availabilityDuringWeek =====
-  String getAvailabilityDuringWeekTime(String day) {
-    if (availabilityDuringWeek != null) {
-      return availabilityDuringWeek[day][0]["digitalClockString"];
-    }
-    return "";
+  // Get regular opening time of a specific day
+  // @param day The day of the week (Mon, Tue, Wed, Thu, Fri, Sat, Sun)
+  String getAvailabilityDuringWeek(String day) {
+    return availabilityDuringWeek[day][0]["digitalClockString"];
   }
 }
 

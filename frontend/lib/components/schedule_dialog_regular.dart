@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 
+import 'package:frontend/utils/constants.dart';
 import 'package:frontend/api.dart';
 
 class ScheduleDialogRegular extends StatelessWidget {
@@ -51,37 +52,37 @@ class ScheduleDialogRegular extends StatelessWidget {
                 DataRow(cells: [
                   DataCell(Text("schedule_dialog.monday".tr())),
                   DataCell(
-                      Text(currentVet.getAvailabilityDuringWeekTime("Mon"))),
+                      Text(currentVet.getAvailabilityDuringWeek(daysMon))),
                 ]),
                 DataRow(cells: [
                   DataCell(Text("schedule_dialog.tuesday".tr())),
                   DataCell(
-                      Text(currentVet.getAvailabilityDuringWeekTime("Tue"))),
+                      Text(currentVet.getAvailabilityDuringWeek(daysTue))),
                 ]),
                 DataRow(cells: [
                   DataCell(Text("schedule_dialog.wednesday".tr())),
                   DataCell(
-                      Text(currentVet.getAvailabilityDuringWeekTime("Wed"))),
+                      Text(currentVet.getAvailabilityDuringWeek(daysWed))),
                 ]),
                 DataRow(cells: [
                   DataCell(Text("schedule_dialog.thursday".tr())),
                   DataCell(
-                      Text(currentVet.getAvailabilityDuringWeekTime("Thu"))),
+                      Text(currentVet.getAvailabilityDuringWeek(daysThu))),
                 ]),
                 DataRow(cells: [
                   DataCell(Text("schedule_dialog.friday".tr())),
                   DataCell(
-                      Text(currentVet.getAvailabilityDuringWeekTime("Fri"))),
+                      Text(currentVet.getAvailabilityDuringWeek(daysFri))),
                 ]),
                 DataRow(cells: [
                   DataCell(Text("schedule_dialog.saturday".tr())),
                   DataCell(
-                      Text(currentVet.getAvailabilityDuringWeekTime("Sat"))),
+                      Text(currentVet.getAvailabilityDuringWeek(daysSat))),
                 ]),
                 DataRow(cells: [
                   DataCell(Text("schedule_dialog.sunday".tr())),
                   DataCell(
-                      Text(currentVet.getAvailabilityDuringWeekTime("Sun"))),
+                      Text(currentVet.getAvailabilityDuringWeek(daysSun))),
                 ]),
               ],
             ),

@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:frontend/api.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:frontend/utils/preferences.dart';
 
+import 'package:frontend/utils/preferences.dart';
+import 'package:frontend/utils/constants.dart';
 import 'package:frontend/components/schedule_dialog_emergency.dart';
 import 'package:frontend/components/schedule_dialog_regular.dart';
 
@@ -252,7 +253,7 @@ class _VetInformationState extends State<VetInformation> {
                           child: Text(
                             'vet_information.open_schedule_emergency'.tr() +
                                 ": " +
-                                vet.getEmergencyAvailabilityTime(),
+                                vet.getEmergencyAvailabilityToday(),
                             style: const TextStyle(
                               fontSize: 16,
                             ),
@@ -269,7 +270,7 @@ class _VetInformationState extends State<VetInformation> {
                   Expanded(
                     child: ElevatedButton.icon(
                       onPressed: () {
-                        launch('tel:${vet.getContact("tel:landline")}');
+                        launch('tel:${vet.getContact(contactsTelLandline)}');
                       },
                       icon: const Icon(Icons.phone_outlined),
                       style: ElevatedButton.styleFrom(
@@ -344,7 +345,7 @@ class _VetInformationState extends State<VetInformation> {
                     children: [
                       ElevatedButton(
                         onPressed: () {
-                          launch('mailto:${vet.getContact("email")}');
+                          launch('mailto:${vet.getContact(contactsEmail)}');
                         },
                         style: ElevatedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(
@@ -361,7 +362,7 @@ class _VetInformationState extends State<VetInformation> {
                     children: [
                       ElevatedButton(
                         onPressed: () {
-                          launch(vet.getContact("website"));
+                          launch(vet.getContact(contactsWebsite));
                         },
                         style: ElevatedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(

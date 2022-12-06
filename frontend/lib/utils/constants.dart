@@ -8,6 +8,21 @@ const Map availableLanguages = {
 const int maxSearchRadius = 50;
 const int minSearchRadius = 5;
 
+// API
+// Contacts
+const String contactsEmail = "email";
+const String contactsTelLandline = "tel:landline";
+const String contactsTelMobile = "tel:mobile";
+const String contactsWebsite = "website";
+// Days
+const String daysMon = "Mon";
+const String daysTue = "Tue";
+const String daysWed = "Wed";
+const String daysThu = "Thu";
+const String daysFri = "Fri";
+const String daysSat = "Sat";
+const String daysSun = "Sun";
+
 // Shared Preferences Keys
 // App Settings
 const String keyVetId = "vet_id";

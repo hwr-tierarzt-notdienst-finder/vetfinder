@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map/plugin_api.dart';
+import 'package:frontend/utils/constants.dart';
 import 'package:frontend/utils/notifiers.dart';
 import 'package:frontend/utils/preferences.dart';
 import 'package:provider/provider.dart';
@@ -142,7 +143,7 @@ class _HomeState extends State<Home> {
                     return VetCard(
                       id: vets[index].id,
                       name: vets[index].getName(),
-                      telephoneNumber: vets[index].getContact("tel:landline"),
+                      telephoneNumber: vets[index].getContact(contactsTelLandline),
                       location: vets[index].location,
                       onViewInMap: (position) {
                         mapController.move(position, 16);
