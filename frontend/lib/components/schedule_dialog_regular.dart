@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 
-class ScheduleDialog extends StatelessWidget {
-  const ScheduleDialog({super.key});
+class ScheduleDialogRegular extends StatelessWidget {
+  const ScheduleDialogRegular({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -34,38 +34,38 @@ class ScheduleDialog extends StatelessWidget {
             margin: const EdgeInsets.only(top: 10),
             child: DataTable(
               headingRowHeight: 0,
-              columns: const [  
-                DataColumn(label: Text("")),  
-                DataColumn(label: Text("")),  
+              columns: const [
+                DataColumn(label: Text("")),
+                DataColumn(label: Text("")),
               ],
-              rows: [  
-                DataRow(cells: [  
-                  DataCell(Text("schedule_dialog.monday".tr())),  
-                  DataCell(Text("")),  
-                ]),  
-                DataRow(cells: [  
-                  DataCell(Text("schedule_dialog.tuesday".tr())),  
-                  DataCell(Text("")), 
+              rows: [
+                DataRow(cells: [
+                  DataCell(Text("schedule_dialog.monday".tr())),
+                  DataCell(Text("")),
                 ]),
-                DataRow(cells: [  
-                  DataCell(Text("schedule_dialog.wednesday".tr())),  
-                  DataCell(Text("")), 
+                DataRow(cells: [
+                  DataCell(Text("schedule_dialog.tuesday".tr())),
+                  DataCell(Text("")),
                 ]),
-                DataRow(cells: [  
-                  DataCell(Text("schedule_dialog.thursday".tr())),  
-                  DataCell(Text("")), 
+                DataRow(cells: [
+                  DataCell(Text("schedule_dialog.wednesday".tr())),
+                  DataCell(Text("")),
                 ]),
-                DataRow(cells: [  
-                  DataCell(Text("schedule_dialog.friday".tr())),  
-                  DataCell(Text("")), 
+                DataRow(cells: [
+                  DataCell(Text("schedule_dialog.thursday".tr())),
+                  DataCell(Text("")),
                 ]),
-                DataRow(cells: [  
-                  DataCell(Text("schedule_dialog.saturday".tr())),  
-                  DataCell(Text("")), 
+                DataRow(cells: [
+                  DataCell(Text("schedule_dialog.friday".tr())),
+                  DataCell(Text("")),
                 ]),
-                DataRow(cells: [  
-                  DataCell(Text("schedule_dialog.sunday".tr())),  
-                  DataCell(Text("")), 
+                DataRow(cells: [
+                  DataCell(Text("schedule_dialog.saturday".tr())),
+                  DataCell(Text("")),
+                ]),
+                DataRow(cells: [
+                  DataCell(Text("schedule_dialog.sunday".tr())),
+                  DataCell(Text("")),
                 ]),
               ],
             ),

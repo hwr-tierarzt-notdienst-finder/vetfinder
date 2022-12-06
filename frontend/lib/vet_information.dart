@@ -4,7 +4,8 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:frontend/utils/preferences.dart';
 
-import 'package:frontend/components/schedule_dialog.dart';
+import 'package:frontend/components/schedule_dialog_emergency.dart';
+import 'package:frontend/components/schedule_dialog_regular.dart';
 
 bool isDarkMode = SharedPrefs().isDarkMode;
 ThemeData darkThemeVet = ThemeData(
@@ -40,12 +41,22 @@ class _VetInformationState extends State<VetInformation> {
 
   double deviceWidth(BuildContext context) => MediaQuery.of(context).size.width;
 
-  Future<void> _showScheduleDialog(BuildContext context) {
+  Future<void> _showScheduleDialogEmergency(BuildContext context) {
     return showDialog<void>(
       context: context,
       barrierDismissible: false,
       builder: (BuildContext context) {
-        return ScheduleDialog();
+        return ScheduleDialogEmergency();
+      },
+    );
+  }
+
+  Future<void> _showScheduleDialogRegular(BuildContext context) {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return ScheduleDialogRegular();
       },
     );
   }
@@ -280,10 +291,11 @@ class _VetInformationState extends State<VetInformation> {
                     children: [
                       Expanded(
                         child: ElevatedButton.icon(
-                          onPressed: () => _showScheduleDialog(context),
+                          onPressed: () =>
+                              _showScheduleDialogEmergency(context),
                           icon: const Icon(Icons.emergency_outlined),
                           label: Text(
-                            'vet_information.open_schedule_emergency'.tr(),
+                            'vet_information.open_schedule_emergency_week'.tr(),
                             style: const TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 14,
@@ -301,7 +313,7 @@ class _VetInformationState extends State<VetInformation> {
                     children: [
                       Expanded(
                         child: ElevatedButton.icon(
-                          onPressed: () => _showScheduleDialog(context),
+                          onPressed: () => _showScheduleDialogRegular(context),
                           icon: const Icon(Icons.schedule_outlined),
                           label: Text(
                             'vet_information.open_schedule'.tr(),
