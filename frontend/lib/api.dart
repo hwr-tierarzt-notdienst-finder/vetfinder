@@ -195,6 +195,14 @@ class Veterinarian {
 
   // ===== availabilityDuringWeek =====
 
+  String getAvailabilityDuringWeek() {
+    if (availabilityDuringWeek != null) {
+      for (var weekDay in weekDays) {
+        return availabilityDuringWeek[weekDay][0]["digitalClockString"];
+      }
+    }
+    return "";
+  }
 }
 
 // Fetch veterinarians data from the server and save it in the app
