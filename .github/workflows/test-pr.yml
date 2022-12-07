@@ -1,0 +1,23 @@
+name: deploy-prod
+run-name: Testing PR ${{ github.ref_name }} ${{ github.base_ref }} (created by ${{ github.actor }})
+on:
+  push:
+    paths:
+      - backend/**
+  pull_request:
+    branches:
+      - main
+jobs:
+  test-backend:
+    runs-on: prod-server
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          path: './test'
+          clean: false
+      - name: Setting up environment
+        run: ./test/backend/bin/setup-env.sh
+      - name: Install python requirements
+        run: ./test/backend/bin/requirements-install.sh
+      - name: Testing backend
+        run: ./test/backend/bin/test.sh --run-prod-only -v
