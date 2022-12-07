@@ -7,7 +7,6 @@ on:
   pull_request:
     branches:
       - main
-
 jobs:
   test-backend:
     runs-on: prod-server
@@ -17,6 +16,6 @@ jobs:
           path: './test'
           clean: false
       - name: Setting up environment
-        run: ./backend/bin/setup-env.sh
+        run: ./test/backend/bin/setup-env.sh
       - name: Testing backend
-        run: ./backend/bin/test.sh
+        run: ./test/backend/bin/test.sh
