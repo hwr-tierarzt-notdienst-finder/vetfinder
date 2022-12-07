@@ -25,16 +25,10 @@ function remove_old_container_if_exists() {
     fi
 }
 
-
-echo_information "Installing NPM modules"
-echo_and_run "npm install"
-echo_information "Compiling/Transpiling to build dir"
-echo_and_run "npm run build"
-
 remove_old_container_if_exists
 
 echo_information "Building docker image '$CONTAINER_NAME'"
-echo_and_run "docker build -f $DOCKER_FILE_NAME -t $CONTAINER_NAME --no-cache $FORM_WEBSITE_DIR"
+echo_and_run "docker build -f $FORM_WEBSITE_DIR/$DOCKER_FILE_NAME -t $CONTAINER_NAME --no-cache $FORM_WEBSITE_DIR"
 
 echo_information "Recreating form website docker container '$CONTAINER_NAME'"
 echo_and_run "docker run --name $CONTAINER_NAME -p $HOST_HTTP_PORT:$CONTAINER_HTTP_PORT $CONTAINER_NAME --detach"
