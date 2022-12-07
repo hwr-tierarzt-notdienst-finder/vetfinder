@@ -4,8 +4,8 @@ from typing import Callable
 
 import pytest
 
-from src import config
-from src import env
+import config
+import env
 
 
 import pytest

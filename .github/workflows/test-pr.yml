@@ -1,5 +1,5 @@
 name: deploy-prod
-run-name: Testing PR ${{ github.ref_name }} ${{ github.ref }} (created by ${{ github.actor }})
+run-name: Testing PR ${{ github.ref_name }} -> ${{ github.base_ref }} (created by ${{ github.actor }})
 on:
   push:
     branches:
@@ -17,5 +17,7 @@ jobs:
           clean: false
       - name: Setting up environment
         run: ./test/backend/bin/setup-env.sh
+      - name: Install python requirements
+        run: ./test/backend/bin/requirements-install.sh
       - name: Testing backend
         run: ./test/backend/bin/test.sh
