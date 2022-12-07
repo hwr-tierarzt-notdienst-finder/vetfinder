@@ -21,16 +21,22 @@ def pytest_configure(config):
     config.addinivalue_line(
         "markers", "prod_only: mark test as only being able to run in production environment"
     )
+    config.addinivalue_line(
+        "markers", "non_prod: mark test as only being able to run in non-production environment"
+    )
 
 
 def pytest_collection_modifyitems(config, items):
     if config.getoption("--run-prod-only"):
-        # --run-prod-only given in cli: do not skip prod_only tests
-        return
-    skip_prod_only = pytest.mark.skip(reason="need --run-prod-only option to run")
-    for item in items:
-        if "prod_only" in item.keywords:
-            item.add_marker(skip_prod_only)
+        skip_non_prod = pytest.mark.skip(reason="need to remove --run-prod-only option to run")
+        for item in items:
+            if "non_prod" in item.keywords:
+                item.add_marker(skip_non_prod)
+    else:
+        skip_prod_only = pytest.mark.skip(reason="need --run-prod-only option to run")
+        for item in items:
+            if "prod_only" in item.keywords:
+                item.add_marker(skip_prod_only)
 
 
 @pytest.fixture

@@ -14,6 +14,7 @@ class TestGetConfig:
 
             assert conf1 == conf2
 
+    @pytest.mark.non_prod
     def test_can_get_in_dev_env_context(self, override_env_context) -> None:
         with override_env_context("dev"):
             # Get twice to test caching
@@ -22,6 +23,7 @@ class TestGetConfig:
 
             assert conf1 == conf2
 
+    @pytest.mark.non_prod
     def test_can_get_in_test_env_context(self, override_env_context) -> None:
         # 'test' environment context should be automatically inferred
         # because this is running as a test
