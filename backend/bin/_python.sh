@@ -7,7 +7,7 @@ SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 
 function python_executable() {
     if [ -z "${PYTHON_EXECUTABLE:-}" ]; then
-        echo "python"
+        echo "python3"
     else
         echo "$PYTHON_EXECUTABLE"
     fi
