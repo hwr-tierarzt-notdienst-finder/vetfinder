@@ -2,8 +2,8 @@ name: deploy-prod
 run-name: Testing PR ${{ github.ref_name }} ${{ github.base_ref }} (created by ${{ github.actor }})
 on:
   push:
-    branches:
-      - more-backend-tests
+    paths:
+      - backend/**
   pull_request:
     branches:
       - main
