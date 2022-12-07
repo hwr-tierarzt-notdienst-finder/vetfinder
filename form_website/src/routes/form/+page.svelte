@@ -24,7 +24,8 @@
 		type FormOfAddress,
 		FormOfAddressLabels,
 		type Title,
-		TitleLabels
+		TitleLabels,
+		compareTime
 	} from '../../types';
 
 	import { page } from '$app/stores';
@@ -48,7 +49,7 @@
 			if (vetToken) {
 				const vet = await getVetWithToken(vetToken);
 
-				if (vet == null) {
+				if (vet === null) {
 					goto('/');
 				} else {
 					console.log(vet);
@@ -57,6 +58,11 @@
 			}
 
 			availableTreatments = await getTreatments();
+
+			for (const treatment of availableTreatments) {
+				selectedTreatments[treatment] = false;
+			}
+
 			loading = false;
 		})();
 	});
@@ -71,13 +77,7 @@
 	let city: string = '';
 	let postCode: string = '';
 
-	let selectedTreatments: TreatmentState = {
-		dog: false,
-		cat: false,
-		horse: false,
-		small_animals: false,
-		other: false
-	};
+	let selectedTreatments: TreatmentState = {};
 
 	let otherTreatmentInformation: string = '';
 	let treatmentNote: string = '';
@@ -111,7 +111,7 @@
 	};
 
 	function getOpeningHoursOfDay(day: Day): OpeningHoursInformation | undefined {
-		if (openingHoursFrom[day] == undefined || openingHoursTo[day] == undefined) {
+		if (openingHoursFrom[day] === undefined || openingHoursTo[day] === undefined) {
 			return undefined;
 		}
 
@@ -139,6 +139,62 @@
 		return overview;
 	}
 
+	function checkInputError(): string | null {
+		if (clinicName.length === 0) {
+			return 'Klinikname fehlt!';
+		} else if (email.length === 0) {
+			return 'E-Mail fehlt!';
+		} else if (telephone.length === 0) {
+			return 'Telefonnummer fehlt!';
+		} else if (firstName.length === 0) {
+			return 'Vorname fehlt!';
+		} else if (lastName.length === 0) {
+			return 'Nachname fehlt!';
+		} else if (street.length === 0) {
+			return 'Straße fehlt!';
+		} else if (houseNumber.length === 0) {
+			return 'Hausnummer fehlt!';
+		} else if (city.length === 0) {
+			return 'Stadt fehlt!';
+		} else if (postCode.length === 0) {
+			return 'Postleitzahl fehlt!';
+		}
+
+		return null;
+	}
+
+	function checkTreatmentsError(treatments: string[]): string | null {
+		if (treatments.length === 0) {
+			return 'Wählen Sie bitte mindestens eine Tierart, die Sie behandeln, aus!';
+		} else if (treatments.indexOf('misc') !== -1 && otherTreatmentInformation.length === 0) {
+			return 'Spezifizieren Sie "Sonstige" bei Ihren Behandlungen!';
+		}
+		return null;
+	}
+
+	function checkOpeningHourError(): string | null {
+		for (const day of Days) {
+			if (dayClosed[day]) continue;
+
+			if (openingHoursFrom[day] === undefined && openingHoursTo[day] === undefined) {
+				return `Öffnungszeiten am ${DayLabels[day]} fehlen!`;
+			} else if (openingHoursFrom[day] === undefined && openingHoursTo[day] !== undefined) {
+				return `Öffnungszeit am ${DayLabels[day]} fehlt!`;
+			} else if (openingHoursFrom[day] !== undefined && openingHoursTo[day] === undefined) {
+				return `Schließzeit am ${DayLabels[day]} fehlt!`;
+			} else if (openingHoursFrom[day] !== undefined && openingHoursTo[day] !== undefined) {
+				const compare = compareTime(openingHoursFrom[day]!, openingHoursTo[day]!);
+				if (compare === 1) {
+					return `Die Öffnungszeit am ${DayLabels[day]} muss vor der Schließzeit liegen!`;
+				} else if (compare === 0) {
+					return `Die Öffnungszeit und Schließzeit am ${DayLabels[day]} müssen sich unterscheiden!`;
+				}
+			}
+		}
+
+		return null;
+	}
+
 	let newEmergencyTimeTemplate: EmergencyTimeTemplate = createDefaultEmergencyTimeTemplate();
 
 	let emergencyTimes: EmergencyTime[] = [];
@@ -151,13 +207,50 @@
 
 	function addEmergencyTime() {
 		const emergencyTime = createEmergencyTimeFromTemplate(newEmergencyTimeTemplate);
+
+		if (emergencyTime.days.length === 0) {
+			showError('Wähle Sie bitte mindestens einen Wochentag aus!');
+			return;
+		}
+
+		if (emergencyTime.startDate.getTime() > emergencyTime.endDate.getTime()) {
+			showError('Das Startdatum muss vor der Enddatum liegen!');
+			return;
+		}
+
+		if (emergencyTime.fromTime.getTime() > emergencyTime.toTime.getTime()) {
+			showError('Die Startöffnungszeit muss vor der Endöffnungszeit liegen!');
+			return;
+		}
+
 		emergencyTimes.push(emergencyTime);
 		emergencyTimes = emergencyTimes;
 		newEmergencyTimeTemplate = createDefaultEmergencyTimeTemplate();
 	}
 
 	function sendFormData() {
+		const inputErrors = checkInputError();
+
+		if (inputErrors !== null) {
+			showError(inputErrors);
+			return;
+		}
+
 		const treatments = treatmentStateToArray(selectedTreatments);
+		const treatmentsError = checkTreatmentsError(treatments);
+
+		if (treatmentsError !== null) {
+			showError(treatmentsError);
+			return;
+		}
+
+		const openingHoursError = checkOpeningHourError();
+
+		if (openingHoursError !== null) {
+			showError(openingHoursError);
+			return;
+		}
+
 		const emergencyTimeRequests: EmergencyTimeRequest[] = emergencyTimes.map((emergencyTime) =>
 			convertEmergencyTimeToRequest(emergencyTime)
 		);
@@ -195,13 +288,47 @@
 
 		createOrOverwriteVet(request);
 	}
+
+	let timer: NodeJS.Timer | null = null;
+	let error: string = '';
+	const ErrorTime: number = 5000;
+
+	function showError(message: string) {
+		if (timer !== null) {
+			clearTimeout(timer);
+		}
+
+		error = message;
+		timer = setTimeout(() => {
+			error = '';
+		}, ErrorTime);
+	}
 </script>
+
+{#if error}
+	<div class="alert alert-error shadow-lg w-1/2 fixed top-5 right-5">
+		<div>
+			<svg
+				xmlns="http://www.w3.org/2000/svg"
+				class="stroke-current flex-shrink-0 h-6 w-6"
+				fill="none"
+				viewBox="0 0 24 24"
+				><path
+					stroke-linecap="round"
+					stroke-linejoin="round"
+					stroke-width="2"
+					d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+				/></svg
+			>
+			<span>{error}</span>
+		</div>
+	</div>
+{/if}
 
 <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
 <!-- svelte-ignore a11y-label-has-associated-control -->
 <!-- svelte-ignore a11y-missing-attribute -->
 <!-- svelte-ignore a11y-click-events-have-key-events -->
-
 <div class="mt-10 flex min-w-full justify-center">
 	<div class="flex flex-col gap-10 justify-center items-center">
 		{#if !loading}
@@ -222,9 +349,22 @@
 		<div class="section">
 			<h1 class="text-2xl font-bold">Kontaktdaten</h1>
 			<div class="flex gap-4">
-				<Input label="Klinikname" bind:value={clinicName} type="text" placeholder="Hier eingeben" />
-				<Input label="E-Mail" bind:value={email} type="email" placeholder="Hier eingeben" />
 				<Input
+					required
+					label="Klinikname"
+					bind:value={clinicName}
+					type="text"
+					placeholder="Hier eingeben"
+				/>
+				<Input
+					required
+					label="E-Mail"
+					bind:value={email}
+					type="email"
+					placeholder="Hier eingeben"
+				/>
+				<Input
+					required
 					label="Telefonnummer"
 					bind:value={telephone}
 					type="tel"
@@ -285,8 +425,20 @@
 						</div>
 					</div>
 				</div>
-				<Input label="Vorname" bind:value={firstName} type="text" placeholder="Hier eingeben" />
-				<Input label="Nachname" bind:value={lastName} type="text" placeholder="Hier eingeben" />
+				<Input
+					required
+					label="Vorname"
+					bind:value={firstName}
+					type="text"
+					placeholder="Hier eingeben"
+				/>
+				<Input
+					required
+					label="Nachname"
+					bind:value={lastName}
+					type="text"
+					placeholder="Hier eingeben"
+				/>
 			</div>
 		</div>
 		<div class="divider" />
@@ -294,15 +446,28 @@
 		<div class="section">
 			<h1 class="text-2xl font-bold">Adresse</h1>
 			<div class="flex gap-4">
-				<Input label="Straße" bind:value={street} type="text" placeholder="Hier eingeben" />
 				<Input
+					required
+					label="Straße"
+					bind:value={street}
+					type="text"
+					placeholder="Hier eingeben"
+				/>
+				<Input
+					required
 					label="Hausnummer"
 					bind:value={houseNumber}
 					type="text"
 					placeholder="Hier eingeben"
 				/>
-				<Input label="Stadt" bind:value={city} type="text" placeholder="Hier eingeben" />
-				<Input label="Postleitzahl" bind:value={postCode} type="text" placeholder="Hier eingeben" />
+				<Input required label="Stadt" bind:value={city} type="text" placeholder="Hier eingeben" />
+				<Input
+					required
+					label="Postleitzahl"
+					bind:value={postCode}
+					type="text"
+					placeholder="Hier eingeben"
+				/>
 			</div>
 		</div>
 		<div class="divider" />
@@ -326,7 +491,7 @@
 							</label>
 						{/each}
 					</div>
-					{#if selectedTreatments['other']}
+					{#if selectedTreatments['misc']}
 						<div class="mt-2 form-control w-full">
 							<input
 								bind:value={otherTreatmentInformation}

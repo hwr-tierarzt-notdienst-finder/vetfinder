@@ -217,6 +217,32 @@ function formatTime(time: Date): string {
     return `${String(time.getHours()).padStart(2, '0')}:${String(time.getMinutes()).padStart(2, '0')}`
 }
 
+export function compareTime(time1: string, time2: string): number {
+
+    const spit1 = time1.split(":");
+    const hour1 = Number(spit1[0]);
+    const minute1 = Number(spit1[1]);
+
+    const spit2 = time2.split(":");
+    const hour2 = Number(spit2[0]);
+    const minute2 = Number(spit2[1]);
+
+    if (hour1 < hour2) {
+        return -1;
+    } else if (hour1 > hour2) {
+        return 1;
+    } else {
+        if (minute1 < minute2) {
+            return -1;
+        } else if (minute1 > minute2) {
+            return 1;
+        }
+    }
+
+    return 0;
+
+}
+
 export function createEmergencyTimeFromTemplate(template: EmergencyTimeTemplate): EmergencyTime {
 
     return {
