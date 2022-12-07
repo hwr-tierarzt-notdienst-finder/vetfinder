@@ -31,7 +31,8 @@ def send_vet_registration(
         "form_url": template.replace(
             config.get().form.vet_registration_url_template,
             {
-                "token": registration_token
+                "token": registration_token,
+                "email": to,
             }
         )
     }

@@ -25,6 +25,7 @@ origins = [
     "https://127.0.0.1",
     "http://127.0.0.1:8000",
     "http://127.0.0.1:5173",
+    "https://vetfinder-form.dowahdid.de",
 ]
 
 api.add_middleware(
@@ -87,4 +88,4 @@ async def vet_management_access_denied_error_handler(
 
 @api.get("/treatments")
 def get_treatments() -> list[str]:
-    return sorted(treatment for treatment in Treatments.__members__.values())
+    return sorted(Treatments.__members__.values())
