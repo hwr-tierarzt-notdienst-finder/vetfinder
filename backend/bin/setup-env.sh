@@ -22,7 +22,7 @@ function check_running_correct_python_version() {
     local python_version_file="$SCRIPT_DIR/../.python-version-match"
     expected_version="$(cat "$python_version_file")"
     local cli_version_str
-    cli_version_str="$(python3 --version)"
+    cli_version_str="$(run_python --version)"
     local actual_version="${cli_version_str#Python }"
 
     local expected_version_arr
