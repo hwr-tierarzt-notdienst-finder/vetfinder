@@ -4,7 +4,7 @@ COPY . /app/form_website
 
 WORKDIR /app/form_website
 
-RUN ls -la && npm install npm@latest -g \
+RUN npm install npm@latest -g \
     && npm install \
     && npm run build
 
