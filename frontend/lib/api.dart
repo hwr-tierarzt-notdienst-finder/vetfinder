@@ -156,10 +156,10 @@ class Veterinarian {
         if (dateToday.isAfter(DateTime.parse(startDate)) &&
             dateToday.isBefore(DateTime.parse(endDate))) {
           return true;
-        } else {
-          return false;
         }
       }
+    } else {
+      return false;
     }
 
     return false;
