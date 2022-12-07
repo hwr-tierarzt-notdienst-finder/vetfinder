@@ -13,9 +13,6 @@ fi
 
 create_mongo_container 'test'
 
-echo_information "Setting up secrets"
-echo_and_run "ENV=test PYTHONPATH=${SRC_DIR} $(venv_python_executable) ${SRC_DIR}/entrypoints/setup_secrets.py"
-
 echo_information "Running tests"
 echo_and_run "ENV=test PYTHONPATH=${SRC_DIR} PYTEST_DISABLE_PLUGIN_AUTOLOAD=true $(venv_python_executable) -m pytest $SCRIPT_DIR/../tests $*"
 

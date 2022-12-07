@@ -5,6 +5,7 @@ import config
 
 class TestGetConfig:
 
+    @pytest.mark.prod_only
     def test_can_get_in_prod_env_context(self, override_env_context) -> None:
         with override_env_context("prod"):
             # Get twice to test caching
@@ -30,5 +31,3 @@ class TestGetConfig:
             conf2 = config.get()
 
         assert conf1 == conf2
-
-
