@@ -41,6 +41,11 @@ class SharedPrefs {
     _sharedPrefs.setStringList(keyTreatments, value);
   }
 
+  bool get emergencyServiceAvailable => _sharedPrefs.getBool(keyEmergencyServiceAvailable) ?? false;
+  set emergencyServiceAvailable(bool value) {
+    _sharedPrefs.setBool(keyEmergencyServiceAvailable, value);
+  }
+
   // Location Settings
   String get currentAddress => _sharedPrefs.getString(keyCurrentAddress) ?? "";
   set currentAddress(String value) {

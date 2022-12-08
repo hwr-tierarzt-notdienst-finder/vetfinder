@@ -299,10 +299,14 @@ List<Veterinarian> getFilteredVeterinarians(
   List<Veterinarian> vets = getVeterinarians();
   List<Veterinarian> filteredVets = [];
 
-  // Filter vets list based on treatments and search radius
+  // Filter vets list based on the filter settings
   for (Veterinarian vet in vets) {
+
+    // Filter based on search radius
     if ((vet.getDistanceInMeters(currentPosition) / 1000) <
         SharedPrefs().searchRadius) {
+
+      // Filter based on treatments
       if (SharedPrefs().treatments.isNotEmpty) {
         for (String treatment in SharedPrefs().treatments) {
           if (vet.treatments.contains(treatment)) {
@@ -314,6 +318,19 @@ List<Veterinarian> getFilteredVeterinarians(
         filteredVets.add(vet);
       }
     }
+  }
+
+  // Filter based on emergency availability
+  if (SharedPrefs().emergencyServiceAvailable) {
+    List<Veterinarian> filteredEmergencyVets = [];
+
+    for (Veterinarian vet in filteredVets) {
+      if (vet.getEmergencyAvailabilityStatus()) {
+        filteredEmergencyVets.add(vet);
+      }
+    }
+
+    filteredVets = filteredEmergencyVets;
   }
 
   List<Veterinarian> returnedVets = [];

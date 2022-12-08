@@ -234,6 +234,24 @@ class _SearchFilterDialogState extends State<SearchFilterDialog> {
                       );
                     }),
                   ),
+                  const SizedBox(height: 10),
+                  CheckboxListTile(
+                    title: Text(
+                      'search_filter_dialog.emergency_service'.tr(),
+                      style: const TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
+                      ),  
+                    ),
+                    controlAffinity: ListTileControlAffinity.leading, 
+                    value: SharedPrefs().emergencyServiceAvailable,
+                    onChanged: (bool? value) {
+                      setState(() {
+                        SharedPrefs().emergencyServiceAvailable = value!;
+                        print(SharedPrefs().emergencyServiceAvailable);
+                      });
+                    },
+                  )
                 ],
               ),
             ],

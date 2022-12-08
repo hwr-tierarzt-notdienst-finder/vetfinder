@@ -20,6 +20,7 @@
     "title": "Filter Settings",
     "search_radius": "Search Radius",
     "treatment": "Animal Type",
+    "emergency_service": "Emergency Service",
     "reset": "Reset",
     "cancel": "Cancel",
     "apply": "Apply"

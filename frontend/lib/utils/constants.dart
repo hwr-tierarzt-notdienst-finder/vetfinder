@@ -31,6 +31,7 @@ const String keyLanguage = "language";
 // Filter Settings
 const String keySearchRadius = "search_radius";
 const String keyTreatments= "treatments";
+const String keyEmergencyServiceAvailable= "emergency_service_available";
 // Location Settings
 const String keyCurrentAddress = "current_address";
 const String keyCurrentPosition = "current_position";
