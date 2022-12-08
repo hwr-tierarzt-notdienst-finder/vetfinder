@@ -185,14 +185,13 @@ class Veterinarian {
       }
     }
 
-    return "";
+    return 'vet_information.closed_today'.tr();
   }
 
   // Get service opening time of a specific weekday
   String getAvailabilityToday() {
     DateTime date = DateTime.now();
-    String weekDay = 'Mon';
-    // String weekDay = DateFormat('E').format(date);
+    String weekDay = DateFormat('E').format(date);
 
     if (availabilityDuringWeek[weekDay].isNotEmpty) {
       return availabilityDuringWeek[weekDay][0]["digitalClockString"];

@@ -39,14 +39,14 @@
     "title": "Vet Information",
     "mark_as_fav": "Mark as Favorite",
     "unmark_as_fav": "Unmark as Favorite",
-    "open_schedule": "Opening Hours",
+    "open_schedule": "Opening Hours Today",
     "open_schedule_emergency": "Emergency Hours Today",
     "open_schedule_emergency_week": "Emergency Service Opening Hours",
     "call_vet": "Call Vet",
     "open_website": "Open Website",
     "open_map": "Open Map",
     "open_schedule_today": "Today",
-    "closed_today": "Closed Today"
+    "closed_today": "Closed"
   },
   "settings": {
     "title": "Settings",
