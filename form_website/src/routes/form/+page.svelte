@@ -49,6 +49,12 @@
 
 		(async () => {
 			if (vetToken) {
+				availableTreatments = await getTreatments();
+
+				for (const treatment of availableTreatments) {
+					selectedTreatments[treatment] = false;
+				}
+
 				const vet = await getVetWithToken(vetToken);
 
 				if (vet !== null) {
@@ -92,12 +98,6 @@
 				}
 			} else {
 				goto('/');
-			}
-
-			availableTreatments = await getTreatments();
-
-			for (const treatment of availableTreatments) {
-				selectedTreatments[treatment] = false;
 			}
 
 			loading = false;
@@ -265,7 +265,7 @@
 		newEmergencyTimeTemplate = createDefaultEmergencyTimeTemplate();
 	}
 
-	function sendVet() {
+	async function sendVet() {
 		const inputErrors = checkInputError();
 
 		if (inputErrors !== null) {
@@ -323,7 +323,17 @@
 
 		console.log(vet);
 
-		createOrOverwriteVet(vet, vetToken);
+		const success = await createOrOverwriteVet(vet, vetToken!);
+		const modalElement = document.getElementById('change-success-modal');
+
+		if (success) {
+			if (modalElement !== null) {
+				(modalElement as HTMLInputElement).checked = true;
+			}
+		} else {
+			showError('Anfrage zur Änderung fehlgeschlagen!');
+		}
+
 	}
 
 	let timer: NodeJS.Timer | null = null;
