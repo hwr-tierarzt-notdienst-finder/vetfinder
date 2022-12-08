@@ -51,37 +51,37 @@ class ScheduleDialogEmergency extends StatelessWidget {
                 DataRow(cells: [
                   DataCell(Text("schedule_dialog.monday".tr())),
                   DataCell(
-                      Text(currentVet.getEmergencyAvailabilityDuringWeek(daysMon))),
+                      Center(child: Text(currentVet.getEmergencyAvailabilityDuringWeek(daysMon)))),
                 ]),
                 DataRow(cells: [
                   DataCell(Text("schedule_dialog.tuesday".tr())),
                   DataCell(
-                      Text(currentVet.getEmergencyAvailabilityDuringWeek(daysTue))),
+                      Center(child: Text(currentVet.getEmergencyAvailabilityDuringWeek(daysTue)))),
                 ]),
                 DataRow(cells: [
                   DataCell(Text("schedule_dialog.wednesday".tr())),
                   DataCell(
-                      Text(currentVet.getEmergencyAvailabilityDuringWeek(daysWed))),
+                      Center(child: Text(currentVet.getEmergencyAvailabilityDuringWeek(daysWed)))),
                 ]),
                 DataRow(cells: [
                   DataCell(Text("schedule_dialog.thursday".tr())),
                   DataCell(
-                      Text(currentVet.getEmergencyAvailabilityDuringWeek(daysThu))),
+                      Center(child: Text(currentVet.getEmergencyAvailabilityDuringWeek(daysThu)))),
                 ]),
                 DataRow(cells: [
                   DataCell(Text("schedule_dialog.friday".tr())),
                   DataCell(
-                      Text(currentVet.getEmergencyAvailabilityDuringWeek(daysFri))),
+                      Center(child: Text(currentVet.getEmergencyAvailabilityDuringWeek(daysFri)))),
                 ]),
                 DataRow(cells: [
                   DataCell(Text("schedule_dialog.saturday".tr())),
                   DataCell(
-                      Text(currentVet.getEmergencyAvailabilityDuringWeek(daysSat))),
+                      Center(child: Text(currentVet.getEmergencyAvailabilityDuringWeek(daysSat)))),
                 ]),
                 DataRow(cells: [
                   DataCell(Text("schedule_dialog.sunday".tr())),
                   DataCell(
-                      Text(currentVet.getEmergencyAvailabilityDuringWeek(daysSun))),
+                      Center(child: Text(currentVet.getEmergencyAvailabilityDuringWeek(daysSun)))),
                 ]),
               ],
             ),

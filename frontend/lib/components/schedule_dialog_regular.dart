@@ -52,37 +52,37 @@ class ScheduleDialogRegular extends StatelessWidget {
                 DataRow(cells: [
                   DataCell(Text("schedule_dialog.monday".tr())),
                   DataCell(
-                      Text(currentVet.getAvailabilityDuringWeek(daysMon))),
+                      Center(child: Text(currentVet.getAvailabilityDuringWeek(daysMon)))),
                 ]),
                 DataRow(cells: [
                   DataCell(Text("schedule_dialog.tuesday".tr())),
                   DataCell(
-                      Text(currentVet.getAvailabilityDuringWeek(daysTue))),
+                      Center(child: Text(currentVet.getAvailabilityDuringWeek(daysTue)))),
                 ]),
                 DataRow(cells: [
                   DataCell(Text("schedule_dialog.wednesday".tr())),
                   DataCell(
-                      Text(currentVet.getAvailabilityDuringWeek(daysWed))),
+                      Center(child: Text(currentVet.getAvailabilityDuringWeek(daysWed)))),
                 ]),
                 DataRow(cells: [
                   DataCell(Text("schedule_dialog.thursday".tr())),
                   DataCell(
-                      Text(currentVet.getAvailabilityDuringWeek(daysThu))),
+                      Center(child: Text(currentVet.getAvailabilityDuringWeek(daysThu)))),
                 ]),
                 DataRow(cells: [
                   DataCell(Text("schedule_dialog.friday".tr())),
                   DataCell(
-                      Text(currentVet.getAvailabilityDuringWeek(daysFri))),
+                      Center(child: Text(currentVet.getAvailabilityDuringWeek(daysFri)))),
                 ]),
                 DataRow(cells: [
                   DataCell(Text("schedule_dialog.saturday".tr())),
                   DataCell(
-                      Text(currentVet.getAvailabilityDuringWeek(daysSat))),
+                      Center(child: Text(currentVet.getAvailabilityDuringWeek(daysSat)))),
                 ]),
                 DataRow(cells: [
                   DataCell(Text("schedule_dialog.sunday".tr())),
                   DataCell(
-                      Text(currentVet.getAvailabilityDuringWeek(daysSun))),
+                      Center(child: Text(currentVet.getAvailabilityDuringWeek(daysSun)))),
                 ]),
               ],
             ),

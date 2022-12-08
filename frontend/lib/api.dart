@@ -183,15 +183,20 @@ class Veterinarian {
   // @param day The day of the week (Mon, Tue, Wed, Thu, Fri, Sat, Sun)
   String getEmergencyAvailabilityDuringWeek(String day) {
     if (emergencyAvailabilityDuringWeek != null) {
-      return emergencyAvailabilityDuringWeek![day][0]["digitalClockString"];
+      if (emergencyAvailabilityDuringWeek![day].isNotEmpty) {
+        return emergencyAvailabilityDuringWeek![day][0]["digitalClockString"];
+      }
     }
-    return "";
+    return "-";
   }
 
   // Get regular opening time of a specific day
   // @param day The day of the week (Mon, Tue, Wed, Thu, Fri, Sat, Sun)
   String getAvailabilityDuringWeek(String day) {
-    return availabilityDuringWeek[day][0]["digitalClockString"];
+    if (availabilityDuringWeek[day].isNotEmpty) {
+      return availabilityDuringWeek[day][0]["digitalClockString"];
+    }
+    return "-";
   }
 }
 
