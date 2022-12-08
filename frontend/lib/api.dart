@@ -354,8 +354,8 @@ List<Veterinarian> getFilteredVeterinarians(
       });
     } else {
       returnedVets.sort((a, b) {
-        String vetInfo1 = '${a.getName} ${a.getAddress()}';
-        String vetInfo2 = '${b.getName} ${b.getAddress()}';
+        String vetInfo1 = '${a.getName()} ${a.getAddress()}';
+        String vetInfo2 = '${b.getName()} ${b.getAddress()}';
 
         double similarityScore1 = query.similarityTo(vetInfo1);
         double similarityScore2 = query.similarityTo(vetInfo2);
