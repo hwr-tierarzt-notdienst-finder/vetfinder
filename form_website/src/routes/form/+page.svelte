@@ -323,7 +323,7 @@
 
 		console.log(vet);
 
-		createOrOverwriteVet(vet);
+		createOrOverwriteVet(vet, vetToken);
 	}
 
 	let timer: NodeJS.Timer | null = null;
