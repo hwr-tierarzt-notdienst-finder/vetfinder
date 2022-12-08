@@ -1,0 +1,5 @@
+-c requirements.txt
+pytest>=7.1<8
+PyYAML>=6.0<7.0
+lark>=1.1.2<2
+types_-beautifulsoup4>=4.11.5<5.0
