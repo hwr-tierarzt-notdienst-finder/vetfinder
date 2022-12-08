@@ -222,6 +222,48 @@ class _VetInformationState extends State<VetInformation> {
                   ),
                 ],
               ),
+              const SizedBox(height: 20),
+              Row(
+                children: [
+                  Container(
+                    width: deviceWidth(context) * 0.9,
+                    height: deviceHeight(context) * 0.12,
+                    decoration: BoxDecoration(
+                        color: Theme.of(context).brightness == Brightness.dark
+                            ? Color.fromRGBO(48, 48, 48, 1)
+                            : Colors.grey[200],
+                        border: Border.all(
+                          color: Color.fromRGBO(244, 67, 54, 1),
+                          width: 4,
+                        ),
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(20))),
+                    child: Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.only(left: 10),
+                          child: const Icon(
+                            Icons.schedule_outlined,
+                            size: 30,
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        Container(
+                          padding: const EdgeInsets.only(left: 10),
+                          child: Text(
+                            'vet_information.open_schedule'.tr() +
+                                ": " +
+                                vet.getAvailabilityToday(),
+                            style: const TextStyle(
+                              fontSize: 16,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
               vet.getEmergencyAvailabilityStatus()
                   ? const SizedBox(height: 20)
                   : const SizedBox(height: 0),
@@ -246,7 +288,7 @@ class _VetInformationState extends State<VetInformation> {
                           Container(
                             padding: const EdgeInsets.only(left: 10),
                             child: const Icon(
-                              Icons.access_time_filled,
+                              Icons.emergency_outlined,
                               size: 30,
                             ),
                           ),

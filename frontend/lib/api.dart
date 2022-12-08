@@ -188,6 +188,19 @@ class Veterinarian {
     return "";
   }
 
+  // Get service opening time of a specific weekday
+  String getAvailabilityToday() {
+    DateTime date = DateTime.now();
+    String weekDay = 'Mon';
+    // String weekDay = DateFormat('E').format(date);
+
+    if (availabilityDuringWeek[weekDay].isNotEmpty) {
+      return availabilityDuringWeek[weekDay][0]["digitalClockString"];
+    }
+
+    return 'vet_information.closed_today'.tr();
+  }
+
   // Get emergency service opening time of a specific day
   // @param day The day of the week (Mon, Tue, Wed, Thu, Fri, Sat, Sun)
   String getEmergencyAvailabilityDuringWeek(String day) {

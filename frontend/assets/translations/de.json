@@ -45,7 +45,8 @@
     "call_vet": "Anrufen",
     "open_website": "Webseite öffnen",
     "open_map": "Karte öffnen",
-    "open_schedule_today": "Heute"
+    "open_schedule_today": "Heute",
+    "closed_today": "Heute Geschlossen"
   },
   "settings": {
     "title": "Einstellungen",

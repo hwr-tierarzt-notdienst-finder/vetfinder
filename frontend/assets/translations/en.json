@@ -45,7 +45,8 @@
     "call_vet": "Call Vet",
     "open_website": "Open Website",
     "open_map": "Open Map",
-    "open_schedule_today": "Today"
+    "open_schedule_today": "Today",
+    "closed_today": "Closed Today"
   },
   "settings": {
     "title": "Settings",
