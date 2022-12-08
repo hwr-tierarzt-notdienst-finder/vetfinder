@@ -250,7 +250,7 @@ Future<void> fetchVeterinarians() async {
       String formattedTime =
           "${timeNow.day}-${timeNow.month}-${timeNow.year} ${timeNow.hour}:${timeNow.minute}";
 
-      SharedPrefs().vets = response.body;
+      SharedPrefs().vets = const Utf8Decoder().convert(response.bodyBytes);
       SharedPrefs().lastUpdated = formattedTime;
     } else {
       throw Exception(
