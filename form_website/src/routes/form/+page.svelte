@@ -333,6 +333,7 @@
 		} else {
 			showError('Anfrage zur Änderung fehlgeschlagen!');
 		}
+
 	}
 
 	let timer: NodeJS.Timer | null = null;
