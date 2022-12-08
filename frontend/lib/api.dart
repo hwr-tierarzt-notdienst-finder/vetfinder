@@ -185,7 +185,19 @@ class Veterinarian {
       }
     }
 
-    return "";
+    return 'vet_information.closed_today'.tr();
+  }
+
+  // Get service opening time of a specific weekday
+  String getAvailabilityToday() {
+    DateTime date = DateTime.now();
+    String weekDay = DateFormat('E').format(date);
+
+    if (availabilityDuringWeek[weekDay].isNotEmpty) {
+      return availabilityDuringWeek[weekDay][0]["digitalClockString"];
+    }
+
+    return 'vet_information.closed_today'.tr();
   }
 
   // Get emergency service opening time of a specific day
