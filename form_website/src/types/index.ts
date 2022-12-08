@@ -4,13 +4,74 @@ export type LabelObject<T extends string> = {
     [index in T]: string;
 }
 
+export function convertVetToFormDataRequest(vet: Vet): FormDataRequest {
+    return {
+        clinicName: vet.contact.clinicName,
+        nameInformation: vet.name,
+        contacts: [
+            {
+                type: "tel:landline",
+                value: vet.contact.telephone
+            },
+            {
+                type: "email",
+                value: vet.contact.email
+            },
+        ],
+        location: {
+            address: vet.address
+        },
+        treatments: vet.treatments.treatments,
+        openingHours: vet.openingHours,
+        emergencyTimes: vet.emergencyTimes,
+        timezone: vet.timezone
+    }
+}
+
+export function convertFormDataRequestToVet(request: FormDataRequest): Vet {
+    return {
+        contact: {
+            clinicName: request.clinicName,
+            telephone: request.contacts.find(entry => entry.type === "tel:landline")?.value || '',
+            email: request.contacts.find(entry => entry.type === "email")?.value || '',
+        },
+        name: request.nameInformation,
+        address: request.location.address,
+        treatments: {
+            treatments: request.treatments,
+        },
+        openingHours: request.openingHours,
+        emergencyTimes: request.emergencyTimes,
+        timezone: request.timezone
+    }
+}
+
 export type FormDataRequest = {
+    clinicName: string,
+    nameInformation: NameInformation,
+    contacts: ContactRequestEntry[],
+    location: {
+        address: Address
+    },
+    treatments: string[],
+    openingHours: OpeningHoursOverview,
+    emergencyTimes?: EmergencyTimeRequest[],
+    timezone: string
+}
+
+export type ContactRequestEntry = {
+    type: string,
+    value: string
+}
+
+export type Vet = {
     contact: Contact,
     name: NameInformation,
     address: Address,
     treatments: TreatmentInformation,
     openingHours: OpeningHoursOverview,
-    emergencyTimes?: EmergencyTimeRequest[]
+    emergencyTimes?: EmergencyTimeRequest[],
+    timezone: string
 }
 
 export type Contact = {
@@ -30,7 +91,7 @@ export type Address = {
     street: string,
     number: string,
     city: string,
-    postCode: string,
+    zipCode: string,
 }
 
 export type TreatmentInformation = {
@@ -65,40 +126,37 @@ export function convertEmergencyTimeToRequest(emergencyTime: EmergencyTime): Eme
     }
 }
 
-export type Treatment = 'dog' | 'cat' | 'horse' | 'small_animals' | 'other';
-export const Treatments: Treatment[] = ['dog', 'cat', 'horse', 'small_animals', 'other'];
-
-export const TreatmentLabels: LabelObject<Treatment> = {
-    dog: 'Hund',
-    cat: 'Katze',
-    horse: 'Pferd',
+export const TreatmentLabels: LabelObject<string> = {
+    dogs: 'Hund',
+    cats: 'Katze',
+    horses: 'Pferd',
     small_animals: 'Kleintiere',
-    other: 'Sonstige'
+    misc: 'Sonstige'
 };
 
 export type TreatmentState = {
-    [index in Treatment]: boolean;
+    [index: string]: boolean;
 };
 
-export type Day = 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday';
+export type Day = 'Mon' | 'Tue' | 'Wed' | 'Thu' | 'Fri' | 'Sat' | 'Sun';
 export const Days: Day[] = [
-    'monday',
-    'tuesday',
-    'wednesday',
-    'thursday',
-    'friday',
-    'saturday',
-    'sunday'
+    'Mon',
+    'Tue',
+    'Wed',
+    'Thu',
+    'Fri',
+    'Sat',
+    'Sun'
 ];
 
 export const DayLabels: LabelObject<Day> = {
-    monday: 'Montag',
-    tuesday: 'Dienstag',
-    wednesday: 'Mittwoch',
-    thursday: 'Donnerstag',
-    friday: 'Freitag',
-    saturday: 'Samstag',
-    sunday: 'Sonntag'
+    Mon: 'Montag',
+    Tue: 'Dienstag',
+    Wed: 'Mittwoch',
+    Thu: 'Donnerstag',
+    Fri: 'Freitag',
+    Sat: 'Samstag',
+    Sun: 'Sonntag'
 };
 
 export type OpeningHoursInformation = {
@@ -175,15 +233,15 @@ export function createDefaultEmergencyTimeTemplate(): EmergencyTimeTemplate {
 
     const offsetNextMonday = 8 - now.getDay();
     let fromDate = new Date(now.getTime() + 3600000 * 24 * offsetNextMonday);
-    
+
     const offsetNextFriday = offsetNextMonday + 4;
     let toDate = new Date(now.getTime() + 3600000 * 24 * offsetNextFriday);
-    
+
     let fromTime = new Date(now);
     fromTime.setMinutes(0);
     fromTime.setSeconds(0);
     fromTime.setMilliseconds(0);
-    
+
     fromTime = new Date(fromTime.getTime() + 3600000 * 1); // add one hour
 
     let toTime = new Date(now);
@@ -199,16 +257,27 @@ export function createDefaultEmergencyTimeTemplate(): EmergencyTimeTemplate {
         fromTime: formatTime(fromTime),
         toTime: formatTime(toTime),
         days: {
-            monday: false,
-            tuesday: false,
-            wednesday: false,
-            thursday: false,
-            friday: false,
-            saturday: false,
-            sunday: false
+            Mon: false,
+            Tue: false,
+            Wed: false,
+            Thu: false,
+            Fri: false,
+            Sat: false,
+            Sun: false
         }
     };
 
+}
+
+export function convertEmergencyTimeRequestToEmergencyTime(request: EmergencyTimeRequest): EmergencyTime {
+    return {
+        id: uuidv4(),
+        startDate: convertDateStringToDateObject(request.startDate),
+        endDate: convertDateStringToDateObject(request.endDate),
+        fromTime: convertTimeStringToDateObject(request.fromTime),
+        toTime: convertTimeStringToDateObject(request.toTime),
+        days: request.days.map(dayString => dayString as Day)
+    }
 }
 
 function formatDate(date: Date): string {
@@ -219,19 +288,45 @@ function formatTime(time: Date): string {
     return `${String(time.getHours()).padStart(2, '0')}:${String(time.getMinutes()).padStart(2, '0')}`
 }
 
+export function compareTime(time1: string, time2: string): number {
+
+    const spit1 = time1.split(":");
+    const hour1 = Number(spit1[0]);
+    const minute1 = Number(spit1[1]);
+
+    const spit2 = time2.split(":");
+    const hour2 = Number(spit2[0]);
+    const minute2 = Number(spit2[1]);
+
+    if (hour1 < hour2) {
+        return -1;
+    } else if (hour1 > hour2) {
+        return 1;
+    } else {
+        if (minute1 < minute2) {
+            return -1;
+        } else if (minute1 > minute2) {
+            return 1;
+        }
+    }
+
+    return 0;
+
+}
+
 export function createEmergencyTimeFromTemplate(template: EmergencyTimeTemplate): EmergencyTime {
 
     return {
         id: uuidv4(),
         startDate: new Date(template.startDate),
         endDate: new Date(template.endDate),
-        fromTime: timeToDate(template.fromTime),
-        toTime: timeToDate(template.toTime),
-        days: daySelectionMapToArray(template.days)
+        fromTime: convertTimeStringToDateObject(template.fromTime),
+        toTime: convertTimeStringToDateObject(template.toTime),
+        days: convertDaySelectionMapToArray(template.days)
     }
 }
 
-function daySelectionMapToArray(selection: DaySelectionInformation): Day[] {
+export function convertDaySelectionMapToArray(selection: DaySelectionInformation): Day[] {
 
     let days: Day[] = []
 
@@ -248,13 +343,33 @@ function daySelectionMapToArray(selection: DaySelectionInformation): Day[] {
 
 }
 
-export function treatmentStateToArray(state: TreatmentState): Treatment[] {
+export function convertArrayToDaySelectionMap(days: string[]): DaySelectionInformation {
 
-    let treatments: Treatment[] = []
+    let selection: DaySelectionInformation = {
+        Mon: false,
+        Tue: false,
+        Wed: false,
+        Thu: false,
+        Fri: false,
+        Sat: false,
+        Sun: false
+    }
 
-    for (const key of Object.keys(state)) {
+    for (const dayString of days) {
+        const day = dayString as Day;
+        selection[day] = true;
+    }
 
-        const treatment: Treatment = key as Treatment;
+    return selection;
+
+}
+
+export function convertTreatmentStateToArray(state: TreatmentState): string[] {
+
+    let treatments: string[] = []
+
+    for (const treatment of Object.keys(state)) {
+
         if (state[treatment]) {
             treatments.push(treatment);
         }
@@ -265,7 +380,19 @@ export function treatmentStateToArray(state: TreatmentState): Treatment[] {
 
 }
 
-function timeToDate(time: string): Date {
+export function convertArrayToTreatmentState(array: string[]): TreatmentState {
+
+    const state: TreatmentState = {}
+
+    for (const treatment of array) {
+        state[treatment] = true;
+    }
+
+    return state;
+
+}
+
+function convertTimeStringToDateObject(time: string): Date {
 
     const split = time.split(":");
     const hours = split[0];
@@ -273,7 +400,21 @@ function timeToDate(time: string): Date {
 
     const date = new Date(0);
     date.setHours(Number(hours)),
-    date.setMinutes(Number(minutes));
+        date.setMinutes(Number(minutes));
+
+    return date;
+
+}
+
+function convertDateStringToDateObject(time: string): Date {
+
+    const split = time.split(".");
+    const days = Number(split[0]);
+    const month = Number(split[1]);
+    const year = Number(split[2]);
+
+    const date = new Date(0);
+    date.setFullYear(year, month - 1, days);
 
     return date;
 

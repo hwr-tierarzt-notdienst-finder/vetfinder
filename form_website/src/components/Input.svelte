@@ -23,6 +23,7 @@
 	export let type: InputType = 'text';
 	export let placeholder: string = '';
 	export let value: string = '';
+	export let required: boolean = false;
 
 	function typeAction(node: HTMLInputElement) {
 		node.type = type;
@@ -34,5 +35,11 @@
 	<label class="label">
 		<span class="label-text">{label}</span>
 	</label>
-	<input bind:value use:typeAction {placeholder} class="input input-bordered w-full max-w-xs" />
+	<input
+		{required}
+		bind:value
+		use:typeAction
+		{placeholder}
+		class={`input input-bordered w-full max-w-xs`}
+	/>
 </div>
