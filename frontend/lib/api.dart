@@ -248,7 +248,7 @@ Future<void> fetchVeterinarians() async {
     if (response.statusCode == 200) {
       DateTime timeNow = DateTime.now();
       String formattedTime =
-          "${timeNow.day}-${timeNow.month}-${timeNow.year} ${timeNow.hour}:${timeNow.minute}";
+          "${timeNow.day}-${timeNow.month}-${timeNow.year} ${DateFormat.Hm().format(timeNow)}";
 
       SharedPrefs().vets = const Utf8Decoder().convert(response.bodyBytes);
       SharedPrefs().lastUpdated = formattedTime;
