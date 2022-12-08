@@ -175,7 +175,7 @@ class _EditAddressModalState extends State<EditAddressModal> {
     try {
       Position currentPosition =
         await Geolocator.getCurrentPosition(
-          desiredAccuracy: LocationAccuracy.high,
+          desiredAccuracy: LocationAccuracy.best,
           forceAndroidLocationManager: true,
           timeLimit: const Duration(seconds: 5)
         );

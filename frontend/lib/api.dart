@@ -124,7 +124,7 @@ class Veterinarian {
   String getName() {
     String title = 'person.${person.title}'.tr();
 
-    String name = "$title${person.firstName} ${person.lastName}";
+    String name = "${title.isNotEmpty ? "$title " : ""}${person.firstName} ${person.lastName}";
     return name;
   }
 
