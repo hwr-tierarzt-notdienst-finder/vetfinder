@@ -66,18 +66,18 @@ class _VetInformationState extends State<VetInformation> {
 
   @override
   Widget build(BuildContext context) {
+    // Get the vet object by ID
     final arguments = ModalRoute.of(context)!.settings.arguments
         as VetInformationScreenArguments;
-
     String id = arguments.id;
     Veterinarian vet = getVeterinarianById(id);
 
-    const descTextStyle = TextStyle(
-      color: Colors.black,
-      fontWeight: FontWeight.w800,
-      fontSize: 18,
-      height: 2,
-    );
+    // Translate treatments to be shown in the correct language
+    List<String> translatedTreatments = [];
+    for (String treatment in vet.treatments) {
+      translatedTreatments.add('treatments.$treatment'.tr());
+    }
+
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
@@ -95,7 +95,7 @@ class _VetInformationState extends State<VetInformation> {
                 vet.getName(),
                 style: const TextStyle(
                   fontWeight: FontWeight.bold,
-                  fontSize: 30,
+                  fontSize: 25,
                 ),
               ),
               const SizedBox(height: 10),
@@ -210,8 +210,8 @@ class _VetInformationState extends State<VetInformation> {
                         Container(
                           padding: const EdgeInsets.only(left: 10),
                           child: Text(
-                            vet.treatments.toString().substring(
-                                1, vet.treatments.toString().length - 1),
+                            translatedTreatments.toString().substring(
+                                1, translatedTreatments.toString().length - 1),
                             style: const TextStyle(
                               fontSize: 18,
                             ),

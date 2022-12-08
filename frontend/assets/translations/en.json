@@ -57,6 +57,13 @@
     "snackbar_language_change": "Restart the application to apply the change.",
     "snackbar_close": "Close"
   },
+  "treatments": {
+    "dogs": "Dogs",
+    "cats": "Cats",
+    "horses": "Horses",
+    "small_animals": "Small Animals",
+    "misc": "Others"
+  },
   "person": {
     "mr": "Mr.",
     "ms": "Ms.",

@@ -211,7 +211,7 @@ class _SearchFilterDialogState extends State<SearchFilterDialog> {
                       final isSelected = currentTreatments.contains(treatment);
 
                       return FilterChip(
-                        label: Text(treatment),
+                        label: Text('treatments.$treatment'.tr()),
                         labelStyle: TextStyle(
                           color: isSelected
                               ? Colors.white

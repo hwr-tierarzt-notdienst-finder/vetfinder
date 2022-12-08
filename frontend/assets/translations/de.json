@@ -57,6 +57,13 @@
     "snackbar_language_change": "Starten Sie die App neu, um die Änderung anzuwenden.",
     "snackbar_close": "Schließen"
   },
+  "treatments": {
+    "dogs": "Hunde",
+    "cats": "Katzen",
+    "horses": "Pferde",
+    "small_animals": "Kleintiere",
+    "misc": "Sonstige"
+  },
   "person": {
     "mr": "Herr",
     "ms": "Frau",
