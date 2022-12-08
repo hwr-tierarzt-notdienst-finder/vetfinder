@@ -150,11 +150,13 @@ class Veterinarian {
       for (var item in emergencyAvailability!) {
         DateTime dateToday = DateTime.now();
 
-        String startDate = item["start"];
-        String endDate = item["end"];
+        String startDateRaw = item["start"];
+        String endDateRaw = item["end"];
 
-        if (dateToday.isAfter(DateTime.parse(startDate)) &&
-            dateToday.isBefore(DateTime.parse(endDate))) {
+        DateTime startDate = DateTime.parse(startDateRaw);
+        DateTime endDate = DateTime.parse(endDateRaw);
+
+        if (dateToday.isAfter(startDate) && dateToday.isBefore(endDate)) {
           return true;
         }
       }
