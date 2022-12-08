@@ -81,6 +81,7 @@
 						} else {
 							openingHoursFrom[day] = vet.openingHours[day]!.from;
 							openingHoursTo[day] = vet.openingHours[day]!.to;
+							dayClosed[day] = false;
 						}
 					}
 
@@ -119,7 +120,7 @@
 	let otherTreatmentInformation: string = ''; // currently not supported by the backend
 	let treatmentNote: string = ''; // currently not supported by the backend
 
-	const openingHoursFrom: OpeningHours = {
+	let openingHoursFrom: OpeningHours = {
 		Mon: undefined,
 		Tue: undefined,
 		Wed: undefined,
@@ -128,7 +129,7 @@
 		Sat: undefined,
 		Sun: undefined
 	};
-	const openingHoursTo: OpeningHours = {
+	let openingHoursTo: OpeningHours = {
 		Mon: undefined,
 		Tue: undefined,
 		Wed: undefined,
@@ -137,7 +138,7 @@
 		Sat: undefined,
 		Sun: undefined
 	};
-	const dayClosed: DaySelectionInformation = {
+	let dayClosed: DaySelectionInformation = {
 		Mon: true,
 		Tue: true,
 		Wed: true,
