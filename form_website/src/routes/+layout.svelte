@@ -3,6 +3,7 @@
 	import { themeChange } from 'theme-change';
 	import { onMount } from 'svelte';
 	import { sendVetRegistrationEmail } from '../api';
+	import { goto } from '$app/navigation';
 
 	onMount(() => {
 		themeChange(false);
@@ -15,6 +16,10 @@
 			sendVetRegistrationEmail(registrationEmail);
 			registrationEmail = '';
 		}
+	}
+
+	function goToHome() {
+		goto('/');
 	}
 </script>
 
@@ -45,12 +50,26 @@
 				/>
 			</div>
 			<div class="modal-action">
-				<label for="email-registration" class="btn btn-ghost" on:click={regsiter}>Schließen</label>
+				<label for="email-registration" class="btn btn-ghost">Schließen</label>
 				<label for="email-registration" class="btn" on:click={regsiter}>Registrieren</label>
 			</div>
 		</div>
 	</div>
 	<!-- Register modal -->
+	<!-- Success modal -->
+	<input type="checkbox" id="change-success-modal" class="modal-toggle" />
+	<div class="modal modal-bottom sm:modal-middle">
+		<div class="modal-box">
+			<h3 class="font-bold text-lg">Änderung erfolgreich</h3>
+			<p class="py-4">Ihre Änderung an Ihren Daten war erfolgreich.</p>
+			<div class="modal-action">
+				<label for="change-success-modal" class="btn btn-success" on:click={goToHome}
+					>Schließen</label
+				>
+			</div>
+		</div>
+	</div>
+	<!-- Success modal -->
 	<div class="navbar bg-base-100">
 		<div class="navbar-start">
 			<div class="dropdown">
