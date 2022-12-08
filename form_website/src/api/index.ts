@@ -1,6 +1,6 @@
 import { convertFormDataRequestToVet, convertVetToFormDataRequest, type FormDataRequest, type Vet } from "../types";
 
-export async function createOrOverwriteVet(vet: Vet) {
+export async function createOrOverwriteVet(vet: Vet, vetToken: string) {
 
     const request: FormDataRequest = convertVetToFormDataRequest(vet);
     return new Promise<string[]>((resolve, reject) => {
@@ -8,7 +8,7 @@ export async function createOrOverwriteVet(vet: Vet) {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${import.meta.env['VITE_JWT_TOKEN']}`
+                'Authorization': `Bearer ${vetToken}`
             },
             body: JSON.stringify(request)
         })
