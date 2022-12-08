@@ -34,6 +34,7 @@
 					<div class="stat">
 						<div class="stat-title">Neue Tierärzte</div>
 						<div class="stat-value">265</div>
+						<div class="stat-desc">im letzten Quartal</div>
 					</div>
 
 					<div class="stat">

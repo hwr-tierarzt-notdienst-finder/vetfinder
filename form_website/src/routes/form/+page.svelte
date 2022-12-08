@@ -15,17 +15,19 @@
 		type EmergencyTimeTemplate,
 		createDefaultEmergencyTimeTemplate,
 		createEmergencyTimeFromTemplate,
-		type FormDataRequest,
+		type Vet,
 		type TreatmentState,
 		TreatmentLabels,
-		treatmentStateToArray,
 		type EmergencyTimeRequest,
 		convertEmergencyTimeToRequest,
 		type FormOfAddress,
 		FormOfAddressLabels,
 		type Title,
 		TitleLabels,
-		compareTime
+		compareTime,
+		convertTreatmentStateToArray,
+		convertArrayToTreatmentState,
+		convertEmergencyTimeRequestToEmergencyTime
 	} from '../../types';
 
 	import { page } from '$app/stores';
@@ -54,6 +56,41 @@
 				} else {
 					console.log(vet);
 					// TODO: mapping
+
+					clinicName = vet.contact.clinicName;
+					email = vet.contact.email;
+					telephone = vet.contact.telephone;
+
+					selectedFormOfAddress = vet.name.formOfAddress || 'not_specified';
+					selectedTitle = vet.name.title || 'not_specified';
+					firstName = vet.name.firstName;
+					lastName = vet.name.lastName;
+
+					street = vet.address.street;
+					houseNumber = vet.address.number;
+					city = vet.address.city;
+					zipCode = vet.address.zipCode;
+
+					selectedTreatments = convertArrayToTreatmentState(vet.treatments.treatments);
+					otherTreatmentInformation = '';
+					treatmentNote = '';
+
+					for (const day of Days) {
+						if (vet.openingHours[day] === undefined) {
+							dayClosed[day] = true;
+						} else {
+							openingHoursFrom[day] = vet.openingHours[day]!.from;
+							openingHoursTo[day] = vet.openingHours[day]!.to;
+						}
+					}
+
+					if (vet.emergencyTimes) {
+						emergencyTimes = vet.emergencyTimes.map((request) =>
+							convertEmergencyTimeRequestToEmergencyTime(request)
+						);
+					} else {
+						emergencyTimes = [];
+					}
 				}
 			}
 
@@ -75,12 +112,12 @@
 	let street: string = '';
 	let houseNumber: string = '';
 	let city: string = '';
-	let postCode: string = '';
+	let zipCode: string = '';
 
 	let selectedTreatments: TreatmentState = {};
 
-	let otherTreatmentInformation: string = '';
-	let treatmentNote: string = '';
+	let otherTreatmentInformation: string = ''; // currently not supported by the backend
+	let treatmentNote: string = ''; // currently not supported by the backend
 
 	const openingHoursFrom: OpeningHours = {
 		Mon: undefined,
@@ -156,7 +193,7 @@
 			return 'Hausnummer fehlt!';
 		} else if (city.length === 0) {
 			return 'Stadt fehlt!';
-		} else if (postCode.length === 0) {
+		} else if (zipCode.length === 0) {
 			return 'Postleitzahl fehlt!';
 		}
 
@@ -228,7 +265,7 @@
 		newEmergencyTimeTemplate = createDefaultEmergencyTimeTemplate();
 	}
 
-	function sendFormData() {
+	function sendVet() {
 		const inputErrors = checkInputError();
 
 		if (inputErrors !== null) {
@@ -236,7 +273,7 @@
 			return;
 		}
 
-		const treatments = treatmentStateToArray(selectedTreatments);
+		const treatments = convertTreatmentStateToArray(selectedTreatments);
 		const treatmentsError = checkTreatmentsError(treatments);
 
 		if (treatmentsError !== null) {
@@ -255,7 +292,7 @@
 			convertEmergencyTimeToRequest(emergencyTime)
 		);
 
-		const request: FormDataRequest = {
+		const vet: Vet = {
 			contact: {
 				clinicName: clinicName,
 				email: email,
@@ -272,7 +309,7 @@
 				street: street,
 				number: houseNumber,
 				city: city,
-				postCode: postCode
+				zipCode: zipCode
 			},
 			treatments: {
 				treatments: treatments,
@@ -284,9 +321,9 @@
 			timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
 		};
 
-		console.log(request);
+		console.log(vet);
 
-		createOrOverwriteVet(request);
+		createOrOverwriteVet(vet);
 	}
 
 	let timer: NodeJS.Timer | null = null;
@@ -464,7 +501,7 @@
 				<Input
 					required
 					label="Postleitzahl"
-					bind:value={postCode}
+					bind:value={zipCode}
 					type="text"
 					placeholder="Hier eingeben"
 				/>
@@ -666,7 +703,7 @@
 				</table>
 			</div>
 		</div>
-		<button class="btn btn-primary btn-lg" on:click={sendFormData}
+		<button class="btn btn-primary btn-lg" on:click={sendVet}
 			>{vetToken ? 'Aktualisieren' : 'Eintragen'}</button
 		>
 	</div>

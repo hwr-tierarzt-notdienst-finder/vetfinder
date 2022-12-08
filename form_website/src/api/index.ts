@@ -1,6 +1,8 @@
-import type { FormDataRequest } from "../types";
+import { convertFormDataRequestToVet, convertVetToFormDataRequest, type FormDataRequest, type Vet } from "../types";
 
-export async function createOrOverwriteVet(request: FormDataRequest) {
+export async function createOrOverwriteVet(vet: Vet) {
+
+    const request: FormDataRequest = convertVetToFormDataRequest(vet);
     return new Promise<string[]>((resolve, reject) => {
         fetch(`${import.meta.env['VITE_API_URL']}/form/create-or-overwrite-vet`, {
             method: 'PUT',
@@ -38,8 +40,8 @@ export async function sendVetRegistrationEmail(email: string) {
     });
 }
 
-export async function getVetWithToken(vetToken: string): Promise<FormDataRequest | null> {
-    return new Promise<FormDataRequest | null>((resolve, reject) => {
+export async function getVetWithToken(vetToken: string): Promise<Vet | null> {
+    return new Promise<Vet | null>((resolve, reject) => {
         fetch(`${import.meta.env['VITE_API_URL']}/form/vet`, {
             headers: {
                 'Content-Type': 'application/json',
@@ -54,8 +56,8 @@ export async function getVetWithToken(vetToken: string): Promise<FormDataRequest
                     return response.json();
                 }
             })
-            .then((vet: FormDataRequest) => {
-                resolve(vet);
+            .then((request: FormDataRequest) => {
+                resolve(convertFormDataRequestToVet(request));
             })
             .catch(error => {
                 console.error(error);

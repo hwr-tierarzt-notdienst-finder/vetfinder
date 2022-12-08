@@ -4,7 +4,67 @@ export type LabelObject<T extends string> = {
     [index in T]: string;
 }
 
+export function convertVetToFormDataRequest(vet: Vet): FormDataRequest {
+    return {
+        clinicName: vet.contact.clinicName,
+        nameInformation: vet.name,
+        contacts: [
+            {
+                type: "tel:landline",
+                value: vet.contact.telephone
+            },
+            {
+                type: "email",
+                value: vet.contact.email
+            },
+        ],
+        location: {
+            address: vet.address
+        },
+        treatments: vet.treatments.treatments,
+        openingHours: vet.openingHours,
+        emergencyTimes: vet.emergencyTimes,
+        timezone: vet.timezone
+    }
+}
+
+export function convertFormDataRequestToVet(request: FormDataRequest): Vet {
+    return {
+        contact: {
+            clinicName: request.clinicName,
+            telephone: request.contacts.find(entry => entry.type === "tel:landline")?.value || '',
+            email: request.contacts.find(entry => entry.type === "email")?.value || '',
+        },
+        name: request.nameInformation,
+        address: request.location.address,
+        treatments: {
+            treatments: request.treatments,
+        },
+        openingHours: request.openingHours,
+        emergencyTimes: request.emergencyTimes,
+        timezone: request.timezone
+    }
+}
+
 export type FormDataRequest = {
+    clinicName: string,
+    nameInformation: NameInformation,
+    contacts: ContactRequestEntry[],
+    location: {
+        address: Address
+    },
+    treatments: string[],
+    openingHours: OpeningHoursOverview,
+    emergencyTimes?: EmergencyTimeRequest[],
+    timezone: string
+}
+
+export type ContactRequestEntry = {
+    type: string,
+    value: string
+}
+
+export type Vet = {
     contact: Contact,
     name: NameInformation,
     address: Address,
@@ -31,7 +91,7 @@ export type Address = {
     street: string,
     number: string,
     city: string,
-    postCode: string,
+    zipCode: string,
 }
 
 export type TreatmentInformation = {
@@ -209,6 +269,17 @@ export function createDefaultEmergencyTimeTemplate(): EmergencyTimeTemplate {
 
 }
 
+export function convertEmergencyTimeRequestToEmergencyTime(request: EmergencyTimeRequest): EmergencyTime {
+    return {
+        id: uuidv4(),
+        startDate: convertDateStringToDateObject(request.startDate),
+        endDate: convertDateStringToDateObject(request.endDate),
+        fromTime: convertTimeStringToDateObject(request.fromTime),
+        toTime: convertTimeStringToDateObject(request.toTime),
+        days: request.days.map(dayString => dayString as Day)
+    }
+}
+
 function formatDate(date: Date): string {
     return `${date.getFullYear()}-${String(date.getMonth()).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`
 }
@@ -249,13 +320,13 @@ export function createEmergencyTimeFromTemplate(template: EmergencyTimeTemplate)
         id: uuidv4(),
         startDate: new Date(template.startDate),
         endDate: new Date(template.endDate),
-        fromTime: timeToDate(template.fromTime),
-        toTime: timeToDate(template.toTime),
-        days: daySelectionMapToArray(template.days)
+        fromTime: convertTimeStringToDateObject(template.fromTime),
+        toTime: convertTimeStringToDateObject(template.toTime),
+        days: convertDaySelectionMapToArray(template.days)
     }
 }
 
-function daySelectionMapToArray(selection: DaySelectionInformation): Day[] {
+export function convertDaySelectionMapToArray(selection: DaySelectionInformation): Day[] {
 
     let days: Day[] = []
 
@@ -272,7 +343,28 @@ function daySelectionMapToArray(selection: DaySelectionInformation): Day[] {
 
 }
 
-export function treatmentStateToArray(state: TreatmentState): string[] {
+export function convertArrayToDaySelectionMap(days: string[]): DaySelectionInformation {
+
+    let selection: DaySelectionInformation = {
+        Mon: false,
+        Tue: false,
+        Wed: false,
+        Thu: false,
+        Fri: false,
+        Sat: false,
+        Sun: false
+    }
+
+    for (const dayString of days) {
+        const day = dayString as Day;
+        selection[day] = true;
+    }
+
+    return selection;
+
+}
+
+export function convertTreatmentStateToArray(state: TreatmentState): string[] {
 
     let treatments: string[] = []
 
@@ -288,7 +380,19 @@ export function treatmentStateToArray(state: TreatmentState): string[] {
 
 }
 
-function timeToDate(time: string): Date {
+export function convertArrayToTreatmentState(array: string[]): TreatmentState {
+
+    const state: TreatmentState = {}
+
+    for (const treatment of array) {
+        state[treatment] = true;
+    }
+
+    return state;
+
+}
+
+function convertTimeStringToDateObject(time: string): Date {
 
     const split = time.split(":");
     const hours = split[0];
@@ -297,6 +401,20 @@ function timeToDate(time: string): Date {
     const date = new Date(0);
     date.setHours(Number(hours)),
         date.setMinutes(Number(minutes));
+
+    return date;
+
+}
+
+function convertDateStringToDateObject(time: string): Date {
+
+    const split = time.split(".");
+    const days = Number(split[0]);
+    const month = Number(split[1]);
+    const year = Number(split[2]);
+
+    const date = new Date(0);
+    date.setFullYear(year, month - 1, days);
 
     return date;
 
