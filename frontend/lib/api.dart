@@ -171,10 +171,17 @@ class Veterinarian {
   String getEmergencyAvailabilityToday() {
     if (emergencyAvailability != null) {
       for (var item in emergencyAvailability!) {
-        String startDate = item["start"];
-        String endDate = item["end"];
+        DateTime dateToday = DateTime.now();
 
-        return "${startDate.substring(11, 16)} - ${endDate.substring(11, 16)}";
+        String startDateRaw = item["start"];
+        String endDateRaw = item["end"];
+
+        DateTime startDate = DateTime.parse(startDateRaw);
+        DateTime endDate = DateTime.parse(endDateRaw);
+
+        if (dateToday.isAfter(startDate) && dateToday.isBefore(endDate)) {
+          return "${DateFormat.Hm().format(startDate)} - ${DateFormat.Hm().format(endDate)}";
+        }
       }
     }
 
