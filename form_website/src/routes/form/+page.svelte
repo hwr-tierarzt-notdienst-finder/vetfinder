@@ -51,11 +51,8 @@
 			if (vetToken) {
 				const vet = await getVetWithToken(vetToken);
 
-				if (vet === null) {
-					goto('/');
-				} else {
+				if (vet !== null) {
 					console.log(vet);
-					// TODO: mapping
 
 					clinicName = vet.contact.clinicName;
 					email = vet.contact.email;
@@ -93,6 +90,8 @@
 						emergencyTimes = [];
 					}
 				}
+			} else {
+				goto('/');
 			}
 
 			availableTreatments = await getTreatments();
