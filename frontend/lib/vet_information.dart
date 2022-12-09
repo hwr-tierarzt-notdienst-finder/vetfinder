@@ -362,7 +362,7 @@ class _VetInformationState extends State<VetInformation> {
                               _showScheduleDialogRegular(context, id),
                           icon: const Icon(Icons.schedule_outlined),
                           label: Text(
-                            'vet_information.open_schedule'.tr(),
+                            'vet_information.open_schedule_week'.tr(),
                             style: const TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 14,
