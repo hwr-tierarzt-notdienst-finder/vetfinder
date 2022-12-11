@@ -44,7 +44,7 @@ def send_registration_email(
 def get_vet_by_form_user(
         jwt: str,
 ) -> Vet:
-    access_info = _allow_access(jwt, "form_user")
+    access_info = allow_access_and_get_info(jwt, "form_user")
 
     return db.get_vet_by_id(access_info.visibility, access_info.id)
 
@@ -53,7 +53,7 @@ def create_or_update_vet_by_form_user(
         jwt: str,
         vet: VetCreateOrOverwrite,
 ) -> Vet:
-    access_info = _allow_access(jwt, "form_user")
+    access_info = allow_access_and_get_info(jwt, "form_user")
 
     vet = normalization.vet.normalize(vet)
 
@@ -86,7 +86,7 @@ def create_or_update_vet_by_form_user(
 
 
 def grant_vet_verification_by_content_management(jwt: str) -> Vet:
-    access_info = _allow_access(jwt, "content_management")
+    access_info = allow_access_and_get_info(jwt, "content_management")
 
     return db.change_vet_verification_status_by_id_if_exists(
         access_info.visibility,
@@ -96,7 +96,7 @@ def grant_vet_verification_by_content_management(jwt: str) -> Vet:
 
 
 def revoke_vet_verification_by_content_management(jwt: str) -> Vet:
-    access_info = _allow_access(jwt, "content_management")
+    access_info = allow_access_and_get_info(jwt, "content_management")
 
     return db.change_vet_verification_status_by_id_if_exists(
         access_info.visibility,
@@ -108,7 +108,7 @@ def revoke_vet_verification_by_content_management(jwt: str) -> Vet:
 def delete_vet_by_content_management(
         jwt: str
 ) -> None:
-    access_info = _allow_access(jwt, "content_management")
+    access_info = allow_access_and_get_info(jwt, "content_management")
 
     return db.delete_vet_by_id_if_exists(
         access_info.visibility,
@@ -116,23 +116,7 @@ def delete_vet_by_content_management(
     )
 
 
-def _generate_new_id() -> str:
-    return str(uuid.uuid4())
-
-
-def _generate_access_token(
-        id_: str,
-        role: Role,
-        visibility: VetVisibility,
-) -> str:
-    return auth.generate_jwt({
-        "sub": id_,
-        "role": role,
-        "visibility": visibility,
-    })
-
-
-def _allow_access(
+def allow_access_and_get_info(
         token: str,
         expected_role: Role,
 ) -> _AccessInfo:
@@ -157,3 +141,30 @@ def _allow_access(
             f"Could not allow access as role '{expected_role}'. "
             f"Incomplete JWT payload"
         ) from err
+
+
+def access_is_allowed(
+        token: str,
+        expected_role: Role,
+) -> bool:
+    try:
+        allow_access_and_get_info(token, expected_role)
+        return True
+    except AccessDenied:
+        return False
+
+
+def _generate_new_id() -> str:
+    return str(uuid.uuid4())
+
+
+def _generate_access_token(
+        id_: str,
+        role: Role,
+        visibility: VetVisibility,
+) -> str:
+    return auth.generate_jwt({
+        "sub": id_,
+        "role": role,
+        "visibility": visibility,
+    })

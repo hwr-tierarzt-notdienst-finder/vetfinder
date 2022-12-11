@@ -1,3 +1,5 @@
+from contextlib import contextmanager
+from dataclasses import dataclass
 from typing import Any
 
 from utils import template
@@ -21,10 +23,21 @@ from . import _core as core
 from ._errors import FailedToSend
 
 
+@dataclass(frozen=True)
+class Config:
+    send_mail: core.MailSender = core.send_mail
+
+
+_default_config = Config()
+
+
 def send_vet_registration(
         to: str,
         registration_token: str,
+        config_: Config | None = None,
 ) -> None:
+    config_ = _ensure_config(config_)
+
     template_json_file_name = "vet_registration"
     template_fill_obj = {
         "human_readable_project_name": config.get().human_readable_project_name,
@@ -37,7 +50,7 @@ def send_vet_registration(
         )
     }
 
-    core.send_mail(
+    config_.send_mail(
         to,
         template_json_file_name,
         template_fill_obj
@@ -51,7 +64,10 @@ def send_vet_management(
         delete_url: str,
         vet_id: str,
         vet_fields: dict[str, Any],
+        config_: Config | None = None,
 ) -> None:
+    config_ = _ensure_config(config_)
+
     template_json_file_name = "vet_management"
     template_fill_obj = {
         "human_readable_project_name": config.get().human_readable_project_name,
@@ -65,11 +81,30 @@ def send_vet_management(
         ])
     }
 
-    core.send_mail(
+    config_.send_mail(
         to,
         template_json_file_name,
         template_fill_obj,
     )
+
+
+@contextmanager
+def use_temp_default_config(temp_config: Config) -> None:
+    global _default_config
+
+    old_config = _default_config
+
+    _default_config = temp_config
+
+    yield
+
+    _default_config = old_config
+
+
+def _ensure_config(config_: Config | None) -> Config:
+    global _default_config
+
+    return config_ or _default_config
 
 
 if __name__ == "__main__":
@@ -79,7 +114,7 @@ if __name__ == "__main__":
 
         to = input("Enter recipient email address: ")
 
-        send_vet_registration(to)
+        send_vet_registration(to, "invalid_token")
 
 
     manually_test_send_vet_registration()

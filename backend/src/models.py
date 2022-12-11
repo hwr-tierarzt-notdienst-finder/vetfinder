@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from datetime import datetime
 from enum import Enum
-from typing import TypeVar, Literal, TypeAlias
+from typing import TypeVar, Literal
 
 from pydantic.config import BaseConfig
 from pydantic.main import BaseModel
@@ -12,8 +12,7 @@ from typing_extensions import Annotated
 from pydantic import Field as PydanticField
 
 from utils import string_
-from types_ import Timezone, Region
-
+from types_ import Timezone, Region, Weekday
 
 _T = TypeVar("_T")
 
@@ -162,9 +161,6 @@ class AvailabilityConditionTimeSpanDuringDay(TimezoneAware):
             f"end_time='{self.end_time}';"
             f"timezone='{self.timezone}'"
         )
-
-
-Weekday: TypeAlias = Literal["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
 
 
 class AvailabilityConditionWeekdaysSpan(TimezoneAware):

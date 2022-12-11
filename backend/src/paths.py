@@ -39,8 +39,3 @@ def find_backend() -> Path:
 @cache.return_singleton
 def find_logs() -> Path:
     return find_backend() / "logs"
-
-
-@cache.return_singleton
-def find_secrets() -> Path:
-    return find_backend() / "secrets"
