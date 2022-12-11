@@ -2,10 +2,25 @@
 	import '../app.css';
 	import { themeChange } from 'theme-change';
 	import { onMount } from 'svelte';
+	import { sendVetRegistrationEmail } from '../api';
+	import { goto } from '$app/navigation';
 
 	onMount(() => {
 		themeChange(false);
 	});
+
+	let registrationEmail: string = '';
+
+	function regsiter() {
+		if (registrationEmail) {
+			sendVetRegistrationEmail(registrationEmail);
+			registrationEmail = '';
+		}
+	}
+
+	function goToHome() {
+		goto('/');
+	}
 </script>
 
 <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
@@ -13,6 +28,48 @@
 <!-- svelte-ignore a11y-missing-attribute -->
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <div class="w-full h-screen table m-0">
+	<!-- Register modal -->
+	<input type="checkbox" id="email-registration" class="modal-toggle" />
+	<div class="modal modal-bottom sm:modal-middle">
+		<div class="modal-box">
+			<h3 class="font-bold text-lg">Registrierung</h3>
+			<p class="py-4">
+				Bitte geben Sie Ihre E-Mail an und drücken Sie auf "Registrieren". Sie bekommen anschließend
+				eine E-Mail, die es Ihnen ermöglicht, sich in unser System einzutragen.
+			</p>
+			<div class="form-control w-full max-w-xs">
+				<!-- svelte-ignore a11y-label-has-associated-control -->
+				<label class="label">
+					<span class="label-text">E-Mail</span>
+				</label>
+				<input
+					placeholder="Hier eingeben"
+					type="email"
+					bind:value={registrationEmail}
+					class="input input-bordered w-full max-w-xs"
+				/>
+			</div>
+			<div class="modal-action">
+				<label for="email-registration" class="btn btn-ghost">Schließen</label>
+				<label for="email-registration" class="btn" on:click={regsiter}>Registrieren</label>
+			</div>
+		</div>
+	</div>
+	<!-- Register modal -->
+	<!-- Success modal -->
+	<input type="checkbox" id="change-success-modal" class="modal-toggle" />
+	<div class="modal modal-bottom sm:modal-middle">
+		<div class="modal-box">
+			<h3 class="font-bold text-lg">Änderung erfolgreich</h3>
+			<p class="py-4">Ihre Änderung an Ihren Daten war erfolgreich.</p>
+			<div class="modal-action">
+				<label for="change-success-modal" class="btn btn-success" on:click={goToHome}
+					>Schließen</label
+				>
+			</div>
+		</div>
+	</div>
+	<!-- Success modal -->
 	<div class="navbar bg-base-100">
 		<div class="navbar-start">
 			<div class="dropdown">

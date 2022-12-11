@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { fetchPostFormData } from '../../api';
+	import { createOrOverwriteVet, getTreatments, getVetWithToken } from '../../api';
 	import {
 		type DaySelectionInformation,
 		type EmergencyTime,
@@ -15,31 +15,94 @@
 		type EmergencyTimeTemplate,
 		createDefaultEmergencyTimeTemplate,
 		createEmergencyTimeFromTemplate,
-		type FormDataRequest,
+		type Vet,
 		type TreatmentState,
-		Treatments,
 		TreatmentLabels,
-		treatmentStateToArray,
 		type EmergencyTimeRequest,
 		convertEmergencyTimeToRequest,
 		type FormOfAddress,
 		FormOfAddressLabels,
 		type Title,
-		TitleLabels
+		TitleLabels,
+		compareTime,
+		convertTreatmentStateToArray,
+		convertArrayToTreatmentState,
+		convertEmergencyTimeRequestToEmergencyTime
 	} from '../../types';
 
 	import { page } from '$app/stores';
 	import Input from '../../components/Input.svelte';
+	import { goto } from '$app/navigation';
 
+	let loading: boolean = true;
 	let vetToken: string | null = null;
 
-	onMount(() => {
-		vetToken = $page.url.searchParams.get('vetToken');
-	});
+	let availableTreatments: string[] = [];
 
 	let clinicName: string = '';
 	let email: string = '';
 	let telephone: string = '';
+
+	onMount(() => {
+		email = $page.url.searchParams.get('email') || '';
+		vetToken = $page.url.searchParams.get('access-token');
+
+		(async () => {
+			if (vetToken) {
+				availableTreatments = await getTreatments();
+
+				for (const treatment of availableTreatments) {
+					selectedTreatments[treatment] = false;
+				}
+
+				const vet = await getVetWithToken(vetToken);
+
+				if (vet !== null) {
+					console.log(vet);
+
+					clinicName = vet.contact.clinicName;
+					email = vet.contact.email;
+					telephone = vet.contact.telephone;
+
+					selectedFormOfAddress = vet.name.formOfAddress || 'not_specified';
+					selectedTitle = vet.name.title || 'not_specified';
+					firstName = vet.name.firstName;
+					lastName = vet.name.lastName;
+
+					street = vet.address.street;
+					houseNumber = vet.address.number;
+					city = vet.address.city;
+					zipCode = vet.address.zipCode;
+
+					selectedTreatments = convertArrayToTreatmentState(vet.treatments.treatments);
+					otherTreatmentInformation = '';
+					treatmentNote = '';
+
+					for (const day of Days) {
+						if (vet.openingHours[day] === undefined) {
+							dayClosed[day] = true;
+						} else {
+							openingHoursFrom[day] = vet.openingHours[day]!.from;
+							openingHoursTo[day] = vet.openingHours[day]!.to;
+							dayClosed[day] = false;
+						}
+					}
+
+					if (vet.emergencyTimes) {
+						emergencyTimes = vet.emergencyTimes.map((request) =>
+							convertEmergencyTimeRequestToEmergencyTime(request)
+						);
+					} else {
+						emergencyTimes = [];
+					}
+				}
+			} else {
+				goto('/');
+			}
+
+			loading = false;
+		})();
+	});
 
 	let selectedFormOfAddress: FormOfAddress = 'not_specified';
 	let selectedTitle: Title = 'not_specified';
@@ -49,49 +112,43 @@
 	let street: string = '';
 	let houseNumber: string = '';
 	let city: string = '';
-	let postCode: string = '';
+	let zipCode: string = '';
 
-	let selectedTreatments: TreatmentState = {
-		dog: false,
-		cat: false,
-		horse: false,
-		small_animals: false,
-		other: false
-	};
+	let selectedTreatments: TreatmentState = {};
 
-	let otherTreatmentInformation: string = '';
-	let treatmentNote: string = '';
+	let otherTreatmentInformation: string = ''; // currently not supported by the backend
+	let treatmentNote: string = ''; // currently not supported by the backend
 
-	const openingHoursFrom: OpeningHours = {
-		monday: undefined,
-		tuesday: undefined,
-		wednesday: undefined,
-		thursday: undefined,
-		friday: undefined,
-		saturday: undefined,
-		sunday: undefined
+	let openingHoursFrom: OpeningHours = {
+		Mon: undefined,
+		Tue: undefined,
+		Wed: undefined,
+		Thu: undefined,
+		Fri: undefined,
+		Sat: undefined,
+		Sun: undefined
 	};
-	const openingHoursTo: OpeningHours = {
-		monday: undefined,
-		tuesday: undefined,
-		wednesday: undefined,
-		thursday: undefined,
-		friday: undefined,
-		saturday: undefined,
-		sunday: undefined
+	let openingHoursTo: OpeningHours = {
+		Mon: undefined,
+		Tue: undefined,
+		Wed: undefined,
+		Thu: undefined,
+		Fri: undefined,
+		Sat: undefined,
+		Sun: undefined
 	};
-	const dayClosed: DaySelectionInformation = {
-		monday: true,
-		tuesday: true,
-		wednesday: true,
-		thursday: true,
-		friday: true,
-		saturday: true,
-		sunday: true
+	let dayClosed: DaySelectionInformation = {
+		Mon: true,
+		Tue: true,
+		Wed: true,
+		Thu: true,
+		Fri: true,
+		Sat: true,
+		Sun: true
 	};
 
 	function getOpeningHoursOfDay(day: Day): OpeningHoursInformation | undefined {
-		if (openingHoursFrom[day] == undefined || openingHoursTo[day] == undefined) {
+		if (openingHoursFrom[day] === undefined || openingHoursTo[day] === undefined) {
 			return undefined;
 		}
 
@@ -103,13 +160,13 @@
 
 	function getOpeningHoursOverview(): OpeningHoursOverview {
 		let overview: OpeningHoursOverview = {
-			monday: undefined,
-			tuesday: undefined,
-			wednesday: undefined,
-			thursday: undefined,
-			friday: undefined,
-			saturday: undefined,
-			sunday: undefined
+			Mon: undefined,
+			Tue: undefined,
+			Wed: undefined,
+			Thu: undefined,
+			Fri: undefined,
+			Sat: undefined,
+			Sun: undefined
 		};
 
 		for (const day of Days) {
@@ -117,6 +174,62 @@
 		}
 
 		return overview;
+	}
+
+	function checkInputError(): string | null {
+		if (clinicName.length === 0) {
+			return 'Klinikname fehlt!';
+		} else if (email.length === 0) {
+			return 'E-Mail fehlt!';
+		} else if (telephone.length === 0) {
+			return 'Telefonnummer fehlt!';
+		} else if (firstName.length === 0) {
+			return 'Vorname fehlt!';
+		} else if (lastName.length === 0) {
+			return 'Nachname fehlt!';
+		} else if (street.length === 0) {
+			return 'Straße fehlt!';
+		} else if (houseNumber.length === 0) {
+			return 'Hausnummer fehlt!';
+		} else if (city.length === 0) {
+			return 'Stadt fehlt!';
+		} else if (zipCode.length === 0) {
+			return 'Postleitzahl fehlt!';
+		}
+
+		return null;
+	}
+
+	function checkTreatmentsError(treatments: string[]): string | null {
+		if (treatments.length === 0) {
+			return 'Wählen Sie bitte mindestens eine Tierart, die Sie behandeln, aus!';
+		} else if (treatments.indexOf('misc') !== -1 && otherTreatmentInformation.length === 0) {
+			return 'Spezifizieren Sie "Sonstige" bei Ihren Behandlungen!';
+		}
+		return null;
+	}
+
+	function checkOpeningHourError(): string | null {
+		for (const day of Days) {
+			if (dayClosed[day]) continue;
+
+			if (openingHoursFrom[day] === undefined && openingHoursTo[day] === undefined) {
+				return `Öffnungszeiten am ${DayLabels[day]} fehlen!`;
+			} else if (openingHoursFrom[day] === undefined && openingHoursTo[day] !== undefined) {
+				return `Öffnungszeit am ${DayLabels[day]} fehlt!`;
+			} else if (openingHoursFrom[day] !== undefined && openingHoursTo[day] === undefined) {
+				return `Schließzeit am ${DayLabels[day]} fehlt!`;
+			} else if (openingHoursFrom[day] !== undefined && openingHoursTo[day] !== undefined) {
+				const compare = compareTime(openingHoursFrom[day]!, openingHoursTo[day]!);
+				if (compare === 1) {
+					return `Die Öffnungszeit am ${DayLabels[day]} muss vor der Schließzeit liegen!`;
+				} else if (compare === 0) {
+					return `Die Öffnungszeit und Schließzeit am ${DayLabels[day]} müssen sich unterscheiden!`;
+				}
+			}
+		}
+
+		return null;
 	}
 
 	let newEmergencyTimeTemplate: EmergencyTimeTemplate = createDefaultEmergencyTimeTemplate();
@@ -131,18 +244,55 @@
 
 	function addEmergencyTime() {
 		const emergencyTime = createEmergencyTimeFromTemplate(newEmergencyTimeTemplate);
+
+		if (emergencyTime.days.length === 0) {
+			showError('Wähle Sie bitte mindestens einen Wochentag aus!');
+			return;
+		}
+
+		if (emergencyTime.startDate.getTime() > emergencyTime.endDate.getTime()) {
+			showError('Das Startdatum muss vor der Enddatum liegen!');
+			return;
+		}
+
+		if (emergencyTime.fromTime.getTime() > emergencyTime.toTime.getTime()) {
+			showError('Die Startöffnungszeit muss vor der Endöffnungszeit liegen!');
+			return;
+		}
+
 		emergencyTimes.push(emergencyTime);
 		emergencyTimes = emergencyTimes;
 		newEmergencyTimeTemplate = createDefaultEmergencyTimeTemplate();
 	}
 
-	function sendFormData() {
-		const treatments = treatmentStateToArray(selectedTreatments);
+	async function sendVet() {
+		const inputErrors = checkInputError();
+
+		if (inputErrors !== null) {
+			showError(inputErrors);
+			return;
+		}
+
+		const treatments = convertTreatmentStateToArray(selectedTreatments);
+		const treatmentsError = checkTreatmentsError(treatments);
+
+		if (treatmentsError !== null) {
+			showError(treatmentsError);
+			return;
+		}
+
+		const openingHoursError = checkOpeningHourError();
+
+		if (openingHoursError !== null) {
+			showError(openingHoursError);
+			return;
+		}
+
 		const emergencyTimeRequests: EmergencyTimeRequest[] = emergencyTimes.map((emergencyTime) =>
 			convertEmergencyTimeToRequest(emergencyTime)
 		);
 
-		const request: FormDataRequest = {
+		const vet: Vet = {
 			contact: {
 				clinicName: clinicName,
 				email: email,
@@ -159,7 +309,7 @@
 				street: street,
 				number: houseNumber,
 				city: city,
-				postCode: postCode
+				zipCode: zipCode
 			},
 			treatments: {
 				treatments: treatments,
@@ -167,12 +317,60 @@
 				note: treatmentNote
 			},
 			openingHours: getOpeningHoursOverview(),
-			emergencyTimes: emergencyTimeRequests
+			emergencyTimes: emergencyTimeRequests,
+			timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
 		};
 
-		fetchPostFormData(request);
+		console.log(vet);
+
+		const success = await createOrOverwriteVet(vet, vetToken!);
+		const modalElement = document.getElementById('change-success-modal');
+
+		if (success) {
+			if (modalElement !== null) {
+				(modalElement as HTMLInputElement).checked = true;
+			}
+		} else {
+			showError('Anfrage zur Änderung fehlgeschlagen!');
+		}
+
+	}
+
+	let timer: NodeJS.Timer | null = null;
+	let error: string = '';
+	const ErrorTime: number = 5000;
+
+	function showError(message: string) {
+		if (timer !== null) {
+			clearTimeout(timer);
+		}
+
+		error = message;
+		timer = setTimeout(() => {
+			error = '';
+		}, ErrorTime);
 	}
 </script>
+
+{#if error}
+	<div class="alert alert-error shadow-lg w-1/2 fixed top-5 right-5">
+		<div>
+			<svg
+				xmlns="http://www.w3.org/2000/svg"
+				class="stroke-current flex-shrink-0 h-6 w-6"
+				fill="none"
+				viewBox="0 0 24 24"
+				><path
+					stroke-linecap="round"
+					stroke-linejoin="round"
+					stroke-width="2"
+					d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+				/></svg
+			>
+			<span>{error}</span>
+		</div>
+	</div>
+{/if}
 
 <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
 <!-- svelte-ignore a11y-label-has-associated-control -->
@@ -180,25 +378,40 @@
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <div class="mt-10 flex min-w-full justify-center">
 	<div class="flex flex-col gap-10 justify-center items-center">
-		<div class="p-4 rounded-xl flex flex-col gap-2 justify-center items-center bg-base-200">
-			{#if vetToken}
-				<h1 class="text-2xl font-bold">Willkommen zurück!</h1>
-				<p class="text-xl">Hier kannst du deine Daten abändern.</p>
-			{:else}
-				<h1 class="text-2xl font-bold">Hallo!</h1>
-				<p class="text-xl">Vielen Dank, dass Sie sich in unserem System eintragen wollen.</p>
-				<p class="text-xl">Der Schutz Ihrer Daten ist uns sehr wichtig.</p>
-				<p class="text-xl">Wir gehen verantwortungsvoll mit Ihren Daten um.</p>
-				<p class="text-xl">Unter anderem werden Ihre Daten verschlüsselt an uns gesendet.</p>
-			{/if}
-		</div>
+		{#if !loading}
+			<div class="p-4 rounded-xl flex flex-col gap-2 justify-center items-center bg-base-200">
+				{#if vetToken}
+					<h1 class="text-2xl font-bold">Willkommen zurück!</h1>
+					<p class="text-xl">Hier kannst du deine Daten abändern.</p>
+				{:else}
+					<h1 class="text-2xl font-bold">Hallo!</h1>
+					<p class="text-xl">Vielen Dank, dass Sie sich in unserem System eintragen wollen.</p>
+					<p class="text-xl">Der Schutz Ihrer Daten ist uns sehr wichtig.</p>
+					<p class="text-xl">Wir gehen verantwortungsvoll mit Ihren Daten um.</p>
+					<p class="text-xl">Unter anderem werden Ihre Daten verschlüsselt an uns gesendet.</p>
+				{/if}
+			</div>
+		{/if}
 		<!-- Contact -->
 		<div class="section">
 			<h1 class="text-2xl font-bold">Kontaktdaten</h1>
 			<div class="flex gap-4">
-				<Input label="Klinikname" bind:value={clinicName} type="text" placeholder="Hier eingeben" />
-				<Input label="E-Mail" bind:value={email} type="email" placeholder="Hier eingeben" />
 				<Input
+					required
+					label="Klinikname"
+					bind:value={clinicName}
+					type="text"
+					placeholder="Hier eingeben"
+				/>
+				<Input
+					required
+					label="E-Mail"
+					bind:value={email}
+					type="email"
+					placeholder="Hier eingeben"
+				/>
+				<Input
+					required
 					label="Telefonnummer"
 					bind:value={telephone}
 					type="tel"
@@ -259,8 +472,20 @@
 						</div>
 					</div>
 				</div>
-				<Input label="Vorname" bind:value={firstName} type="text" placeholder="Hier eingeben" />
-				<Input label="Nachname" bind:value={lastName} type="text" placeholder="Hier eingeben" />
+				<Input
+					required
+					label="Vorname"
+					bind:value={firstName}
+					type="text"
+					placeholder="Hier eingeben"
+				/>
+				<Input
+					required
+					label="Nachname"
+					bind:value={lastName}
+					type="text"
+					placeholder="Hier eingeben"
+				/>
 			</div>
 		</div>
 		<div class="divider" />
@@ -268,15 +493,28 @@
 		<div class="section">
 			<h1 class="text-2xl font-bold">Adresse</h1>
 			<div class="flex gap-4">
-				<Input label="Straße" bind:value={street} type="text" placeholder="Hier eingeben" />
 				<Input
+					required
+					label="Straße"
+					bind:value={street}
+					type="text"
+					placeholder="Hier eingeben"
+				/>
+				<Input
+					required
 					label="Hausnummer"
 					bind:value={houseNumber}
 					type="text"
 					placeholder="Hier eingeben"
 				/>
-				<Input label="Stadt" bind:value={city} type="text" placeholder="Hier eingeben" />
-				<Input label="Postleitzahl" bind:value={postCode} type="text" placeholder="Hier eingeben" />
+				<Input required label="Stadt" bind:value={city} type="text" placeholder="Hier eingeben" />
+				<Input
+					required
+					label="Postleitzahl"
+					bind:value={zipCode}
+					type="text"
+					placeholder="Hier eingeben"
+				/>
 			</div>
 		</div>
 		<div class="divider" />
@@ -289,7 +527,7 @@
 						<span class="label-text">Tierarten</span>
 					</label>
 					<div class="form-control flex-row flex-wrap gap-4">
-						{#each Treatments as treatment}
+						{#each availableTreatments as treatment}
 							<label class="label justify-start gap-2 cursor-pointer">
 								<input
 									type="checkbox"
@@ -300,7 +538,7 @@
 							</label>
 						{/each}
 					</div>
-					{#if selectedTreatments['other']}
+					{#if selectedTreatments['misc']}
 						<div class="mt-2 form-control w-full">
 							<input
 								bind:value={otherTreatmentInformation}
@@ -475,7 +713,9 @@
 				</table>
 			</div>
 		</div>
-		<button class="btn btn-primary btn-lg" on:click={sendFormData}>Eintragen</button>
+		<button class="btn btn-primary btn-lg" on:click={sendVet}
+			>{vetToken ? 'Aktualisieren' : 'Eintragen'}</button
+		>
 	</div>
 </div>
 
