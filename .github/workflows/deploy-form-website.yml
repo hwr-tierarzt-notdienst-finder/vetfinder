@@ -1,0 +1,21 @@
+name: deploy-from-website
+run-name: Deploying form website on production server (by @${{ github.actor }})
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - form_website/**
+jobs:
+  re-deploy:
+    runs-on: prod-server
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          path: '.'
+          # We should start from a clean repo in the future
+          # and store data somewhere else.
+          # TODO: set to true
+          clean: false
+      - name: Rebuild and restart form website containers
+        run: ./form_website/bin/rebuild-and-deploy.sh

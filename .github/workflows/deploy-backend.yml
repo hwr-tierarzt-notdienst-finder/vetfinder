@@ -1,9 +1,13 @@
-name: deploy-prod
-run-name: Deploying on production server (by ${{ github.actor }})
+name: deploy-backend
+run-name: Deploying backend on production server (by @${{ github.actor }})
 on:
   push:
     branches:
       - main
+    paths:
+      - backend/**
+      - shared-bash.sh
+
 jobs:
   re-deploy:
     runs-on: prod-server
@@ -11,6 +15,9 @@ jobs:
       - uses: actions/checkout@v3
         with:
           path: '.'
+          # We should start from a clean repo in the future
+          # and store data somewhere else.
+          # TODO: set to true
           clean: false
       - name: Remove old backend app container
         run: ./backend/bin/app-remove-prod-container.sh --skip-if-container-does-not-exist
@@ -18,5 +25,3 @@ jobs:
         run: ./backend/bin/mongo-remove-prod-container.sh --skip-if-container-does-not-exist
       - name: Restart backend containers
         run: ./backend/bin/start-prod.sh --run-detached
-      - name: Rebuild and restart form website containers
-        run: ./form_website/bin/rebuild-and-deploy.sh
