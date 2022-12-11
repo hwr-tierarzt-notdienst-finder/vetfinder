@@ -2,13 +2,12 @@ from contextlib import contextmanager, AbstractContextManager
 import os
 from typing import Callable
 
+from fastapi.testclient import TestClient
 import pytest
 
+import api
 import config
 import env
-
-
-import pytest
 
 
 def pytest_addoption(parser):
@@ -55,3 +54,8 @@ def override_env_context() -> Callable[[env.Context], AbstractContextManager[env
             os.environ["ENV"] = original_ctx
 
     return override
+
+
+@pytest.fixture(scope="module")
+def fastapi_client() -> TestClient:
+    return TestClient(api.api)
