@@ -8,18 +8,6 @@ import 'package:frontend/utils/constants.dart';
 import 'package:frontend/components/schedule_dialog_emergency.dart';
 import 'package:frontend/components/schedule_dialog_regular.dart';
 
-bool isDarkMode = SharedPrefs().isDarkMode;
-ThemeData darkThemeVet = ThemeData(
-  brightness: Brightness.dark,
-  primarySwatch: Colors.grey,
-);
-ThemeData lightThemeVet = ThemeData(
-  brightness: Brightness.light,
-  primarySwatch: Colors.red,
-  buttonTheme: const ButtonThemeData(buttonColor: Colors.red),
-  scaffoldBackgroundColor: const Color(0xfff1f1f1),
-);
-
 class VetInformationScreenArguments {
   final String id;
   VetInformationScreenArguments(this.id);
