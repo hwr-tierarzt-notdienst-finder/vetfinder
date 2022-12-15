@@ -34,23 +34,47 @@ Working through the list somewhat chronologically me be a good way to start.
 | logs              | Utilities for creating loggers and log messages that will be saved in files in `/backend/logs`.                                                                                                                                                                                                                                                            |
 
 
-# Development Environment Setup
+# Development
+
+## Environment Setup
 
 Prerequisites:
 - You are able to use a bash shell in your development environment
 
+---
+
 1. Install the newest python version as specified by `.python-version-match` and make sure the executable
    `python<major version number>` can be executed by your shell
 2. [Install docker](https://docs.docker.com/engine/install/) and make sure it is accessible on your shell
-4. Run `./bin/setup-env.sh` in the `backend` directory. This should create and activate a python virtual environment 
+3. Run `./bin/setup-env.sh` in the `backend` directory. This should create and activate a python virtual environment 
    and install the requirements listed in `backend/requirements.txt` and `backend/dev-requirements.txt`
-5. Run `./bin/mongo-create-dev-container.sh`. This should create a database container running MongoDB.
+4. Run `./bin/mongo-create-dev-container.sh`. This should create a database container running MongoDB.
    Confirm the container is running with `docker ps`. You should see something similar to
    ```
    CONTAINER ID   IMAGE          COMMAND                  CREATED          STATUS          PORTS                                           NAMES
    26aa50764160   mongo:4.2.22   "docker-entrypoint.s…"   38 seconds ago   Up 38 seconds   0.0.0.0:27018->27017/tcp, :::27018->27017/tcp   tierarzt_notdienst_mongo_dev
    ```
-6. Run `./bin/start-dev.sh`. Now the API should be running at `http://127.0.0.1:8000` (visit `http://127.0.0.1:8000/docs`)
+5. Run `./bin/start-dev.sh`. Now the API should be running at `http://127.0.0.1:8000` (visit `http://127.0.0.1:8000/docs`)
+
+Because of permission problems you many need to remove and recreated the development database container
+between runs using `./bin/mongo-remove-dev-container.sh` and `./bin/mongo-create-dev-container.sh`.
+
+## Testing
+
+Run `./bin/test.sh`
+
+## Managing python dependencies
+
+Add/update/remove dependencies that will be used by the production server during runtime to `backend/requirements.in`
+and add/update/remove dependencies that are only used during development or testing to `backend/dev-requirements.in`.
+
+Now running `./bin/requirements-compile.sh` will update the 
+`backend/requirements.txt` and `backend/dev-requirements.txt` with pinned versions of all the
+dependencies that you added/updated and pinned versions of their sub-dependencies
+(This should keep your environment reproducible and try to 
+resolve conflicting sub-dependency version incompatibilities).
+
+Finally, run `./bin/requirements-install.sh` to install the newly updated dependencies in your virtual environment.
 
 
 # Production Server Setup
@@ -58,6 +82,8 @@ Prerequisites:
 Prerequisites:
 - Credentials for an SMTP-connection to an external email-provider of your choice
 - A domain and knowledge of how to set up a reverse proxy (such as [nginx](https://www.digitalocean.com/community/tutorials/how-to-configure-nginx-as-a-reverse-proxy-on-ubuntu-22-04))
+
+---
 
 1. Ask the old repository maintainers for permissions or fork the repo
 2. Choose a linux system of your choice (cloud, self-hosted, etc.) to run the server on
