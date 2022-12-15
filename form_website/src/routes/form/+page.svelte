@@ -48,56 +48,60 @@
 		vetToken = $page.url.searchParams.get('access-token');
 
 		(async () => {
-			if (vetToken) {
-				availableTreatments = await getTreatments();
-
-				for (const treatment of availableTreatments) {
-					selectedTreatments[treatment] = false;
-				}
-
-				const vet = await getVetWithToken(vetToken);
-
-				if (vet !== null) {
-					console.log(vet);
-
-					clinicName = vet.contact.clinicName;
-					email = vet.contact.email;
-					telephone = vet.contact.telephone;
-
-					selectedFormOfAddress = vet.name.formOfAddress || 'not_specified';
-					selectedTitle = vet.name.title || 'not_specified';
-					firstName = vet.name.firstName;
-					lastName = vet.name.lastName;
-
-					street = vet.address.street;
-					houseNumber = vet.address.number;
-					city = vet.address.city;
-					zipCode = vet.address.zipCode;
-
-					selectedTreatments = convertArrayToTreatmentState(vet.treatments.treatments);
-					otherTreatmentInformation = '';
-					treatmentNote = '';
-
-					for (const day of Days) {
-						if (vet.openingHours[day] === undefined) {
-							dayClosed[day] = true;
-						} else {
-							openingHoursFrom[day] = vet.openingHours[day]!.from;
-							openingHoursTo[day] = vet.openingHours[day]!.to;
-							dayClosed[day] = false;
-						}
-					}
-
-					if (vet.emergencyTimes) {
-						emergencyTimes = vet.emergencyTimes.map((request) =>
-							convertEmergencyTimeRequestToEmergencyTime(request)
-						);
-					} else {
-						emergencyTimes = [];
-					}
-				}
-			} else {
+			if (!vetToken) {
 				goto('/');
+				return;
+			}
+
+			const vet = await getVetWithToken(vetToken);
+
+			if (vet === null) {
+				goto('/');
+				return;
+			}
+
+			console.log(vet);
+
+			availableTreatments = await getTreatments();
+
+			for (const treatment of availableTreatments) {
+				selectedTreatments[treatment] = false;
+			}
+
+			clinicName = vet.contact.clinicName;
+			email = vet.contact.email;
+			telephone = vet.contact.telephone;
+
+			selectedFormOfAddress = vet.name.formOfAddress || 'not_specified';
+			selectedTitle = vet.name.title || 'not_specified';
+			firstName = vet.name.firstName;
+			lastName = vet.name.lastName;
+
+			street = vet.address.street;
+			houseNumber = vet.address.number;
+			city = vet.address.city;
+			zipCode = vet.address.zipCode;
+
+			selectedTreatments = convertArrayToTreatmentState(vet.treatments.treatments);
+			otherTreatmentInformation = '';
+			treatmentNote = '';
+
+			for (const day of Days) {
+				if (vet.openingHours[day] === undefined) {
+					dayClosed[day] = true;
+				} else {
+					openingHoursFrom[day] = vet.openingHours[day]!.from;
+					openingHoursTo[day] = vet.openingHours[day]!.to;
+					dayClosed[day] = false;
+				}
+			}
+
+			if (vet.emergencyTimes) {
+				emergencyTimes = vet.emergencyTimes.map((request) =>
+					convertEmergencyTimeRequestToEmergencyTime(request)
+				);
+			} else {
+				emergencyTimes = [];
 			}
 
 			loading = false;
@@ -378,344 +382,345 @@
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <div class="mt-10 flex min-w-full justify-center">
 	<div class="flex flex-col gap-10 justify-center items-center">
-		{#if !loading}
-			<div class="p-4 rounded-xl flex flex-col gap-2 justify-center items-center bg-base-200">
-				{#if vetToken}
-					<h1 class="text-2xl font-bold">Willkommen zurück!</h1>
-					<p class="text-xl">Hier kannst du deine Daten abändern.</p>
-				{:else}
-					<h1 class="text-2xl font-bold">Hallo!</h1>
-					<p class="text-xl">Vielen Dank, dass Sie sich in unserem System eintragen wollen.</p>
-					<p class="text-xl">Der Schutz Ihrer Daten ist uns sehr wichtig.</p>
-					<p class="text-xl">Wir gehen verantwortungsvoll mit Ihren Daten um.</p>
-					<p class="text-xl">Unter anderem werden Ihre Daten verschlüsselt an uns gesendet.</p>
-				{/if}
+		{#if loading}
+			<button class="btn btn-square btn-wide loading gap-2 p-2">Lade Daten</button>
+		{:else}
+			<div
+				class="max-w-lg p-4 rounded-xl flex flex-col gap-2 text-center justify-center items-center bg-base-200"
+			>
+				<h1 class="text-2xl font-bold">Hallo!</h1>
+				<p class="text-xl">
+					Vielen Dank, dass Sie sich in unserem System eintragen oder Ihre Daten aktualisieren
+					wollen.
+				</p>
+				<p class="text-xl">Der Schutz Ihrer Daten ist uns sehr wichtig.</p>
+				<p class="text-xl">Wir gehen verantwortungsvoll mit Ihren Daten um.</p>
+				<p class="text-xl">Unter anderem werden Ihre Daten verschlüsselt an uns gesendet.</p>
 			</div>
-		{/if}
-		<!-- Contact -->
-		<div class="section">
-			<h1 class="text-2xl font-bold">Kontaktdaten</h1>
-			<div class="flex gap-4">
-				<Input
-					required
-					label="Klinikname"
-					bind:value={clinicName}
-					type="text"
-					placeholder="Hier eingeben"
-				/>
-				<Input
-					required
-					label="E-Mail"
-					bind:value={email}
-					type="email"
-					placeholder="Hier eingeben"
-				/>
-				<Input
-					required
-					label="Telefonnummer"
-					bind:value={telephone}
-					type="tel"
-					placeholder="Hier eingeben"
-				/>
+			<!-- Contact -->
+			<div class="section">
+				<h1 class="text-2xl font-bold">Kontaktdaten</h1>
+				<div class="flex gap-4">
+					<Input
+						required
+						label="Klinikname"
+						bind:value={clinicName}
+						type="text"
+						placeholder="Hier eingeben"
+					/>
+					<Input
+						required
+						label="E-Mail"
+						bind:value={email}
+						type="email"
+						placeholder="Hier eingeben"
+					/>
+					<Input
+						required
+						label="Telefonnummer"
+						bind:value={telephone}
+						type="tel"
+						placeholder="Hier eingeben"
+					/>
+				</div>
 			</div>
-		</div>
-		<div class="divider" />
-		<!-- Name -->
-		<div class="section">
-			<h1 class="text-2xl font-bold">Vollständiger Name</h1>
-			<div class="flex gap-4">
-				<div class="form-control max-w-xs">
-					<label class="label">
-						<span class="label-text">Anrede</span>
-					</label>
-					<div class="flex">
-						<div class="dropdown dropdown-bottom">
-							<label tabindex="0" class="btn m-1"
-								>{selectedFormOfAddress
-									? FormOfAddressLabels[selectedFormOfAddress]
-									: 'Hier eingeben'}</label
-							>
-							<ul
-								tabindex="0"
-								class="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52"
-							>
-								{#each FormOfAddresses as formOfAddress}
-									<li>
-										<a on:click={() => (selectedFormOfAddress = formOfAddress)}
-											>{FormOfAddressLabels[formOfAddress]}</a
-										>
-									</li>
-								{/each}
-							</ul>
+			<div class="divider" />
+			<!-- Name -->
+			<div class="section">
+				<h1 class="text-2xl font-bold">Vollständiger Name</h1>
+				<div class="flex gap-4">
+					<div class="form-control max-w-xs">
+						<label class="label">
+							<span class="label-text">Anrede</span>
+						</label>
+						<div class="flex">
+							<div class="dropdown dropdown-bottom">
+								<label tabindex="0" class="btn m-1"
+									>{selectedFormOfAddress
+										? FormOfAddressLabels[selectedFormOfAddress]
+										: 'Hier eingeben'}</label
+								>
+								<ul
+									tabindex="0"
+									class="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52"
+								>
+									{#each FormOfAddresses as formOfAddress}
+										<li>
+											<a on:click={() => (selectedFormOfAddress = formOfAddress)}
+												>{FormOfAddressLabels[formOfAddress]}</a
+											>
+										</li>
+									{/each}
+								</ul>
+							</div>
 						</div>
 					</div>
-				</div>
-				<div class="form-control max-w-xs">
-					<label class="label">
-						<span class="label-text">Titel</span>
-					</label>
-					<div class="flex">
-						<div class="dropdown dropdown-bottom">
-							<label tabindex="0" class="btn m-1"
-								>{selectedTitle ? TitleLabels[selectedTitle] : 'Hier eingeben'}</label
-							>
-							<ul
-								tabindex="0"
-								class="dropdown-content  menu p-2 shadow bg-base-100 rounded-box w-52"
-							>
-								{#each Titles as title}
-									<li>
-										<a on:click={() => (selectedTitle = title)}>{TitleLabels[title]}</a>
-									</li>
-								{/each}
-							</ul>
+					<div class="form-control max-w-xs">
+						<label class="label">
+							<span class="label-text">Titel</span>
+						</label>
+						<div class="flex">
+							<div class="dropdown dropdown-bottom">
+								<label tabindex="0" class="btn m-1"
+									>{selectedTitle ? TitleLabels[selectedTitle] : 'Hier eingeben'}</label
+								>
+								<ul
+									tabindex="0"
+									class="dropdown-content  menu p-2 shadow bg-base-100 rounded-box w-52"
+								>
+									{#each Titles as title}
+										<li>
+											<a on:click={() => (selectedTitle = title)}>{TitleLabels[title]}</a>
+										</li>
+									{/each}
+								</ul>
+							</div>
 						</div>
 					</div>
+					<Input
+						required
+						label="Vorname"
+						bind:value={firstName}
+						type="text"
+						placeholder="Hier eingeben"
+					/>
+					<Input
+						required
+						label="Nachname"
+						bind:value={lastName}
+						type="text"
+						placeholder="Hier eingeben"
+					/>
 				</div>
-				<Input
-					required
-					label="Vorname"
-					bind:value={firstName}
-					type="text"
-					placeholder="Hier eingeben"
-				/>
-				<Input
-					required
-					label="Nachname"
-					bind:value={lastName}
-					type="text"
-					placeholder="Hier eingeben"
-				/>
 			</div>
-		</div>
-		<div class="divider" />
-		<!-- Adress -->
-		<div class="section">
-			<h1 class="text-2xl font-bold">Adresse</h1>
-			<div class="flex gap-4">
-				<Input
-					required
-					label="Straße"
-					bind:value={street}
-					type="text"
-					placeholder="Hier eingeben"
-				/>
-				<Input
-					required
-					label="Hausnummer"
-					bind:value={houseNumber}
-					type="text"
-					placeholder="Hier eingeben"
-				/>
-				<Input required label="Stadt" bind:value={city} type="text" placeholder="Hier eingeben" />
-				<Input
-					required
-					label="Postleitzahl"
-					bind:value={zipCode}
-					type="text"
-					placeholder="Hier eingeben"
-				/>
+			<div class="divider" />
+			<!-- Adress -->
+			<div class="section">
+				<h1 class="text-2xl font-bold">Adresse</h1>
+				<div class="flex gap-4">
+					<Input
+						required
+						label="Straße"
+						bind:value={street}
+						type="text"
+						placeholder="Hier eingeben"
+					/>
+					<Input
+						required
+						label="Hausnummer"
+						bind:value={houseNumber}
+						type="text"
+						placeholder="Hier eingeben"
+					/>
+					<Input required label="Stadt" bind:value={city} type="text" placeholder="Hier eingeben" />
+					<Input
+						required
+						label="Postleitzahl"
+						bind:value={zipCode}
+						type="text"
+						placeholder="Hier eingeben"
+					/>
+				</div>
 			</div>
-		</div>
-		<div class="divider" />
-		<!-- Treatments -->
-		<div class="section">
-			<h1 class="text-2xl font-bold">Behandlungen</h1>
-			<div class="flex gap-4">
-				<div class="form-control flex-col w-full max-w-xs">
-					<label class="label">
-						<span class="label-text">Tierarten</span>
-					</label>
-					<div class="form-control flex-row flex-wrap gap-4">
-						{#each availableTreatments as treatment}
-							<label class="label justify-start gap-2 cursor-pointer">
+			<div class="divider" />
+			<!-- Treatments -->
+			<div class="section">
+				<h1 class="text-2xl font-bold">Behandlungen</h1>
+				<div class="flex gap-4">
+					<div class="form-control flex-col w-full max-w-xs">
+						<label class="label">
+							<span class="label-text">Tierarten</span>
+						</label>
+						<div class="form-control flex-row flex-wrap gap-4">
+							{#each availableTreatments as treatment}
+								<label class="label justify-start gap-2 cursor-pointer">
+									<input
+										type="checkbox"
+										bind:checked={selectedTreatments[treatment]}
+										class="checkbox"
+									/>
+									<span class="label-text">{TreatmentLabels[treatment]}</span>
+								</label>
+							{/each}
+						</div>
+						{#if selectedTreatments['misc']}
+							<div class="mt-2 form-control w-full">
 								<input
-									type="checkbox"
-									bind:checked={selectedTreatments[treatment]}
-									class="checkbox"
+									bind:value={otherTreatmentInformation}
+									type="text"
+									placeholder="Hier eingeben"
+									class="input input-bordered w-full max-w-xs"
 								/>
-								<span class="label-text">{TreatmentLabels[treatment]}</span>
-							</label>
-						{/each}
+							</div>
+						{/if}
 					</div>
-					{#if selectedTreatments['misc']}
+					<div class="form-control flex-col w-full max-w-xs">
+						<label class="label">
+							<span class="label-text">Anmerkungen</span>
+						</label>
 						<div class="mt-2 form-control w-full">
 							<input
-								bind:value={otherTreatmentInformation}
+								bind:value={treatmentNote}
 								type="text"
-								placeholder="Hier eingeben"
+								placeholder="Anmerkungen..."
 								class="input input-bordered w-full max-w-xs"
 							/>
 						</div>
-					{/if}
-				</div>
-				<div class="form-control flex-col w-full max-w-xs">
-					<label class="label">
-						<span class="label-text">Anmerkungen</span>
-					</label>
-					<div class="mt-2 form-control w-full">
-						<input
-							bind:value={treatmentNote}
-							type="text"
-							placeholder="Anmerkungen..."
-							class="input input-bordered w-full max-w-xs"
-						/>
 					</div>
 				</div>
 			</div>
-		</div>
-		<div class="divider" />
-		<!-- Opening Hours -->
-		<div class="section">
-			<h1 class="text-2xl font-bold">Öffnungszeiten</h1>
-			<div class="w-full flex flex-col gap-4">
-				{#each Days as day}
-					<div class="form-control">
-						<label class="label">
-							<span class="label-text">{DayLabels[day]}</span>
-						</label>
-						<div class="flex gap-2">
+			<div class="divider" />
+			<!-- Opening Hours -->
+			<div class="section">
+				<h1 class="text-2xl font-bold">Öffnungszeiten</h1>
+				<div class="w-full flex flex-col gap-4">
+					{#each Days as day}
+						<div class="form-control">
 							<label class="label">
-								<span class="label-text">von</span>
+								<span class="label-text">{DayLabels[day]}</span>
 							</label>
-							<input
-								disabled={dayClosed[day]}
-								bind:value={openingHoursFrom[day]}
-								type="time"
-								class="input input-bordered w-full max-w-xs"
-							/>
-							<label class="label">
-								<span class="label-text">bis</span>
-							</label>
-							<input
-								disabled={dayClosed[day]}
-								bind:value={openingHoursTo[day]}
-								type="time"
-								class="input input-bordered w-full max-w-xs"
-							/>
-							<label class="label justify-start gap-2 cursor-pointer">
+							<div class="flex gap-2">
+								<label class="label">
+									<span class="label-text">von</span>
+								</label>
 								<input
-									type="checkbox"
-									bind:checked={dayClosed[day]}
-									class="checkbox"
-									on:input={() => {
-										openingHoursFrom[day] = undefined;
-										openingHoursTo[day] = undefined;
-									}}
+									disabled={dayClosed[day]}
+									bind:value={openingHoursFrom[day]}
+									type="time"
+									class="input input-bordered w-full max-w-xs"
 								/>
-								<span class="label-text">geschlossen</span>
-							</label>
+								<label class="label">
+									<span class="label-text">bis</span>
+								</label>
+								<input
+									disabled={dayClosed[day]}
+									bind:value={openingHoursTo[day]}
+									type="time"
+									class="input input-bordered w-full max-w-xs"
+								/>
+								<label class="label justify-start gap-2 cursor-pointer">
+									<input
+										type="checkbox"
+										bind:checked={dayClosed[day]}
+										class="checkbox"
+										on:input={() => {
+											openingHoursFrom[day] = undefined;
+											openingHoursTo[day] = undefined;
+										}}
+									/>
+									<span class="label-text">geschlossen</span>
+								</label>
+							</div>
 						</div>
-					</div>
-				{/each}
+					{/each}
+				</div>
 			</div>
-		</div>
-		<div class="divider" />
-		<!-- Emergency Times -->
-		<div class="w-full flex flex-col gap-2">
-			<h1 class="text-2xl font-bold">Notfallzeiten</h1>
-			<div class="overflow-x-auto overflow-y-auto">
-				<table class="table table-zebra w-full">
-					<thead>
-						<tr>
-							<th />
-							<th>Startdatum</th>
-							<th>Enddatum</th>
-							<th>Wochentage</th>
-							<th>Öffnungszeit (Start)</th>
-							<th>Öffnungszeit (Ende)</th>
-							<th />
-						</tr>
-					</thead>
-					<tbody>
-						{#each emergencyTimes as emergencyTime, index}
+			<div class="divider" />
+			<!-- Emergency Times -->
+			<div class="w-full flex flex-col gap-2">
+				<h1 class="text-2xl font-bold">Notfallzeiten</h1>
+				<div class="overflow-x-auto overflow-y-auto">
+					<table class="table table-zebra w-full">
+						<thead>
 							<tr>
-								<th>{index + 1}</th>
-								<td
-									>{emergencyTime.startDate.toLocaleDateString(undefined, {
-										dateStyle: 'medium'
-									})}</td
-								>
-								<td
-									>{emergencyTime.endDate.toLocaleDateString(undefined, {
-										dateStyle: 'medium'
-									})}</td
-								>
-								<td>{emergencyTime.days.map((day) => DayLabels[day]).join(', ')}</td>
-								<td
-									>{emergencyTime.fromTime.toLocaleTimeString(undefined, {
-										timeStyle: 'short'
-									})}</td
-								>
-								<td
-									>{emergencyTime.toTime.toLocaleTimeString(undefined, {
-										timeStyle: 'short'
-									})}</td
-								>
+								<th />
+								<th>Startdatum</th>
+								<th>Enddatum</th>
+								<th>Wochentage</th>
+								<th>Öffnungszeit (Start)</th>
+								<th>Öffnungszeit (Ende)</th>
+								<th />
+							</tr>
+						</thead>
+						<tbody>
+							{#each emergencyTimes as emergencyTime, index}
+								<tr>
+									<th>{index + 1}</th>
+									<td
+										>{emergencyTime.startDate.toLocaleDateString(undefined, {
+											dateStyle: 'medium'
+										})}</td
+									>
+									<td
+										>{emergencyTime.endDate.toLocaleDateString(undefined, {
+											dateStyle: 'medium'
+										})}</td
+									>
+									<td>{emergencyTime.days.map((day) => DayLabels[day]).join(', ')}</td>
+									<td
+										>{emergencyTime.fromTime.toLocaleTimeString(undefined, {
+											timeStyle: 'short'
+										})}</td
+									>
+									<td
+										>{emergencyTime.toTime.toLocaleTimeString(undefined, {
+											timeStyle: 'short'
+										})}</td
+									>
+									<td>
+										<button
+											class="btn btn-ghost"
+											on:click={() => deleteEmergencyTime(emergencyTime.id)}>Löschen</button
+										>
+									</td>
+								</tr>
+							{/each}
+							<tr>
+								<th>{emergencyTimes.length + 1}</th>
 								<td>
-									<button
-										class="btn btn-ghost"
-										on:click={() => deleteEmergencyTime(emergencyTime.id)}>Löschen</button
+									<input
+										bind:value={newEmergencyTimeTemplate.startDate}
+										type="date"
+										class="input input-bordered w-full max-w-xs"
+									/>
+								</td>
+								<td>
+									<input
+										bind:value={newEmergencyTimeTemplate.endDate}
+										type="date"
+										class="input input-bordered w-full max-w-xs"
+									/>
+								</td>
+								<td>
+									<div class="flex flex-wrap max-w-xs">
+										{#each Days as day}
+											<label class="label justify-start gap-2 cursor-pointer">
+												<input
+													type="checkbox"
+													bind:checked={newEmergencyTimeTemplate.days[day]}
+													class="checkbox"
+												/>
+												<span class="label-text">{DayLabels[day]}</span>
+											</label>
+										{/each}
+									</div>
+								</td>
+								<td>
+									<input
+										bind:value={newEmergencyTimeTemplate.fromTime}
+										type="time"
+										class="input input-bordered w-full max-w-xs"
+									/>
+								</td>
+								<td>
+									<input
+										bind:value={newEmergencyTimeTemplate.toTime}
+										type="time"
+										class="input input-bordered w-full max-w-xs"
+									/>
+								</td>
+								<td>
+									<button class="btn btn-ghost" on:click={() => addEmergencyTime()}
+										>Hinzufügen</button
 									>
 								</td>
 							</tr>
-						{/each}
-						<tr>
-							<th>{emergencyTimes.length + 1}</th>
-							<td>
-								<input
-									bind:value={newEmergencyTimeTemplate.startDate}
-									type="date"
-									class="input input-bordered w-full max-w-xs"
-								/>
-							</td>
-							<td>
-								<input
-									bind:value={newEmergencyTimeTemplate.endDate}
-									type="date"
-									class="input input-bordered w-full max-w-xs"
-								/>
-							</td>
-							<td>
-								<div class="flex flex-wrap max-w-xs">
-									{#each Days as day}
-										<label class="label justify-start gap-2 cursor-pointer">
-											<input
-												type="checkbox"
-												bind:checked={newEmergencyTimeTemplate.days[day]}
-												class="checkbox"
-											/>
-											<span class="label-text">{DayLabels[day]}</span>
-										</label>
-									{/each}
-								</div>
-							</td>
-							<td>
-								<input
-									bind:value={newEmergencyTimeTemplate.fromTime}
-									type="time"
-									class="input input-bordered w-full max-w-xs"
-								/>
-							</td>
-							<td>
-								<input
-									bind:value={newEmergencyTimeTemplate.toTime}
-									type="time"
-									class="input input-bordered w-full max-w-xs"
-								/>
-							</td>
-							<td>
-								<button class="btn btn-ghost" on:click={() => addEmergencyTime()}>Hinzufügen</button
-								>
-							</td>
-						</tr>
-					</tbody>
-				</table>
+						</tbody>
+					</table>
+				</div>
 			</div>
-		</div>
-		<button class="btn btn-primary btn-lg" on:click={sendVet}
-			>{vetToken ? 'Aktualisieren' : 'Eintragen'}</button
-		>
+			<button class="btn btn-primary btn-lg" on:click={sendVet}>Eintragen</button>
+		{/if}
 	</div>
 </div>
 
