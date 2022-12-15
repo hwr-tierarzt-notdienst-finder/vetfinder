@@ -60,14 +60,20 @@ export async function getVetWithToken(vetToken: string): Promise<Vet | null> {
             },
         })
             .then(response => {
-                if (response.status === 404) {
-                    resolve(null);
+                if (response.status !== 200) {
+                    return null;
                 } else {
                     return response.json();
                 }
             })
-            .then((request: FormDataRequest) => {
-                resolve(convertFormDataRequestToVet(request));
+            .then((request: FormDataRequest | null) => {
+
+                if (request === null) {
+                    resolve(null);
+                } else {
+                    resolve(convertFormDataRequestToVet(request));
+                }
+
             })
             .catch(error => {
                 console.error(error);
