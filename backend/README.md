@@ -11,6 +11,7 @@ Of course, you can also dive straight into reading the source code. We have trie
 the following list of modules in order of importance for understanding core functionality.
 Working through the list somewhat chronologically me be a good way to start.
 
+
 # Modules
 | name              | description                                                                                                                                                                                                                                                                                                                                                |
 |-------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -31,3 +32,49 @@ Working through the list somewhat chronologically me be a good way to start.
 | constants         | Custom global constants                                                                                                                                                                                                                                                                                                                                    |
 | utils             | General utilities that are not tied to any system specific implementation details                                                                                                                                                                                                                                                                          |
 | logs              | Utilities for creating loggers and log messages that will be saved in files in `/backend/logs`.                                                                                                                                                                                                                                                            |
+
+
+# Development Environment Setup
+
+Prerequisites:
+- You are able to use a bash shell in your development environment
+
+1. Install the newest python version as specified by `.python-version-match` and make sure the executable
+   `python<major version number>` can be executed by your shell
+2. [Install docker](https://docs.docker.com/engine/install/) and make sure it is accessible on your shell
+4. Run `./bin/setup-env.sh` in the `backend` directory. This should create and activate a python virtual environment 
+   and install the requirements listed in `backend/requirements.txt` and `backend/dev-requirements.txt`
+5. Run `./bin/mongo-create-dev-container.sh`. This should create a database container running MongoDB.
+   Confirm the container is running with `docker ps`. You should see something similar to
+   ```
+   CONTAINER ID   IMAGE          COMMAND                  CREATED          STATUS          PORTS                                           NAMES
+   26aa50764160   mongo:4.2.22   "docker-entrypoint.s…"   38 seconds ago   Up 38 seconds   0.0.0.0:27018->27017/tcp, :::27018->27017/tcp   tierarzt_notdienst_mongo_dev
+   ```
+6. Run `./bin/start-dev.sh`. Now the API should be running at `http://127.0.0.1:8000` (visit `http://127.0.0.1:8000/docs`)
+
+
+# Production Server Setup
+
+Prerequisites:
+- Credentials for an SMTP-connection to an external email-provider of your choice
+- A domain and knowledge of how to set up a reverse proxy (such as [nginx](https://www.digitalocean.com/community/tutorials/how-to-configure-nginx-as-a-reverse-proxy-on-ubuntu-22-04))
+
+1. Ask the old repository maintainers for permissions or fork the repo
+2. Choose a linux system of your choice (cloud, self-hosted, etc.) to run the server on
+3. [Install docker](https://docs.docker.com/engine/install/)
+4. Set up a [self-hosted github runner](https://docs.github.com/en/actions/hosting-your-own-runners/about-self-hosted-runners)
+   named `prod-server` and make sure the user running the runner script has access to the docker service
+5. Delete the old `prod-server` runner in the repository and replace it with your new one
+6. Fully rerun the latest `deploy-backend` github workflow. This will fail, that's expected don't panic!
+7. On the production server, change directory to `repo/vetfinder/backend` from where the github runner script
+   was started. Copy `.env.secret.template` to `.env.secret` values for the environment variables in the dotenv file
+8. Retry running the deployment workflow. If everything goes well, it should succeed 
+   - The output of `docker ps` should be similar to
+     ```
+     CONTAINER ID   IMAGE                             COMMAND                  CREATED        STATUS        PORTS                                           NAMES
+     13519f7aeceb   tierarzt_notdienst_app_prod       "/bin/sh -c 'ENV=pro…"   4 days ago     Up 4 days                                                     tierarzt_notdienst_app_prod
+     adb475f9deb1   mongo:4.2.22                      "docker-entrypoint.s…"   4 days ago     Up 4 days     0.0.0.0:27017->27017/tcp, :::27017->27017/tcp   tierarzt_notdienst_mongo_prod
+     ```
+9. The API should be accessible over port 80 (try `http://<Server IP>/docs` or `http://<Server IP>:80/docs` if you have configured a different default HTTP-Port)9Use a reverse proxy for your choice to set expose the API from your domain and set up HTTPs (e.g. using [certbot](https://certbot.eff.org/))
+10. Change the `PROD_DOMAIN` in `.env` and in also change the domain in the frontend services
+11. Time for a drink, integration hell is over 🥳🍻
