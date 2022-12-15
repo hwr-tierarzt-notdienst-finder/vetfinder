@@ -1,0 +1,13 @@
+# Hack -> see githubs documentation https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/defining-the-mergeability-of-pull-requests/troubleshooting-required-status-checks#handling-skipped-but-required-checks
+name: test-backend
+run-name: Dummy workflow to skip required backend tests when backend was not changed
+on:
+  push:
+    paths-ignore:
+      - backend/**
+      - shared-bash.sh
+jobs:
+  test-backend:
+    runs-on: ubuntu-latest
+    steps:
+      - run: 'echo "Dummy workflow to skip tests that are required for backend"'
