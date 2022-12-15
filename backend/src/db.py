@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any, Iterable
+from typing import Any, Iterable, Literal
 
 import geopy.distance
 import pymongo
@@ -117,6 +117,53 @@ def delete_vet_by_id_if_exists(
         collection = _get_vet_collection(visibility, verification_status)
 
         collection.delete_many({"_id": id_})
+
+
+def delete_vet_collections(
+        visibility: VetVisibility | Literal["all"] = "all",
+        verification_status: VetVerificationStatus | Literal["all"] = "all",
+) -> None:
+    visibilities = (
+        VET_VISIBILITIES
+        if visibility == "all"
+        else [visibility]
+    )
+    verification_statuses = (
+        VET_VERIFICATION_STATUSES
+        if verification_status == "all"
+        else [verification_status]
+    )
+
+    for visibility in visibilities:
+        for verification_status in verification_statuses:
+            collection = _get_vet_collection(visibility, verification_status)
+
+            collection.drop()
+
+
+def vet_collections_are_empty(
+        visibility: VetVisibility | Literal["all"] = "all",
+        verification_status: VetVerificationStatus | Literal["all"] = "all",
+) -> bool:
+    visibilities = (
+        VET_VISIBILITIES
+        if visibility == "all"
+        else [visibility]
+    )
+    verification_statuses = (
+        VET_VERIFICATION_STATUSES
+        if verification_status == "all"
+        else [verification_status]
+    )
+
+    for visibility in visibilities:
+        for verification_status in verification_statuses:
+            collection = _get_vet_collection(visibility, verification_status)
+
+            if collection.count_documents({}) > 0:
+                return False
+
+    return True
 
 
 def _get_vet_collection(

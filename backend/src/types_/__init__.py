@@ -23,6 +23,7 @@ Region: TypeAlias = Literal[
     "Bundesland:Thüringen",
 ]
 VetVisibility: TypeAlias = Literal[
+    "software_test",
     "test",
     "public",
 ]

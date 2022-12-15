@@ -4,7 +4,7 @@ from email.message import EmailMessage
 from pathlib import Path
 import smtplib
 import textwrap
-from typing import TypedDict, Any, Type, cast, Sequence
+from typing import TypedDict, Any, Type, cast, Sequence, Protocol
 
 if __name__ == "__main__":
     import os
@@ -32,6 +32,17 @@ class SegmentDict(TypedDict, total=False):
 class TemplateDict(TypedDict):
     header: list[SegmentDict]
     body: list[SegmentDict]
+
+
+class MailSender(Protocol):
+
+    def __call__(
+            self,
+            to: str,
+            template_: TemplateDict | str,
+            template_fill_obj: Any,
+    ) -> None:
+        ...
 
 
 def send_mail(

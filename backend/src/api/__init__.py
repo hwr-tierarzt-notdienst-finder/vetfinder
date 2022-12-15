@@ -9,6 +9,7 @@ import db
 import normalization
 import utils.string_
 import vet_management
+import vet_visibility
 from models import Treatments
 from . import vets
 from . import form
@@ -41,10 +42,11 @@ api.include_router(form.router)
 api.include_router(content_management.router)
 
 
+@api.exception_handler(vet_visibility.AccessDenied)
 @api.exception_handler(vet_management.AccessDenied)
 async def vet_management_access_denied_error_handler(
         request: Request,
-        err: vet_management.AccessDenied
+        err: vet_visibility.AccessDenied | vet_management.AccessDenied
 ) -> NoReturn:
     return JSONResponse(
         status_code=status.HTTP_403_FORBIDDEN,

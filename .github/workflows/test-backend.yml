@@ -1,19 +1,23 @@
-name: deploy-prod
-run-name: Testing PR ${{ github.ref_name }} ${{ github.base_ref }} (created by ${{ github.actor }})
+name: test-backend
+run-name: Testing PR ${{ github.ref_name }} ${{ github.base_ref }} (created by @${{ github.actor }})
 on:
   push:
     paths:
       - backend/**
-  pull_request:
-    branches:
-      - main
+      - shared-bash.sh
 jobs:
   test-backend:
     runs-on: prod-server
     steps:
       - uses: actions/checkout@v3
         with:
+          # Running tests in a subdirectory is a hack.
+          # We should use a different runner for tests.
+          # TODO: fix
           path: './test'
+          # We should start from a clean repo in the future
+          # and store data somewhere else.
+          # TODO: set to true
           clean: false
       - name: Setting up environment
         run: ./test/backend/bin/setup-env.sh

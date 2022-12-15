@@ -6,6 +6,10 @@ import paths
 from types_ import VetVisibility
 
 
+class AccessDenied(Exception):
+    pass
+
+
 def generate_visibility_jwt(
         visibility: VetVisibility,
 ) -> str:
@@ -15,10 +19,19 @@ def generate_visibility_jwt(
 
 
 def get_visibility_from_jwt(jwt: str) -> VetVisibility:
-    return cast(
-        VetVisibility,
-        auth.verify_jwt_return_payload(jwt)["visibility"]
-    )
+    try:
+        return cast(
+            VetVisibility,
+            auth.verify_jwt_return_payload(jwt)["visibility"]
+        )
+    except KeyError as err:
+        raise AccessDenied(
+            "JWT does not contain 'visibility' in payload"
+        ) from err
+    except auth.JWTVerificationError as err:
+        raise AccessDenied(
+            f"Invalid JWT"
+        ) from err
 
 
 def _write_visibility_jwts_to_file() -> None:
