@@ -1,0 +1,343 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+skinparam handwritten true
+
+actor "Tier(ä/a)rzt*in" as Vet
+actor "Content-Manager*in" as ContentManager
+actor "App-Nutzer*in" as AppUser
+box "Datenerfassungswebseite"
+participant "Startseite" as FormHome
+participant "Datenerfassungs-\nseite" as FormForm
+end box
+participant "Flutter-\nFrontend-\nApplikation" as App
+participant Backend
+database "MongoDB-\nDatenbank" as Database
+participant "SMTP-Server" as SMTPServer
+
+== Tier(ä/a)rzt*inregisierung ==
+
+Vet -> FormHome: registiert sich mit\neine E-Mail-Adresse
+activate Vet
+activate FormHome
+
+FormHome -> Backend: POST ""<Domainname>/form/send-vet-registration-email""\nHeader: ""Authorization: Bearer <Sichtsbarkeitsstufe-JWT>""\nBody: ""{"email": "<E-Mail-Adresse>"}""
+activate Backend
+
+Backend -> Backend: Prüft das Sichtsbarkeitsstufe-JWT
+
+alt Sichtsbarkeitsstufe-JWT ist valide
+
+    Backend -> Backend: Erstellt eine UUID\nfür das zukünftige\nTier(ä/a)rzt*in\n-datensatz
+    Backend -> Backend: Erstellt einen\nZugriffs-JWT\nmit dem Payload:\n""{sub: "<UUID>"""\n"" role: "form_user"""\n"" visibility:""\n""     "<Sichtbarkeitsstufe>"}""
+    Backend -> Backend: erstellt einem\nRegistierungs-E-Mail\nmit einem Link auf die\nDatenerfassungsseite.\nDas URL vom Link enthält\ndas Zugriffs-JWT
+    Backend ->> SMTPServer: versendet den Registierungs-E-Maildaten
+
+    activate SMTPServer
+    SMTPServer ->> Vet: versendet das E-Mail
+    deactivate SMTPServer
+
+    Backend --> FormHome: HTTP 200
+
+    FormHome --> Vet: Erfolgsmeldung\nwird angezeigt
+
+else Sichtsbarkeitsstufe-JWT nicht valide
+
+    return HTTP 403
+
+    return Fehlermeldung\nwird angezeigt
+
+    deactivate Vet
+
+end
+
+== Anlegen/Erneuernung von Tier(ä/a)rzt*indaten ==
+
+Vet -> FormForm: Verfolgt der Link aus dem Registierungs-E-Mail\nGET ""<Domainname>/form?access-token=<Zugriffs-JWT>&email=<E-Mail-Adresse>""
+activate Vet
+activate FormForm
+
+FormForm -> Backend: GET ""<Domainname>/form/vet""\nHeader: ""Authorization: Bearer <Zugriffs-JWT>""
+activate Backend
+
+Backend -> Backend: Prüft das Zugriffs-JWT
+
+alt Zugriffs-JWT ist valide
+
+    Backend -> Database: Fragt Dokumente mit dem UUID aus\ndem Zugriffs-JWT aus folgenden\nDokumentensammlungen ab:\n""<Sichtbarkeitsstufe>_unverified""\n""<Sichtbarkeitsstufe>_verified""
+    activate Database
+    return ""[<Dokument>]"" oder ""[]""
+
+
+    alt Das Dokument liegt in der Datenbank vor
+
+        Backend -> Backend: Erstellte eine\nRückgabe-Modell-Objekt \naus dem Dokument
+        Backend --> FormForm: HTTP 200\nBody: <serialisiertes Modell-Objekt als JSON>
+
+        FormForm -> FormForm: Trägt Werte\naus dem JSON-Objekt\nin die Formularfelder ein
+
+    else Das Dokument liegt in der Datenbank nicht vor
+
+        Backend --> FormForm: HTTP 404
+
+    end
+
+else Zugriffs-JWT ist nicht valide
+
+    return HTTP 403
+
+    FormForm --> Vet: Fehlermeldung\nwird angezeigt
+
+end
+
+loop Bis die Datenerfassungsseite vom Tier(ä/a)rzt*in verlassen wird
+
+    Vet -> FormForm: Trägt Werte in die Formularfelder ein
+    Vet -> FormForm: Klickt auf das Button zum speichern der Daten
+
+    FormForm -> Backend: PUT ""<Domainname>/form/create-or-overwrite-vet""\nHeader: ""Authorization: Bearer <Zugriffs-JWT>""\nBody: ""<Tier(ä/a)rzt*indaten als JSON-Objekt>""
+    activate Backend
+
+    alt Zugriffs-JWT ist valide
+
+        Backend -> Backend: deserialisiert JSON in\neinem Modell-Objekt
+        Backend -> Backend: normalisiert und\nvalidiert Modell-Objekt
+
+        alt Modell-Objekt ist valide
+
+            Backend -> Database: löscht Dokumente\nmit dem gleichen UUID aus die\nDokumentensammlungen
+            activate Database
+            return
+            Backend -> Database: Erzeugt neues Dokument\naus dem Modell-Objekt und\nfügt es ein
+            activate Database
+            return
+
+            Backend -> Backend: Erstellt einen\nVerwaltungs-JWT\nmit dem Payload:\n""{sub: "<UUID>"""\n"" role: "content_management"""\n"" visibility:""\n""     "<Sichtbarkeitsstufe>"}""
+
+            loop E-Mails wurden noch nicht an alle Content-Manager*innen versendet
+
+                Backend -> Backend: erstellt Verwaltungs-E-Mail-Daten\nmit Links die Tier(ä/a)rzt*indaten\nals valide oder nicht valide zu\nmarkieren und um die Daten zu\nlöschen. Die Links enhalten\ndas Verwaltungs-JWT
+                Backend ->> SMTPServer: versendet die Verwaltungs-E-Mail-Daten\nmit die Adresse der nächsten Content-Manager*innen
+                activate SMTPServer
+
+                SMTPServer ->> ContentManager: versendet das Verwaltungs-E-Mail
+                deactivate SMTPServer
+
+            end
+
+            Backend --> FormForm: HTTP 200\nBody: ""<serialisiertes Modell-Objekt als JSON>""
+
+        else Modell-Objekt ist nicht valide
+
+            Backend --> FormForm: HTTP 422\nBody: <Informationen zu der Validierungsfehler>
+            FormForm --> Vet: Fehlermeldung\nwird angezeigt
+
+        end
+
+    else Zugriffs-JWT ist nicht valide
+
+        return HTTP 403
+
+        FormForm --> Vet: Fehlermeldung\nwird angezeigt
+
+    end
+
+    deactivate FormForm
+    deactivate Vet
+
+end
+
+== Verwaltung von Tier(ä/a)rzt*indaten ==
+
+ContentManager -> ContentManager: Öffnet die Verwaltungs-E-Mail
+activate ContentManager
+
+alt Content-Manager*in will die Tier(ä/a)rzt*indaten als valide markieren
+
+    ContentManager -> Backend: Verfolgt den Link zum Gewähren der Validierung\nGET ""<Domainname>/content-management/grant-vet-verification?access-token=<Verwaltungs-JWT>""
+    activate Backend
+
+    Backend -> Backend: Prüft das Verwaltungs-JWT
+
+    alt Verwaltungs-JWT ist valide
+
+        Backend -> Database: Fragt Dokumente mit dem UUID aus\ndem Verwaltungs-JWT aus folgenden\nDokumentensammlungen ab:\n""<Sichtbarkeitsstufe>_unverified""\n""<Sichtbarkeitsstufe>_verified""
+
+        activate Database
+        return ""[<Dokument>]"" oder ""[]""
+
+        alt Das Dokument liegt in der Datenbank vor
+
+            Backend -> Backend: Erstellt einem Modell-Objekt\naus dem Dokument
+
+            Backend -> Database: löscht das Dokument
+            activate Database
+            return
+
+            Backend -> Database: Erzeugt ein neues Dokument\naus dem Modell-Objekt und\nfügt es in die Dokumentensammlung\n""<Sichtbarkeitsstufe>_verified""\nein
+            activate Database
+            return
+
+            Backend --> ContentManager: HTTP 200
+
+        else Das Dokument liegt in der Datenbank nicht vor
+
+            Backend --> ContentManager: HTTP 404
+
+        end
+
+    else Verwaltungs-JWT ist nicht valide
+
+        return HTTP 403
+
+    end
+
+else Content-Manager*in will die Tier(ä/a)rzt*indaten als nicht (mehr) valide markieren
+
+    ContentManager -> Backend: Verfolgt den Link zum Entziehen der Validierung\nGET ""<Domainname>/content-management/revoke-vet-verification?access-token=<Verwaltungs-JWT>""
+    activate Backend
+
+    Backend -> Backend: Prüft das Verwaltungs-JWT
+
+    alt Verwaltungs-JWT ist valide
+
+        Backend -> Database: Fragt Dokumente mit dem UUID aus\ndem Verwaltungs-JWT aus folgenden\nDokumentensammlungen ab:\n""<Sichtbarkeitsstufe>_unverified""\n""<Sichtbarkeitsstufe>_verified""
+
+        activate Database
+        return ""[<Dokument>]"" oder ""[]""
+
+        alt Das Dokument liegt in der Datenbank vor
+
+            Backend -> Backend: Erstellt einem Modell-Objekt\naus dem Dokument
+
+            Backend -> Database: löscht das Dokument
+            activate Database
+            return
+
+            Backend -> Database: Erzeugt ein neues Dokument\naus dem Modell-Objekt und\nfügt es in die Dokumentensammlung\n""<Sichtbarkeitsstufe>_unverified""\nein
+            activate Database
+            return
+
+            Backend --> ContentManager: HTTP 200
+
+        else Das Dokument liegt in der Datenbank nicht vor
+
+            Backend --> ContentManager: HTTP 404
+
+        end
+
+    else Verwaltungs-JWT ist nicht valide
+
+        return HTTP 403
+
+    end
+
+else Content-Manager*in will die Tier(ä/a)rzt*indaten löschen
+
+    ContentManager -> Backend: Verfolgt den Link zum Entziehen der Validierung\nGET ""<Domainname>/content-management/delete-vet?access-token=<Verwaltungs-JWT>""
+    activate Backend
+
+    Backend -> Backend: Prüft das Verwaltungs-JWT
+
+    alt Verwaltungs-JWT ist valide
+
+        Backend -> Database: Löscht Dokumente mit dem UUID aus\ndem Verwaltungs-JWT aus folgenden\nDokumentensammlungen:\n""<Sichtbarkeitsstufe>_unverified""\n""<Sichtbarkeitsstufe>_verified""
+        activate Database
+        return
+
+        Backend --> ContentManager: HTTP 200
+
+    else Verwaltungs-JWT ist nicht valide
+
+        return HTTP 403
+
+    end
+
+    deactivate ContentManager
+
+end
+
+== Abfrage von Tier(ä/a)rzt*indaten ==
+
+AppUser -> App: sucht nach Tier(ä/a)rzt*in
+activate AppUser
+activate App
+
+App -> Backend: GET ""<Domainname>/vets/""\n        ""    ?c_lat=<Integer> (optional)""\n        ""    &c_lon=<Integer> (optional)""\n        ""    &r_inner=<Integer> (optional)""\n        ""    &r_outer=<Integer> (optional)""\n        ""    &availability_from=<ISO-Datetime> (optional)""\n        ""    &availability_to=<ISO-Datetime> (optional)""\nHeader: ""Authorization: Bearer <Sichtsbarkeitsstufe-JWT>""
+activate Backend
+
+alt Sichtsbarkeitsstufe-JWT ist valide
+
+    Backend -> Backend: alle Abfrage-Parameter werden validiert
+
+    alt Abfrage-Parameter sind valide
+
+        Backend -> Backend: prüft ob die Abfrage-Parameter\n""c_lat"", ""c_lon"", ""r_inner"" und ""r_outer""\nangegeben wurden
+
+        alt die Abfrage-Parameter \n""c_lat"", ""c_lon"", ""r_inner"" und ""r_outer""\nwurden angegeben
+
+            Backend -> Database: Alle Dokument aus der\n"<Sichtbarkeitsstufe>_verified""\nDokumentensammlung\nwerden abgefragt
+            activate Database
+            return ""[<Dokument>, ...]""
+
+            Backend -> Backend: die Dokumente, die ausgehen von der\nZentralkoordinate ""(<c_lat>°, <c_lon>°)""\nsich nicht zwischen den Radii (in km)\n"r_inner"" und ""r_outer"" befinden werden\naus dem Dokumentenliste rausgefiltert
+            Backend -> Backend: Modell-Objekte werden\naus der Dokumentenliste erzeugt
+
+        else die Abfrage-Parameter\n""c_lat"", ""c_lon"", ""r_inner"" und ""r_outer""\nwurden nicht angegeben
+
+            Backend -> Database: Alle Dokument aus der\n"<Sichtbarkeitsstufe>_verified""\nDokumentensammlung\nwerden abgefragt
+            activate Database
+            return ""[<Dokument>, ...]""
+
+            Backend -> Backend: Modell-Objekte werden\naus der Dokumentenliste erzeugt
+
+        end
+
+        Backend -> Backend: prüft ob die Abfrage-Parameter\n""availability_from"" und\n""availability_to""\nangegeben wurden
+
+        alt die Abfrage-Parameter\navailability_from"" und ""availability_to\nwurden angegeben
+
+            loop aus alle Modell-Objekt\nwurden noch nicht\nRückgabe-Modell-Objekte erzeugt
+
+                Backend -> Backend: die Felder ""availability""\nund ""availability_during_week""\nwerden kalkuliert und zur\nInitialisierung des Rückgabe-Modell-Objekts\nverwendet
+                Backend -> Backend: prüft ob das Feld\n""emergency_availability_condition""\nim Modell-Objekt Null ist
+
+                alt das Feld\n""emergency_availability_condition""\nist im Modell-Objekt ist nicht Null
+
+                    Backend -> Backend: die Felder\n""emergency_availability"" und\n""emergency_availability_during_week""\nwerden kalkuliert und zur Initialisierung\ndes Rückgabe-Modell-Objekts verwendet
+
+                end
+
+                Backend -> Backend: das Rückgabe-Modell-Objekt wird\nals Teil der Rückgabeliste erzeugt
+
+            end
+
+        else alt die Abfrage-Parameter\navailability_from"" und ""availability_to\nwurden nicht angegeben
+
+            Backend -> Backend: erzeugt eine\nRückgabe-Modell-Objektliste\naus der Modell-Objektliste
+
+        end
+
+        Backend --> App: HTTP 200\nBody: ""<Rückgabeliste der Rückgabe-Modell-Objekte>""
+        App --> AppUser: Suchtreffer werden angezeigt
+
+    else
+
+        Backend --> App: HTTP 422\nBody: ""<Informationen zu der Validierungsfehler>""
+
+        App --> AppUser: Fehlermeldung\nwird angezeigt
+
+    end
+
+else Sichtsbarkeitsstufe-JWT nicht valide
+
+    return HTTP 403
+
+    return Fehlermeldung\nwird angezeigt
+
+    deactivate Backend
+    deactivate AppUser
+    deactivate App
+
+end
+
+@enduml
