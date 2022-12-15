@@ -1,0 +1,81 @@
+{
+  "home": {
+    "current_address": "Aktuelle Adresse",
+    "query_hint": "Name, Addresse, PLZ",
+    "no_vet_found": "Kein Tierarzt gefunden.",
+    "snackbar_no_fav": "Kein Tierarzt ist als Favorit gespeichert."
+  },
+  "schedule_dialog": {
+    "title": "Öffnungszeiten",
+    "monday": "Montag",
+    "tuesday": "Dienstag",
+    "wednesday": "Mittwoch",
+    "thursday": "Donnerstag",
+    "friday": "Freitag",
+    "saturday": "Samstag",
+    "sunday": "Sonntag",
+    "close": "Schließen"
+  },
+  "search_filter_dialog": {
+    "title": "Suchfilter",
+    "search_radius": "Suchradius",
+    "treatment": "Tierart",
+    "emergency_service": "Notdienst",
+    "reset": "Zurücksetzen",
+    "cancel": "Abbrechen",
+    "apply": "Anwenden"
+  },
+  "edit_address_modal": {
+    "title": "Standort",
+    "use_current_location": "Aktuellen Standort Verwenden",
+    "address_hint": "Addresse, Nummer, PLZ",
+    "snackbar_timeout": "Aktueller Standort konnte nicht ermittelt werden."
+  },
+  "veterinarian": {
+    "show_in_map": "In Karte anzeigen",
+    "view_vet": "Details ansehen",
+    "emergency": "Notdienst"
+  },
+  "vet_information": {
+    "title": "Tierarzt Information",
+    "mark_as_fav": "Als Favorit speichern",
+    "unmark_as_fav": "Favorit entfernen",
+    "open_schedule": "Öffnungszeiten Heute",
+    "open_schedule_week": "Öffnungszeiten",
+    "open_schedule_emergency": "Notdienstszeiten Heute",
+    "open_schedule_emergency_week": "Notdienst Öffnungszeiten",
+    "call_vet": "Anrufen",
+    "open_website": "Webseite öffnen",
+    "open_map": "Karte öffnen",
+    "open_schedule_today": "Heute",
+    "closed_today": "Geschlossen"
+  },
+  "settings": {
+    "title": "Einstellungen",
+    "darkmode": "Dunkelmodus",
+    "language": "Sprache",
+    "publisher": "Impressum",
+    "last_updated": "Daten zuletzt aktualisiert",
+    "snackbar_language_change": "Starten Sie die App neu, um die Änderung anzuwenden.",
+    "snackbar_close": "Schließen"
+  },
+  "treatments": {
+    "dogs": "Hunde",
+    "cats": "Katzen",
+    "horses": "Pferde",
+    "small_animals": "Kleintiere",
+    "misc": "Sonstige"
+  },
+  "person": {
+    "mr": "Herr",
+    "ms": "Frau",
+    "dr_med": "Dr. med.",
+    "dr_med_dent": "Dr.med. dent.",
+    "dr_med_vent": "Dr. med. vet.",
+    "dr_phil": "Dr. phil.",
+    "dr_paed": "Dr. paed.",
+    "dr_rer_nat": "Dr. rer. nat.",
+    "dr_rer_pol": "Dr. rer. pol.",
+    "dr_ing": "Dr. ing."
+  }
+}
